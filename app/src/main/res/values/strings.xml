@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Futula Coffee Scale</string>
+    <string name="nav_header_title">Futula Coffee Scale</string>
+    <string name="nav_header_subtitle">WIP! Sorry for bugs</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Weighting</string>
+    <string name="menu_gallery">History</string>
+    <string name="menu_slideshow">Settings</string>
+</resources>

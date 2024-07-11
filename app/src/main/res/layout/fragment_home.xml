@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:keepScreenOn="true"
+    tools:context=".ui.home.HomeFragment">
+
+    <Button
+        android:id="@+id/scanButton"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:hapticFeedbackEnabled="true"
+        android:text="CONNECT"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/resetButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="8dp"
+        android:enabled="false"
+        android:hapticFeedbackEnabled="true"
+        android:text="RESET"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/scanButton" />
+
+    <Button
+        android:id="@+id/doseButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:enabled="false"
+        android:hapticFeedbackEnabled="true"
+        android:text="DOSE"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/scanButton" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="66dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/weightLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="WEIGHT (g)"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:id="@+id/weightText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="0,0"
+                    android:textAlignment="center"
+                    android:textSize="34sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/doseLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="DOSE (g)"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:id="@+id/doseText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="0,0"
+                    android:textAlignment="center"
+                    android:textSize="34sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/flowRateLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="FLOWRATE (g/s)"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:id="@+id/flowRateText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="0,0"
+                    android:textAlignment="center"
+                    android:textSize="34sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/timeLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TIME"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:id="@+id/timeText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="00:00.0"
+                    android:textAlignment="center"
+                    android:textSize="34sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/brewRatioLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="BREW RATIO"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:id="@+id/brewRatioText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="1:0,0"
+                    android:textAlignment="center"
+                    android:textSize="34sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2">
+
+            <com.github.aachartmodel.aainfographics.aachartcreator.AAChartView
+                android:id="@+id/chartWeightView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </com.github.aachartmodel.aainfographics.aachartcreator.AAChartView>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="3">
+
+            <com.github.aachartmodel.aainfographics.aachartcreator.AAChartView
+                android:id="@+id/chartFlowRateView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </com.github.aachartmodel.aainfographics.aachartcreator.AAChartView>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/autoTareSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:checked="false"
+                    android:hapticFeedbackEnabled="true"
+                    android:lineSpacingExtra="8sp"
+                    android:minHeight="48dp"
+                    android:showText="false"
+                    android:splitTrack="false"
+                    android:text="TARE"
+                    android:textAlignment="viewEnd"
+                    android:textSize="20sp"
+                    tools:checked="false" />
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/autoDoseSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:checked="false"
+                    android:hapticFeedbackEnabled="true"
+                    android:lineSpacingExtra="8sp"
+                    android:minHeight="48dp"
+                    android:showText="false"
+                    android:splitTrack="false"
+                    android:text="DOSE"
+                    android:textAlignment="viewEnd"
+                    android:textSize="20sp"
+                    tools:checked="false" />
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/autoStartSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:checked="false"
+                    android:hapticFeedbackEnabled="true"
+                    android:lineSpacingExtra="8sp"
+                    android:minHeight="48dp"
+                    android:showText="false"
+                    android:splitTrack="false"
+                    android:text="START"
+                    android:textAlignment="viewEnd"
+                    android:textSize="20sp"
+                    tools:checked="false" />
+            </LinearLayout>
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
