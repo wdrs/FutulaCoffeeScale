@@ -43,8 +43,4 @@ class SettingsFragment : Fragment() {
         _binding = null
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        val item: MenuItem = menu.findItem(R.id.action_settings)
-        item.isVisible = false
-    }
 }

@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +22,11 @@ import com.github.aachartmodel.aainfographics.aachartcreator.AAChartType
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartView
 import com.github.aachartmodel.aainfographics.aachartcreator.AASeriesElement
 import com.google.android.material.materialswitch.MaterialSwitch
+import com.tomatishe.futulacoffeescale.AppDatabase
+import com.tomatishe.futulacoffeescale.Dependencies
 import com.tomatishe.futulacoffeescale.R
+import com.tomatishe.futulacoffeescale.WeightRecord
+import com.tomatishe.futulacoffeescale.WeightRecordRepository
 import com.tomatishe.futulacoffeescale.databinding.FragmentHomeBinding
 import com.welie.blessed.BluetoothCentralManager
 import com.welie.blessed.BluetoothPeripheral
@@ -32,6 +37,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import timerx.buildStopwatch
+import java.util.Calendar
+import java.util.Date
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
@@ -77,7 +84,7 @@ class HomeFragment : Fragment() {
                 waitWatch.reset()
                 waitWatch.start()
                 weightText.text = "%.1f".format(weightRecord)
-                if (autoStartSwitch.isChecked && doseRecord > 0 && !isTimerWorking && weightRecord > 0.1) {
+                if (autoStartSwitch.isChecked && !autoDoseSwitch.isChecked && !autoTareSwitch.isChecked && doseRecord > 0 && !isTimerWorking && weightRecord > 0.1) {
                     startStopWatch()
                 }
             }
@@ -320,6 +327,13 @@ class HomeFragment : Fragment() {
         // Setting a tick listener that gets notified when time changes
         onTick { millis: Long, time: CharSequence ->
             timeString = time.toString()
+//            val preserveWeight = weightLog.last()
+//            if (weightLog.size > 1) {
+//                Log.d("INFO", "CURRENT ${weightRecord} LAST ${preserveWeight}")
+//                if (weightRecord < preserveWeight) {
+//                    weightRecord = preserveWeight
+//                }
+//            }
             weightLog.add(weightRecord)
             if (weightLog.size % 10 == 0) {
                 weightLogSecond.add(weightRecord)
@@ -517,9 +531,47 @@ class HomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
         central = BluetoothCentralManager(requireActivity().applicationContext)
         // keep the fragment and all its data across screen rotation
         // setRetainInstance(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.main, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_save -> {
+                scope.launch {
+                    val brewDateTime: Date = Calendar.getInstance().time
+                    val brewDateTimeAsLong: Long = brewDateTime.time
+                    val weightLogString = weightLogSecond.joinToString(
+                        separator = ";"
+                    )
+                    val flowRateLogString = flowRateLogSecond.joinToString(
+                        separator = ";"
+                    )
+                    val newWeightRecord = WeightRecord(
+                        brewDateTimeAsLong,
+                        weightUnit,
+                        doseRecord,
+                        weightRecord,
+                        weightLogString,
+                        flowRate,
+                        flowRateAvg,
+                        flowRateLogString,
+                        timeString,
+                        brewRatioString
+                    )
+                    Dependencies.weightRecordRepository.insertWeightRecordData(newWeightRecord.toWeightRecordDbEntity())
+                }
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onCreateView(
