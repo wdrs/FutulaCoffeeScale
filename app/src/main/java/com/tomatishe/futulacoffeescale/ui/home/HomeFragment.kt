@@ -37,6 +37,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import timerx.buildStopwatch
+import timerx.buildTimer
 import java.util.Calendar
 import java.util.Date
 import java.util.UUID
@@ -296,9 +297,10 @@ class HomeFragment : Fragment() {
 
     private val scanFilter = ScanFilter.Builder().setDeviceName(SCALE_NAME).build()
 
-    private val waitWatch = buildStopwatch {
+    private val waitWatch = buildTimer {
         startFormat("MM:SS")
         useExactDelay(true)
+        startTime(2, TimeUnit.SECONDS)
         actionWhen(1, TimeUnit.SECONDS) {
             if (autoDoseSwitch.isChecked && !autoTareSwitch.isChecked && !isTimerWorking && weightRecord > 0.1) {
                 doseRecord = weightRecord
