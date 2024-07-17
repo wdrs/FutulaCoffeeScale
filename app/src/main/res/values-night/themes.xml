@@ -15,4 +15,8 @@
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
     </style>
+
+    <style name="ImageViewStyle">
+        <item name="android:tint">@color/white</item>
+    </style>
 </resources>

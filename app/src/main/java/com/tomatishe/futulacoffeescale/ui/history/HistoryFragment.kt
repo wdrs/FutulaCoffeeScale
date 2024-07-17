@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.tomatishe.futulacoffeescale.Dependencies
@@ -25,7 +27,10 @@ data class wRecord(
 )
 
 class WeightAdapter : RecyclerView.Adapter<WeightAdapter.WeightViewHolder>() {
-    var data: List<wRecord> = emptyList()
+    lateinit var navController: NavController
+    lateinit var scope: CoroutineScope
+
+    var data: MutableList<wRecord> = mutableListOf()
         set(newValue) {
             field = newValue
             // notifyDataSetChanged()
@@ -50,22 +55,27 @@ class WeightAdapter : RecyclerView.Adapter<WeightAdapter.WeightViewHolder>() {
         with(holder.binding) {
             dateTextView.text = wData.dateString
             summaryTextView.text = wData.summaryString
-            deleteImageView.setOnClickListener{
-                Log.d("INFO", "DELETED ${wData.id}")
+            deleteImageView.setOnClickListener {
+                scope.launch {
+                    Dependencies.weightRecordRepository.deleteWeightRecordDataById(wData.id)
+                }
+                data.removeAt(position)
+                notifyItemRemoved(position)
             }
         }
-        holder.itemView.setOnClickListener{
-            Log.d("INFO", "SELECTED ${wData.id}")
+        holder.itemView.setOnClickListener {
+            val action =
+                HistoryFragmentDirections.actionNavHistoryToNavHistoryInfo(historyRecordId = wData.id)
+            navController.navigate(action)
         }
     }
 
 }
 
 class HistoryFragment : Fragment() {
-
-    lateinit var weightRecordsList: RecyclerView
-    lateinit var weightRecordsListData: ArrayList<wRecord>
-    lateinit var adapter: WeightAdapter
+    private lateinit var weightRecordsList: RecyclerView
+    private lateinit var weightRecordsListData: ArrayList<wRecord>
+    private lateinit var adapter: WeightAdapter
 
     private var _binding: FragmentHistoryBinding? = null
 
@@ -94,8 +104,10 @@ class HistoryFragment : Fragment() {
                 val currId = weightRecord.id
                 val backToDate: Date = Date(weightRecord.brewDate)
                 val dateFormat = SimpleDateFormat("yyyy.MM.dd HH:mm:ss")
+                val flowRateAvgString = "%.1f".format(weightRecord.flowRateAvg)
+                val weightRecordString = "%.1f".format(weightRecord.weightRecord)
                 val sumString =
-                    "T: ${weightRecord.timeString} FR: ${weightRecord.flowRateAvg} W: ${weightRecord.weightRecord} ${weightRecord.weightUnit}"
+                    "T: ${weightRecord.timeString} FR: ${flowRateAvgString} W: ${weightRecordString} ${weightRecord.weightUnit}"
                 val currRecord: wRecord = wRecord(
                     currId, dateFormat.format(backToDate), sumString
                 )
@@ -118,7 +130,11 @@ class HistoryFragment : Fragment() {
         weightRecordsListData = ArrayList()
 
         val manager = LinearLayoutManager(activity?.applicationContext)
+        val navController = findNavController(this)
+
         adapter = WeightAdapter()
+        adapter.navController = navController
+        adapter.scope = scope
 
         weightRecordsList = binding.weightRecordsList
         weightRecordsList.layoutManager = manager

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Futula Coffee Scale</string>
+    <string name="nav_header_title">Futula Coffee Scale</string>
+    <string name="nav_header_subtitle">И простите за баги!</string>
+    <string name="nav_header_desc">Панель навигации</string>
+    <string name="action_save">Сохранить</string>
+    <string name="action_saved">Сохранил в историю</string>
+    <string name="action_not_saved_empty">Не могу сохранить пустые данные</string>
+    <string name="menu_home">Готовка</string>
+    <string name="menu_history">История</string>
+    <string name="menu_history_info">Информация</string>
+    <string name="menu_settings">Настройки</string>
+    <string name="switch_tare_text">TARE</string>
+    <string name="switch_dose_text">DOSE</string>
+    <string name="switch_autostart_text">START</string>
+</resources>

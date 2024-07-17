@@ -26,12 +26,28 @@
     <fragment
         android:id="@+id/nav_history"
         android:name="com.tomatishe.futulacoffeescale.ui.history.HistoryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_history" />
+        android:label="@string/menu_history"
+        tools:layout="@layout/fragment_history" >
+        <action
+            android:id="@+id/action_nav_history_to_nav_history_info"
+            app:destination="@id/nav_history_info"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_history_info"
+        android:name="com.tomatishe.futulacoffeescale.ui.historyInfo.HistoryInfoFragment"
+        android:label="@string/menu_history_info"
+        tools:layout="@layout/fragment_history_info" >
+        <argument
+            android:name="historyRecordId"
+            app:argType="long" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_settings"
         android:name="com.tomatishe.futulacoffeescale.ui.settings.SettingsFragment"
-        android:label="@string/menu_slideshow"
+        android:label="@string/menu_settings"
         tools:layout="@layout/fragment_settings" />
 </navigation>

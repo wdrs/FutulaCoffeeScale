@@ -4,55 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:keepScreenOn="true"
-    tools:context=".ui.home.HomeFragment">
-
-    <Button
-        android:id="@+id/scanButton"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        android:hapticFeedbackEnabled="true"
-        android:text="CONNECT"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/resetButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="8dp"
-        android:enabled="false"
-        android:hapticFeedbackEnabled="true"
-        android:text="RESET"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/scanButton" />
-
-    <Button
-        android:id="@+id/doseButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        android:enabled="false"
-        android:hapticFeedbackEnabled="true"
-        android:text="DOSE"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/scanButton" />
+    tools:context=".ui.historyInfo.HistoryInfoFragment">
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="66dp"
+        android:layout_marginBottom="8dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -117,6 +78,7 @@
                     android:textAlignment="center"
                     android:textSize="34sp"
                     android:textStyle="bold"
+                    android:maxLines="1"
                     app:autoSizeTextType="uniform"
                     android:justificationMode="inter_word"/>
 
@@ -241,80 +203,6 @@
                 android:layout_height="match_parent">
 
             </com.github.aachartmodel.aainfographics.aachartcreator.AAChartView>
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0">
-
-            <LinearLayout
-                android:id="@+id/switchesLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/autoTareSwitch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
-                    android:layout_weight="1"
-                    android:checked="false"
-                    android:hapticFeedbackEnabled="true"
-                    android:justificationMode="inter_word"
-                    android:lineSpacingExtra="8sp"
-                    android:maxLines="1"
-                    android:minHeight="48dp"
-                    android:showText="false"
-                    android:splitTrack="false"
-                    android:text="@string/switch_tare_text"
-                    android:textSize="20sp"
-                    app:autoSizeTextType="uniform"
-                    app:switchPadding="8dp"
-                    tools:checked="false" />
-
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/autoDoseSwitch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
-                    android:layout_weight="1"
-                    android:checked="false"
-                    android:hapticFeedbackEnabled="true"
-                    android:justificationMode="inter_word"
-                    android:lineSpacingExtra="8sp"
-                    android:maxLines="1"
-                    android:minHeight="48dp"
-                    android:showText="false"
-                    android:splitTrack="false"
-                    android:text="@string/switch_dose_text"
-                    android:textSize="20sp"
-                    app:autoSizeTextType="uniform"
-                    app:switchPadding="8dp"
-                    tools:checked="false" />
-
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/autoStartSwitch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
-                    android:layout_weight="1"
-                    android:checked="false"
-                    android:hapticFeedbackEnabled="true"
-                    android:justificationMode="inter_word"
-                    android:lineSpacingExtra="8sp"
-                    android:maxLines="1"
-                    android:minHeight="48dp"
-                    android:showText="false"
-                    android:splitTrack="false"
-                    android:text="@string/switch_autostart_text"
-                    android:textSize="20sp"
-                    app:autoSizeTextType="uniform"
-                    app:switchPadding="8dp"
-                    tools:checked="false" />
-            </LinearLayout>
-
         </FrameLayout>
 
     </LinearLayout>

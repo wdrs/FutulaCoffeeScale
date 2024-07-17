@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.compose.material3.SnackbarHostState
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartAnimationType
@@ -22,6 +23,7 @@ import com.github.aachartmodel.aainfographics.aachartcreator.AAChartType
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartView
 import com.github.aachartmodel.aainfographics.aachartcreator.AASeriesElement
 import com.google.android.material.materialswitch.MaterialSwitch
+import com.google.android.material.snackbar.Snackbar
 import com.tomatishe.futulacoffeescale.AppDatabase
 import com.tomatishe.futulacoffeescale.Dependencies
 import com.tomatishe.futulacoffeescale.R
@@ -423,9 +425,14 @@ class HomeFragment : Fragment() {
                 if (isTimerWorking) {
                     currentScanButtonText = "PAUSE"
                     doseButton.isEnabled = false
+//                    autoStartSwitch.visibility = View.INVISIBLE
+//                    autoTareSwitch.visibility = View.INVISIBLE
+//                    autoDoseSwitch.visibility = View.INVISIBLE
                 } else {
                     currentScanButtonText = "GO ON"
-                    doseButton.isEnabled = true
+//                    autoStartSwitch.visibility = View.VISIBLE
+//                    autoTareSwitch.visibility = View.VISIBLE
+//                    autoDoseSwitch.visibility = View.VISIBLE
                 }
             }
         }
@@ -436,8 +443,18 @@ class HomeFragment : Fragment() {
             activity?.runOnUiThread {
                 if (isTimerPaused) {
                     currentScanButtonText = "RESUME"
+                    if (isTimerWorking) {
+                        doseButton.isEnabled = false
+                    } else {
+                        doseButton.isEnabled = true
+                    }
                 } else {
                     currentScanButtonText = "PAUSE"
+                    if (isTimerWorking) {
+                        doseButton.isEnabled = false
+                    } else {
+                        doseButton.isEnabled = true
+                    }
                 }
             }
         }
@@ -567,7 +584,16 @@ class HomeFragment : Fragment() {
                         timeString,
                         brewRatioString
                     )
-                    Dependencies.weightRecordRepository.insertWeightRecordData(newWeightRecord.toWeightRecordDbEntity())
+                    if (weightLogSecond.size > 0) {
+                        Dependencies.weightRecordRepository.insertWeightRecordData(newWeightRecord.toWeightRecordDbEntity())
+                        Snackbar.make(
+                            mRootView!!, R.string.action_saved, Snackbar.LENGTH_SHORT
+                        ).setAnchorView(R.id.switchesLayout).show()
+                    } else {
+                        Snackbar.make(
+                            mRootView!!, R.string.action_not_saved_empty, Snackbar.LENGTH_SHORT
+                        ).setAnchorView(R.id.switchesLayout).show()
+                    }
                 }
                 true
             }

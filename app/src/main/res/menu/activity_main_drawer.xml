@@ -11,10 +11,10 @@
         <item
             android:id="@+id/nav_history"
             android:icon="@drawable/baseline_history_24"
-            android:title="@string/menu_gallery" />
+            android:title="@string/menu_history" />
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/baseline_settings_24"
-            android:title="@string/menu_slideshow" />
+            android:title="@string/menu_settings" />
     </group>
 </menu>
