@@ -18,4 +18,7 @@
     <string name="enable_autodose_text">Включить автодозу</string>
     <string name="enable_autotare_text">Включить автотару</string>
     <string name="enable_autofunctions_text">Включить автоматизацию</string>
+    <string name="enable_hide_switches">Прятать переключатели при работе</string>
+    <string name="enable_hide_buttons">Прятать кнопки после работы</string>
+    <string name="enable_ignore_dose">Игнорировать дозу</string>
 </resources>

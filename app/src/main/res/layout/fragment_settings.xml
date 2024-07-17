@@ -19,6 +19,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/autoAllLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -31,11 +32,9 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:gravity="center"
-                android:justificationMode="inter_word"
-                android:maxLines="1"
                 android:text="@string/enable_autofunctions_text"
                 android:textAlignment="textStart"
-                android:textSize="48sp"
+                android:elegantTextHeight="true"
                 app:autoSizeTextType="uniform"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/autoFuncSettingsSwitch"
@@ -65,6 +64,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/autoStartLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -72,16 +72,15 @@
                 android:id="@+id/textView1"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
+                android:elegantTextHeight="true"
                 android:gravity="center"
                 android:justificationMode="inter_word"
-                android:maxLines="1"
                 android:text="@string/enable_autostart_text"
                 android:textAlignment="textStart"
-                android:textSize="48sp"
                 app:autoSizeTextType="uniform"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/autoStartSettingsSwitch"
@@ -111,6 +110,53 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/ignoreDoseLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:elegantTextHeight="true"
+                android:gravity="center"
+                android:justificationMode="inter_word"
+                android:text="@string/enable_ignore_dose"
+                android:textAlignment="textStart"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/ignoreDoseSettingsSwitch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/ignoreDoseSettingsSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:checked="false"
+                android:hapticFeedbackEnabled="true"
+                android:lineSpacingExtra="8sp"
+                android:maxLines="1"
+                android:minHeight="48dp"
+                android:showText="false"
+                android:splitTrack="false"
+                android:textSize="20sp"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:switchPadding="8dp"
+                tools:checked="false" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/autoDoseLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -118,16 +164,15 @@
                 android:id="@+id/textView2"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
+                android:elegantTextHeight="true"
                 android:gravity="center"
                 android:justificationMode="inter_word"
-                android:maxLines="1"
                 android:text="@string/enable_autodose_text"
                 android:textAlignment="textStart"
-                android:textSize="48sp"
                 app:autoSizeTextType="uniform"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/autoDoseSettingsSwitch"
@@ -157,6 +202,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/autoTareLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -164,16 +210,15 @@
                 android:id="@+id/textView3"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
+                android:elegantTextHeight="true"
                 android:gravity="center"
                 android:justificationMode="inter_word"
-                android:maxLines="1"
                 android:text="@string/enable_autotare_text"
                 android:textAlignment="textStart"
-                android:textSize="48sp"
                 app:autoSizeTextType="uniform"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/autoTareSettingsSwitch"
@@ -202,6 +247,97 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/autoSwitchesLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:gravity="center"
+                android:justificationMode="inter_word"
+                android:text="@string/enable_hide_switches"
+                android:textAlignment="textStart"
+                android:elegantTextHeight="true"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/autoHideSwitchesSettingsSwitch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/autoHideSwitchesSettingsSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:checked="true"
+                android:hapticFeedbackEnabled="true"
+                android:lineSpacingExtra="8sp"
+                android:maxLines="1"
+                android:minHeight="48dp"
+                android:showText="false"
+                android:splitTrack="false"
+                android:textSize="20sp"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:switchPadding="8dp"
+                tools:checked="true" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/autoButtonsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:gravity="center"
+                android:justificationMode="inter_word"
+                android:text="@string/enable_hide_buttons"
+                android:textAlignment="textStart"
+                android:elegantTextHeight="true"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/autoHideButtonsSettingsSwitch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/autoHideButtonsSettingsSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:checked="true"
+                android:hapticFeedbackEnabled="true"
+                android:lineSpacingExtra="8sp"
+                android:maxLines="1"
+                android:minHeight="48dp"
+                android:showText="false"
+                android:splitTrack="false"
+                android:textSize="20sp"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:switchPadding="8dp"
+                tools:checked="true" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

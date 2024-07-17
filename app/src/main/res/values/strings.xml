@@ -14,8 +14,11 @@
     <string name="switch_tare_text">TARE</string>
     <string name="switch_dose_text">DOSE</string>
     <string name="switch_autostart_text">START</string>
-    <string name="enable_autostart_text">Enable Auto Start</string>
-    <string name="enable_autodose_text">Enable Auto Dose</string>
-    <string name="enable_autotare_text">Enable Auto Tare</string>
-    <string name="enable_autofunctions_text">Enable Auto Functions</string>
+    <string name="enable_autostart_text">Enable autostart</string>
+    <string name="enable_autodose_text">Enable autodose</string>
+    <string name="enable_autotare_text">Enable autotare</string>
+    <string name="enable_autofunctions_text">Enable auto functions</string>
+    <string name="enable_hide_switches">Hide switches when brewing</string>
+    <string name="enable_hide_buttons">Hide buttons after brewing</string>
+    <string name="enable_ignore_dose">Ignore dose</string>
 </resources>
