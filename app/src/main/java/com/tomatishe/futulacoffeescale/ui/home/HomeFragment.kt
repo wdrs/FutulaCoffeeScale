@@ -56,12 +56,12 @@ private const val unitGramCommand = "fd000400000000000000f9"
 private const val unitOzCommand = "fd000600000000000000fb"
 private const val unitMlWCommand = "fd000700000000000000fa"
 private const val unitMlMilkCommand = "fd000800000000000000f5"
-// private const val deviceNameUuidString = "00002a00-0000-1000-8000-00805f9b34fb"
-// private const val deviceManufacturerNameUuidString = "00002a29-0000-1000-8000-00805f9b34fb"
-// private const val deviceSerialNumberUuidString = "00002a25-0000-1000-8000-00805f9b34fb"
-// private const val deviceSoftwareRevisionUuidString = "00002a28-0000-1000-8000-00805f9b34fb"
-// private const val deviceFirmwareRevisionUuidString = "00002a26-0000-1000-8000-00805f9b34fb"
-// private const val deviceSystemIDUuidString = "00002a23-0000-1000-8000-00805f9b34fb"
+/* private const val deviceNameUuidString = "00002a00-0000-1000-8000-00805f9b34fb"
+private const val deviceManufacturerNameUuidString = "00002a29-0000-1000-8000-00805f9b34fb"
+private const val deviceSerialNumberUuidString = "00002a25-0000-1000-8000-00805f9b34fb"
+private const val deviceSoftwareRevisionUuidString = "00002a28-0000-1000-8000-00805f9b34fb"
+private const val deviceFirmwareRevisionUuidString = "00002a26-0000-1000-8000-00805f9b34fb"
+private const val deviceSystemIDUuidString = "00002a23-0000-1000-8000-00805f9b34fb" */
 
 class HomeFragment : Fragment() {
     private var mRootView: View? = null
@@ -331,14 +331,66 @@ class HomeFragment : Fragment() {
         // Setting a tick listener that gets notified when time changes
         onTick { millis: Long, time: CharSequence ->
             timeString = time.toString()
-//            val preserveWeight = weightLog.last()
-//            if (weightLog.size > 1) {
-//                Log.d("INFO", "CURRENT ${weightRecord} LAST ${preserveWeight}")
-//                if (weightRecord < preserveWeight) {
-//                    weightRecord = preserveWeight
-//                }
-//            }
-            val weightRecordComputed = if (weightRecord<0) {0.0F} else {weightRecord}
+            /* val preserveWeight = weightLog.last()
+            if (weightLog.size > 1) {
+                Log.d("INFO", "CURRENT ${weightRecord} LAST ${preserveWeight}")
+                if (weightRecord < preserveWeight) {
+                    weightRecord = preserveWeight
+                }
+            } */
+            val weightRecordComputed = if (weightRecord < 0) {
+                0.0F
+            } else {
+                weightRecord
+            }
+
+            if (weightLog.size < 2) {
+                Log.d("INFO", "Waiting for weight data")
+            } else if (weightLog.size <= 10) {
+                // val flowRateComputed = (weightLog.last() - weightLog.first())
+                val flowRateComputed = (weightRecordComputed - weightLog.first())
+                flowRate = if (flowRateComputed <= 0) {
+                    0.0F
+                } else {
+                    flowRateComputed
+                }
+                flowRateLog.add(flowRate)
+            } else if (weightLog.size > 10) {
+                /* val flowRateComputed =
+                if ((weightLog.last() - weightLog[weightLog.size - 10]) <= 0) {
+                    0.0F
+                } else {
+                    (weightLog.last() - weightLog[weightLog.size - 10])
+                } */
+                val flowRateComputed = if ((weightRecordComputed - weightLog.subList(0,weightLog.size-10).max()) <= 0) {
+                    0.0F
+                } else {
+                    (weightRecordComputed - weightLog.subList(0,weightLog.size-10).max())
+                }
+                flowRateLog.add(flowRateComputed)
+                flowRate = flowRateLog.takeLast(10).average().toFloat()
+            }
+
+            if (doseRecord > 0) {
+                val percentRatio = weightRecordComputed / doseRecord
+                brewRatioString = "1:${"%.1f".format(percentRatio)}"
+            }
+
+            if (flowRateLog.size > 0) {
+                flowRateAvg = flowRateLog.average().toFloat()
+            }
+
+            if (flowRateLog.size % 10 == 0 && flowRateLog.size > 1) {
+                flowRateLogSecond.add(flowRate)
+                flowRateLogGraphData =
+                    AASeriesElement().name("Flowrate").data(flowRateLogSecond.toTypedArray())
+                chartFlowRateView.aa_onlyRefreshTheChartDataWithChartOptionsSeriesArray(
+                    arrayOf(
+                        flowRateLogGraphData
+                    )
+                )
+            }
+
             weightLog.add(weightRecordComputed)
             if (weightLog.size % 10 == 0) {
                 weightLogSecond.add(weightRecordComputed)
@@ -347,43 +399,6 @@ class HomeFragment : Fragment() {
                 chartWeightView.aa_onlyRefreshTheChartDataWithChartOptionsSeriesArray(
                     arrayOf(
                         weightLogGraphData
-                    )
-                )
-            }
-            if (weightLog.size < 2) {
-                Log.d("INFO", "Waiting for weight data")
-            } else if (weightLog.size <= 10) {
-                val flowRateComputed = (weightLog.last() - weightLog.first())
-                flowRate = if (flowRateComputed <= 0) {
-                    0.0F
-                } else {
-                    flowRateComputed
-                }
-                flowRateLog.add(flowRate)
-            } else {
-                val flowRateComputed =
-                    if ((weightLog.last() - weightLog[weightLog.size - 10]) <= 0) {
-                        0.0F
-                    } else {
-                        (weightLog.last() - weightLog[weightLog.size - 10])
-                    }
-                flowRateLog.add(flowRateComputed)
-                flowRate = flowRateLog.takeLast(10).average().toFloat()
-            }
-            if (doseRecord > 0) {
-                val percentRatio = weightRecordComputed / doseRecord
-                brewRatioString = "1:${"%.1f".format(percentRatio)}"
-            }
-            if (flowRateLog.size > 0) {
-                flowRateAvg = flowRateLog.average().toFloat()
-            }
-            if (flowRateLog.size % 10 == 0 && flowRateLog.size > 1) {
-                flowRateLogSecond.add(flowRate)
-                flowRateLogGraphData =
-                    AASeriesElement().name("Flowrate").data(flowRateLogSecond.toTypedArray())
-                chartFlowRateView.aa_onlyRefreshTheChartDataWithChartOptionsSeriesArray(
-                    arrayOf(
-                        flowRateLogGraphData
                     )
                 )
             }
@@ -426,14 +441,14 @@ class HomeFragment : Fragment() {
                 if (isTimerWorking) {
                     currentScanButtonText = "PAUSE"
                     doseButton.isEnabled = false
-//                    autoStartSwitch.visibility = View.INVISIBLE
-//                    autoTareSwitch.visibility = View.INVISIBLE
-//                    autoDoseSwitch.visibility = View.INVISIBLE
+                    /* autoStartSwitch.visibility = View.INVISIBLE
+                    autoTareSwitch.visibility = View.INVISIBLE
+                    autoDoseSwitch.visibility = View.INVISIBLE */
                 } else {
                     currentScanButtonText = "GO ON"
-//                    autoStartSwitch.visibility = View.VISIBLE
-//                    autoTareSwitch.visibility = View.VISIBLE
-//                    autoDoseSwitch.visibility = View.VISIBLE
+                    /* autoStartSwitch.visibility = View.VISIBLE
+                    autoTareSwitch.visibility = View.VISIBLE
+                    autoDoseSwitch.visibility = View.VISIBLE */
                 }
             }
         }
