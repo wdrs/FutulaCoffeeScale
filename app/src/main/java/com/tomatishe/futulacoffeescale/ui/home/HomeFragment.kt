@@ -1,6 +1,7 @@
 package com.tomatishe.futulacoffeescale.ui.home
 
 import android.annotation.SuppressLint
+import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.le.ScanFilter
 import android.content.res.Configuration
 import android.content.res.Resources
@@ -14,7 +15,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import androidx.compose.material3.SnackbarHostState
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartAnimationType
@@ -24,14 +24,13 @@ import com.github.aachartmodel.aainfographics.aachartcreator.AAChartView
 import com.github.aachartmodel.aainfographics.aachartcreator.AASeriesElement
 import com.google.android.material.materialswitch.MaterialSwitch
 import com.google.android.material.snackbar.Snackbar
-import com.tomatishe.futulacoffeescale.AppDatabase
 import com.tomatishe.futulacoffeescale.Dependencies
 import com.tomatishe.futulacoffeescale.R
 import com.tomatishe.futulacoffeescale.WeightRecord
-import com.tomatishe.futulacoffeescale.WeightRecordRepository
 import com.tomatishe.futulacoffeescale.databinding.FragmentHomeBinding
 import com.welie.blessed.BluetoothCentralManager
 import com.welie.blessed.BluetoothPeripheral
+import com.welie.blessed.ConnectionFailedException
 import com.welie.blessed.WriteType
 import com.welie.blessed.asUInt8
 import kotlinx.coroutines.CoroutineScope
@@ -184,6 +183,9 @@ class HomeFragment : Fragment() {
     private lateinit var scalePeripheral: BluetoothPeripheral
     private lateinit var central: BluetoothCentralManager
 
+    private lateinit var weightCharacteristic: BluetoothGattCharacteristic
+    private lateinit var batteryCharacteristic: BluetoothGattCharacteristic
+
     @SuppressLint("MissingPermission")
     private fun startBleScan() {
         isScanning = true
@@ -233,61 +235,79 @@ class HomeFragment : Fragment() {
         currentScanButtonText = "CONNECTING"
         try {
             central.connectPeripheral(peripheral)
+            sendCommandToScale(peripheral, unitGramCommand)
             isConnected = true
-        } catch (exception: Exception) {
+        } catch (exception: ConnectionFailedException) {
             Log.d("ERROR", "Connection to ${peripheral.name} failed")
             isConnected = false
             isScanning = false
+            if (isTimerWorking && !isTimerPaused) {
+                stopwatch.stop()
+                isTimerPaused = true
+            }
             currentScanButtonText = "CONNECT"
         }
-        sendCommandToScale(peripheral, unitGramCommand)
-        try {
-            peripheral.getCharacteristic(
-                UUID.fromString(scaleServiceUuidString), UUID.fromString(
-                    scaleGetWeightUuidString
-                )
-            )?.let {
-                peripheral.observe(it) { value ->
-                    val weightSign = if (value.sliceArray(5..5)[0].toInt() > 0) -1.0 else 1.0
-                    val localWeightUnit = value.sliceArray(8..8)[0].toInt()
-                    weightUnit = when (localWeightUnit) {
-                        4 -> "g"
-                        6 -> "oz"
-                        7 -> "ml w"
-                        8 -> "ml milk"
-                        else -> {
-                            "g"
-                        }
+
+        weightCharacteristic = peripheral.getCharacteristic(
+            UUID.fromString(scaleServiceUuidString), UUID.fromString(
+                scaleGetWeightUuidString
+            )
+        )!!
+        batteryCharacteristic = peripheral.getCharacteristic(
+            UUID.fromString(scaleBatteryServiceUuidString), UUID.fromString(
+                scaleBatteryLevelUuidString
+            )
+        )!!
+
+        peripheral.observe(weightCharacteristic) { value ->
+            try {
+                val weightSign = if (value.sliceArray(5..5)[0].toInt() > 0) -1.0 else 1.0
+                val localWeightUnit = value.sliceArray(8..8)[0].toInt()
+                weightUnit = when (localWeightUnit) {
+                    4 -> "g"
+                    6 -> "oz"
+                    7 -> "ml w"
+                    8 -> "ml milk"
+                    else -> {
+                        "g"
                     }
-                    val weightUnitMultiplier = when (localWeightUnit) {
-                        4 -> 1.0
-                        6 -> 0.035274
-                        7 -> 1.0
-                        8 -> 0.972
-                        else -> {
-                            1.0
-                        }
+                }
+                val weightUnitMultiplier = when (localWeightUnit) {
+                    4 -> 1.0
+                    6 -> 0.035274
+                    7 -> 1.0
+                    8 -> 0.972
+                    else -> {
+                        1.0
                     }
-                    weightRecord =
-                        (intFrom2ByteArray(value.sliceArray(3..4)).toFloat() / 10) * weightSign.toFloat() * weightUnitMultiplier.toFloat()
                 }
-            }
-            peripheral.getCharacteristic(
-                UUID.fromString(scaleBatteryServiceUuidString), UUID.fromString(
-                    scaleBatteryLevelUuidString
-                )
-            )?.let {
-                batteryLevel = peripheral.readCharacteristic(it).asUInt8()!!.toInt()
-                Log.d("INFO", "BATTERY = $batteryLevel")
-                peripheral.observe(it) { value ->
-                    Log.d("INFO", "BATTERY = $value")
+                weightRecord =
+                    (intFrom2ByteArray(value.sliceArray(3..4)).toFloat() / 10) * weightSign.toFloat() * weightUnitMultiplier.toFloat()
+            } catch (exception: Exception) {
+                Log.d("ERROR", "Connection to ${peripheral.name} failed")
+                isConnected = false
+                isScanning = false
+                if (isTimerWorking && !isTimerPaused) {
+                    stopwatch.stop()
+                    isTimerPaused = true
                 }
+                currentScanButtonText = "CONNECT"
             }
-        } catch (exception: Exception) {
-            Log.d("ERROR", "Connection to ${peripheral.name} failed")
-            isConnected = false
-            isScanning = false
-            currentScanButtonText = "CONNECT"
+        }
+
+        peripheral.observe(batteryCharacteristic) { value ->
+            try {
+                Log.d("INFO", "BATTERY = ${value.asUInt8()?.toInt()}")
+            } catch (exception: Exception) {
+                Log.d("ERROR", "Connection to ${peripheral.name} failed")
+                isConnected = false
+                isScanning = false
+                if (isTimerWorking && !isTimerPaused) {
+                    stopwatch.stop()
+                    isTimerPaused = true
+                }
+                currentScanButtonText = "CONNECT"
+            }
         }
     }
 
@@ -362,11 +382,14 @@ class HomeFragment : Fragment() {
                 } else {
                     (weightLog.last() - weightLog[weightLog.size - 10])
                 } */
-                val flowRateComputed = if ((weightRecordComputed - weightLog.subList(0,weightLog.size-10).max()) <= 0) {
-                    0.0F
-                } else {
-                    (weightRecordComputed - weightLog.subList(0,weightLog.size-10).max())
-                }
+                val flowRateComputed =
+                    if ((weightRecordComputed - weightLog.subList(0, weightLog.size - 10)
+                            .max()) <= 0
+                    ) {
+                        0.0F
+                    } else {
+                        (weightRecordComputed - weightLog.subList(0, weightLog.size - 10).max())
+                    }
                 flowRateLog.add(flowRateComputed)
                 flowRate = flowRateLog.takeLast(10).average().toFloat()
             }
@@ -733,6 +756,10 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         // _binding = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
