@@ -338,9 +338,10 @@ class HomeFragment : Fragment() {
 //                    weightRecord = preserveWeight
 //                }
 //            }
-            weightLog.add(weightRecord)
+            val weightRecordComputed = if (weightRecord<0) {0.0F} else {weightRecord}
+            weightLog.add(weightRecordComputed)
             if (weightLog.size % 10 == 0) {
-                weightLogSecond.add(weightRecord)
+                weightLogSecond.add(weightRecordComputed)
                 weightLogGraphData =
                     AASeriesElement().name("Weight").data(weightLogSecond.toTypedArray())
                 chartWeightView.aa_onlyRefreshTheChartDataWithChartOptionsSeriesArray(
@@ -370,7 +371,7 @@ class HomeFragment : Fragment() {
                 flowRate = flowRateLog.takeLast(10).average().toFloat()
             }
             if (doseRecord > 0) {
-                val percentRatio = weightRecord / doseRecord
+                val percentRatio = weightRecordComputed / doseRecord
                 brewRatioString = "1:${"%.1f".format(percentRatio)}"
             }
             if (flowRateLog.size > 0) {

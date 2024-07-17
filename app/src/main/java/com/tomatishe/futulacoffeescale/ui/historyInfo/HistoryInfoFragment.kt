@@ -146,6 +146,7 @@ class HistoryInfoFragment : Fragment() {
 
         try {
             weightLog = brewData.weightLog.split(";").map(String::toFloat).toMutableList()
+            weightLog.replaceAll { if (it < 0) 0.0F else it }
         } catch (exception: Exception) {
             weightLog = mutableListOf<Float>()
         }
