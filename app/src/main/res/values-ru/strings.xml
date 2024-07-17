@@ -14,4 +14,8 @@
     <string name="switch_tare_text">TARE</string>
     <string name="switch_dose_text">DOSE</string>
     <string name="switch_autostart_text">START</string>
+    <string name="enable_autostart_text">Включить автостарт</string>
+    <string name="enable_autodose_text">Включить автодозу</string>
+    <string name="enable_autotare_text">Включить автотару</string>
+    <string name="enable_autofunctions_text">Включить автоматизацию</string>
 </resources>

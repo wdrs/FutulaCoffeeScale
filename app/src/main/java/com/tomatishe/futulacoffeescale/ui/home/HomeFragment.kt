@@ -14,6 +14,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -164,6 +166,13 @@ class HomeFragment : Fragment() {
                 scanButton.text = currentScanButtonText
             }
         }
+    private var currentDoseButtonText: String = "DOSE"
+        set(value) {
+            field = value
+            activity?.runOnUiThread {
+                doseButton.text = currentDoseButtonText
+            }
+        }
     private lateinit var scanButton: Button
     private lateinit var resetButton: Button
     private lateinit var doseButton: Button
@@ -178,6 +187,8 @@ class HomeFragment : Fragment() {
     private lateinit var autoStartSwitch: MaterialSwitch
     private lateinit var autoTareSwitch: MaterialSwitch
     private lateinit var autoDoseSwitch: MaterialSwitch
+    private lateinit var switchesFrameLayout: FrameLayout
+    private lateinit var buttonsLayout: LinearLayout
     private lateinit var chartWeightView: AAChartView
     private lateinit var chartFlowRateView: AAChartView
     private lateinit var scalePeripheral: BluetoothPeripheral
@@ -324,7 +335,7 @@ class HomeFragment : Fragment() {
         useExactDelay(true)
         startTime(2, TimeUnit.SECONDS)
         actionWhen(1, TimeUnit.SECONDS) {
-            if (autoDoseSwitch.isChecked && !autoTareSwitch.isChecked && !isTimerWorking && weightRecord > 0.1) {
+            if (autoDoseSwitch.isChecked && !autoTareSwitch.isChecked && !isTimerWorking && weightRecord > 0.2) {
                 doseRecord = weightRecord
                 scope.launch {
                     sendCommandToScale(
@@ -333,7 +344,7 @@ class HomeFragment : Fragment() {
                 }
                 autoDoseSwitch.isChecked = false
             }
-            if (autoTareSwitch.isChecked && !isTimerWorking && weightRecord > 0.1) {
+            if (autoTareSwitch.isChecked && !isTimerWorking && weightRecord > 0.2) {
                 weightRecord = 0.0F
                 scope.launch {
                     sendCommandToScale(
@@ -463,15 +474,12 @@ class HomeFragment : Fragment() {
             activity?.runOnUiThread {
                 if (isTimerWorking) {
                     currentScanButtonText = "PAUSE"
-                    doseButton.isEnabled = false
-                    /* autoStartSwitch.visibility = View.INVISIBLE
-                    autoTareSwitch.visibility = View.INVISIBLE
-                    autoDoseSwitch.visibility = View.INVISIBLE */
+                    currentDoseButtonText = "FINISH"
+                    isDoseBecameFinish = true
+                    switchesFrameLayout.visibility = View.GONE
                 } else {
                     currentScanButtonText = "GO ON"
-                    /* autoStartSwitch.visibility = View.VISIBLE
-                    autoTareSwitch.visibility = View.VISIBLE
-                    autoDoseSwitch.visibility = View.VISIBLE */
+                    switchesFrameLayout.visibility = View.VISIBLE
                 }
             }
         }
@@ -483,14 +491,18 @@ class HomeFragment : Fragment() {
                 if (isTimerPaused) {
                     currentScanButtonText = "RESUME"
                     if (isTimerWorking) {
-                        doseButton.isEnabled = false
+                        // doseButton.isEnabled = false
+                        currentDoseButtonText = "FINISH"
+                        isDoseBecameFinish = true
                     } else {
                         doseButton.isEnabled = true
                     }
                 } else {
                     currentScanButtonText = "PAUSE"
                     if (isTimerWorking) {
-                        doseButton.isEnabled = false
+                        // doseButton.isEnabled = false
+                        currentDoseButtonText = "FINISH"
+                        isDoseBecameFinish = true
                     } else {
                         doseButton.isEnabled = true
                     }
@@ -499,6 +511,8 @@ class HomeFragment : Fragment() {
         }
 
     private var showFlowRateAvg = false
+    private var isDoseBecameFinish = false
+
     private fun checkActiveConnection() {
         val checkList = central.getConnectedPeripherals()
         if (checkList.isEmpty()) {
@@ -579,12 +593,49 @@ class HomeFragment : Fragment() {
         flowRateAvg = 0.0F
         timeString = "00:00.0"
         brewRatioString = "1:0,0"
+        currentDoseButtonText = "DOSE"
+        isDoseBecameFinish = false
+        scanButton.isEnabled = true
+        buttonsLayout.visibility = View.VISIBLE
         checkActiveConnection()
     }
 
     private fun isSystemDarkMode(): Boolean {
         val configuration = Resources.getSystem().configuration
         return configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+    }
+
+    private suspend fun saveCurrentBrew() {
+        val brewDateTime: Date = Calendar.getInstance().time
+        val brewDateTimeAsLong: Long = brewDateTime.time
+        val weightLogString = weightLogSecond.joinToString(
+            separator = ";"
+        )
+        val flowRateLogString = flowRateLogSecond.joinToString(
+            separator = ";"
+        )
+        val newWeightRecord = WeightRecord(
+            brewDateTimeAsLong,
+            weightUnit,
+            doseRecord,
+            weightRecord,
+            weightLogString,
+            flowRate,
+            flowRateAvg,
+            flowRateLogString,
+            timeString,
+            brewRatioString
+        )
+        if (weightLogSecond.size > 0) {
+            Dependencies.weightRecordRepository.insertWeightRecordData(newWeightRecord.toWeightRecordDbEntity())
+            Snackbar.make(
+                mRootView!!, R.string.action_saved, Snackbar.LENGTH_SHORT
+            ).setAnchorView(R.id.switchesLayout).show()
+        } else {
+            Snackbar.make(
+                mRootView!!, R.string.action_not_saved_empty, Snackbar.LENGTH_SHORT
+            ).setAnchorView(R.id.switchesLayout).show()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -603,36 +654,20 @@ class HomeFragment : Fragment() {
         return when (item.itemId) {
             R.id.action_save -> {
                 scope.launch {
-                    val brewDateTime: Date = Calendar.getInstance().time
-                    val brewDateTimeAsLong: Long = brewDateTime.time
-                    val weightLogString = weightLogSecond.joinToString(
-                        separator = ";"
-                    )
-                    val flowRateLogString = flowRateLogSecond.joinToString(
-                        separator = ";"
-                    )
-                    val newWeightRecord = WeightRecord(
-                        brewDateTimeAsLong,
-                        weightUnit,
-                        doseRecord,
-                        weightRecord,
-                        weightLogString,
-                        flowRate,
-                        flowRateAvg,
-                        flowRateLogString,
-                        timeString,
-                        brewRatioString
-                    )
-                    if (weightLogSecond.size > 0) {
-                        Dependencies.weightRecordRepository.insertWeightRecordData(newWeightRecord.toWeightRecordDbEntity())
-                        Snackbar.make(
-                            mRootView!!, R.string.action_saved, Snackbar.LENGTH_SHORT
-                        ).setAnchorView(R.id.switchesLayout).show()
-                    } else {
-                        Snackbar.make(
-                            mRootView!!, R.string.action_not_saved_empty, Snackbar.LENGTH_SHORT
-                        ).setAnchorView(R.id.switchesLayout).show()
+                    saveCurrentBrew()
+                }
+                true
+            }
+
+            R.id.action_reset -> {
+                if (isConnected) {
+                    scope.launch {
+                        sendCommandToScale(
+                            scalePeripheral, resetCommand
+                        )
                     }
+                    resetStopWatch()
+                    resetValues()
                 }
                 true
             }
@@ -678,6 +713,9 @@ class HomeFragment : Fragment() {
         autoTareSwitch = binding.autoTareSwitch
         autoDoseSwitch = binding.autoDoseSwitch
 
+        switchesFrameLayout = binding.switchesFrameLayout
+        buttonsLayout = binding.buttonsLayout
+
         chartWeightView = binding.chartWeightView
         chartFlowRateView = binding.chartFlowRateView
 
@@ -700,14 +738,24 @@ class HomeFragment : Fragment() {
 
         doseButton = binding.doseButton
         doseButton.setOnClickListener {
-            if (isConnected) {
+            if (isDoseBecameFinish) {
+                pauseStopWatch()
                 scope.launch {
-                    sendCommandToScale(
-                        scalePeripheral, resetCommand
-                    )
+                    saveCurrentBrew()
                 }
+                scanButton.isEnabled = false
+                doseButton.isEnabled = false
+                buttonsLayout.visibility = View.GONE
+            } else {
+                if (isConnected) {
+                    scope.launch {
+                        sendCommandToScale(
+                            scalePeripheral, resetCommand
+                        )
+                    }
+                }
+                doseRecord = weightRecord
             }
-            doseRecord = weightRecord
         }
 
         resetButton = binding.resetButton
@@ -748,6 +796,10 @@ class HomeFragment : Fragment() {
 
         if (savedInstanceState != null) {
             weightRecord = savedInstanceState.getFloat("weightRecord")
+        }
+
+        if (currentDoseButtonText == "FINISH" && !scanButton.isEnabled) {
+            doseButton.isEnabled = false
         }
 
         return mRootView as View

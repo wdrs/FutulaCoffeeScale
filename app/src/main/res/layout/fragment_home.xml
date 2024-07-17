@@ -7,44 +7,6 @@
     android:keepScreenOn="true"
     tools:context=".ui.home.HomeFragment">
 
-    <Button
-        android:id="@+id/scanButton"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        android:hapticFeedbackEnabled="true"
-        android:text="CONNECT"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/resetButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="8dp"
-        android:enabled="false"
-        android:hapticFeedbackEnabled="true"
-        android:text="RESET"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/scanButton" />
-
-    <Button
-        android:id="@+id/doseButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        android:enabled="false"
-        android:hapticFeedbackEnabled="true"
-        android:text="DOSE"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/scanButton" />
-
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="0dp"
@@ -52,7 +14,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="66dp"
+        android:layout_marginBottom="8dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -244,6 +206,7 @@
         </FrameLayout>
 
         <FrameLayout
+            android:id="@+id/switchesFrameLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0">
@@ -316,6 +279,54 @@
             </LinearLayout>
 
         </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/buttonsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/doseButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:enabled="false"
+                android:hapticFeedbackEnabled="true"
+                android:justificationMode="inter_word"
+                android:maxLines="1"
+                android:text="DOSE"
+                app:autoSizeTextType="uniform" />
+
+            <Button
+                android:id="@+id/scanButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:hapticFeedbackEnabled="true"
+                android:justificationMode="inter_word"
+                android:maxLines="1"
+                android:text="CONNECT"
+                app:autoSizeTextType="uniform" />
+
+            <Button
+                android:id="@+id/resetButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:enabled="false"
+                android:hapticFeedbackEnabled="true"
+                android:justificationMode="inter_word"
+                android:maxLines="1"
+                android:text="RESET"
+                app:autoSizeTextType="uniform" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
