@@ -8,6 +8,7 @@ import android.content.res.Resources
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings.Global
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -16,12 +17,10 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.ViewModelProvider
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartAnimationType
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartModel
@@ -45,13 +44,16 @@ import com.tomatishe.futulacoffeescale.databinding.FragmentHomeBinding
 import com.welie.blessed.BluetoothCentralManager
 import com.welie.blessed.BluetoothPeripheral
 import com.welie.blessed.ConnectionFailedException
+import com.welie.blessed.ConnectionPriority
+import com.welie.blessed.ConnectionState
+import com.welie.blessed.GattException
 import com.welie.blessed.WriteType
 import com.welie.blessed.asUInt8
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timerx.buildStopwatch
 import timerx.buildTimer
@@ -235,7 +237,7 @@ class HomeFragment : Fragment() {
                 isScanning = false
                 scalePeripheral = peripheral
                 central.stopScan()
-                GlobalScope.launch { connectToScale(scalePeripheral) }
+                connectToScale(scalePeripheral)
             },
             { scanFailure ->
                 Log.d("ERROR", "Scan failed with reason $scanFailure")
@@ -269,87 +271,124 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private suspend fun observeWeightData(peripheral: BluetoothPeripheral) {
-        isConnected = true
-
-        weightCharacteristic = peripheral.getCharacteristic(
-            UUID.fromString(scaleServiceUuidString), UUID.fromString(
-                scaleGetWeightUuidString
-            )
-        )!!
-        batteryCharacteristic = peripheral.getCharacteristic(
-            UUID.fromString(scaleBatteryServiceUuidString), UUID.fromString(
-                scaleBatteryLevelUuidString
-            )
-        )!!
-
-        peripheral.observe(weightCharacteristic) { value ->
+    private fun handlePeripheral(peripheral: BluetoothPeripheral) {
+        GlobalScope.launch {
             try {
-                val weightSign = if (value.sliceArray(5..5)[0].toInt() > 0) -1.0 else 1.0
-                val localWeightUnit = value.sliceArray(8..8)[0].toInt()
-                weightUnit = when (localWeightUnit) {
-                    4 -> "g"
-                    6 -> "oz"
-                    7 -> "ml w"
-                    8 -> "ml milk"
-                    else -> {
-                        "g"
+                peripheral.requestConnectionPriority(ConnectionPriority.HIGH)
+
+                weightCharacteristic = peripheral.getCharacteristic(
+                    UUID.fromString(scaleServiceUuidString), UUID.fromString(
+                        scaleGetWeightUuidString
+                    )
+                )!!
+                batteryCharacteristic = peripheral.getCharacteristic(
+                    UUID.fromString(scaleBatteryServiceUuidString), UUID.fromString(
+                        scaleBatteryLevelUuidString
+                    )
+                )!!
+
+                peripheral.observe(weightCharacteristic) { value ->
+                    try {
+                        val weightSign =
+                            if (value.sliceArray(5..5)[0].toInt() > 0) -1.0 else 1.0
+                        val localWeightUnit = value.sliceArray(8..8)[0].toInt()
+                        weightUnit = when (localWeightUnit) {
+                            4 -> "g"
+                            6 -> "oz"
+                            7 -> "ml w"
+                            8 -> "ml milk"
+                            else -> {
+                                "g"
+                            }
+                        }
+                        val weightUnitMultiplier = when (localWeightUnit) {
+                            4 -> 1.0
+                            6 -> 0.035274
+                            7 -> 1.0
+                            8 -> 0.972
+                            else -> {
+                                1.0
+                            }
+                        }
+                        weightRecord =
+                            (intFrom2ByteArray(value.sliceArray(3..4)).toFloat() / 10) * weightSign.toFloat() * weightUnitMultiplier.toFloat()
+                    } catch (exception: Exception) {
+                        Log.d("ERROR", "Connection to ${peripheral.name} failed")
+                        isConnected = false
+                        isScanning = false
+                        if (isTimerWorking && !isTimerPaused) {
+                            stopwatch.stop()
+                            isTimerPaused = true
+                        }
+                        currentScanButtonText = "CONNECT"
                     }
                 }
-                val weightUnitMultiplier = when (localWeightUnit) {
-                    4 -> 1.0
-                    6 -> 0.035274
-                    7 -> 1.0
-                    8 -> 0.972
-                    else -> {
-                        1.0
+
+                peripheral.observe(batteryCharacteristic) { value ->
+                    try {
+                        Log.d("INFO", "BATTERY = ${value.asUInt8()?.toInt()}")
+                    } catch (exception: Exception) {
+                        Log.d("ERROR", "Connection to ${peripheral.name} failed")
+                        isConnected = false
+                        isScanning = false
+                        if (isTimerWorking && !isTimerPaused) {
+                            stopwatch.stop()
+                            isTimerPaused = true
+                        }
+                        currentScanButtonText = "CONNECT"
                     }
                 }
-                weightRecord =
-                    (intFrom2ByteArray(value.sliceArray(3..4)).toFloat() / 10) * weightSign.toFloat() * weightUnitMultiplier.toFloat()
-            } catch (exception: Exception) {
-                Log.d("ERROR", "Connection to ${peripheral.name} failed")
-                isConnected = false
-                isScanning = false
-                if (isTimerWorking && !isTimerPaused) {
-                    stopwatch.stop()
-                    isTimerPaused = true
-                }
-                currentScanButtonText = "CONNECT"
-            }
-        }
 
-        peripheral.observe(batteryCharacteristic) { value ->
-            try {
-                Log.d("INFO", "BATTERY = ${value.asUInt8()?.toInt()}")
-            } catch (exception: Exception) {
-                Log.d("ERROR", "Connection to ${peripheral.name} failed")
-                isConnected = false
-                isScanning = false
-                if (isTimerWorking && !isTimerPaused) {
-                    stopwatch.stop()
-                    isTimerPaused = true
-                }
-                currentScanButtonText = "CONNECT"
+                sendCommandToScale(peripheral, unitGramCommand)
+
+            } catch (e: IllegalArgumentException) {
+                Log.d("ERROR","$e")
+            } catch (b: GattException) {
+                Log.d("ERROR","$b")
             }
         }
     }
 
-    private suspend fun connectToScale(peripheral: BluetoothPeripheral) {
+    private fun connectToScale(peripheral: BluetoothPeripheral) {
         currentScanButtonText = "CONNECTING"
-        try {
-            central.connectPeripheral(peripheral)
-            sendCommandToScale(peripheral, unitGramCommand)
-            observeWeightData(peripheral)
-        } catch (exception: ConnectionFailedException) {
-            Log.d("ERROR", "Connection to ${peripheral.name} failed")
-            isConnected = false
-            isScanning = false
-            if (isTimerWorking && !isTimerPaused) {
-                stopwatch.stop()
-                isTimerPaused = true
+        GlobalScope.launch {
+            try {
+                central.connectPeripheral(peripheral)
+            } catch (connectionFailed: ConnectionFailedException) {
+                Log.d("ERROR","Connection Failed")
             }
-            currentScanButtonText = "CONNECT"
+        }
+        central.observeConnectionState { peripheralCurr, state ->
+            Log.d("INFO", "Peripheral ${peripheralCurr.name} has $state")
+            when (state) {
+                ConnectionState.CONNECTING -> currentScanButtonText = "CONNECTING"
+                ConnectionState.CONNECTED -> {
+                    isConnected = true
+                    handlePeripheral(peripheral)
+                }
+                ConnectionState.DISCONNECTING -> {
+                    currentScanButtonText = "DISCONNECTING"
+                }
+                ConnectionState.DISCONNECTED -> {
+                    isConnected = false
+
+                    currentScanButtonText = "CONNECT"
+
+                    if (isTimerWorking && !isTimerPaused) {
+                        stopwatch.stop()
+                        isTimerPaused = true
+                    }
+
+                    GlobalScope.launch {
+                        delay(15000)
+                        if (central.getPeripheral(peripheral.address).getState() == ConnectionState.DISCONNECTED) {
+                                central.cancelConnection(peripheral)
+                                delay(5000)
+                                central.connectPeripheral(peripheral)
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -631,20 +670,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-    private fun checkActiveConnection() {
-        val checkList = central.getConnectedPeripherals()
-        if (checkList.isEmpty()) {
-            isConnected = false
-            if (::scalePeripheral.isInitialized) {
-                GlobalScope.launch { connectToScale(scalePeripheral) }
-            }
-        } else {
-            isConnected = true
-        }
-    }
-
     private fun startStopWatch() {
-        checkActiveConnection()
         isTimerWorking = true
         isTimerPaused = false
         if (weightLog.size == 0) {
@@ -675,13 +701,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun pauseStopWatch() {
-        checkActiveConnection()
         isTimerPaused = true
         stopwatch.stop()
     }
 
     private fun resetStopWatch() {
-        checkActiveConnection()
         isTimerPaused = false
         isTimerWorking = false
         stopwatch.reset()
@@ -717,7 +741,6 @@ class HomeFragment : Fragment() {
         if (autoHideButtonsSettingsSwitchChecked) {
             buttonsLayout.visibility = View.VISIBLE
         }
-        checkActiveConnection()
     }
 
     private fun isSystemDarkMode(): Boolean {
@@ -761,7 +784,7 @@ class HomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        central = BluetoothCentralManager(requireActivity().applicationContext)
+        central = BluetoothCentralManager(requireContext())
         // keep the fragment and all its data across screen rotation
         // setRetainInstance(true)
     }
@@ -913,8 +936,6 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-
-        checkActiveConnection()
 
         if (savedInstanceState != null) {
             weightRecord = savedInstanceState.getFloat("weightRecord")
