@@ -156,6 +156,10 @@ class HistoryInfoFragment : Fragment() {
             flowRateLog = mutableListOf<Float>()
         }
 
+        val flt = flowRateLog.toMutableList()
+        flt.retainAll {it >= 0.1F}
+        flowRateAvg = flt.average().toFloat()
+
         weightLogGraphData = AASeriesElement().name("Weight").data(weightLog.toTypedArray())
         flowRateLogGraphData = AASeriesElement().name("Flowrate").data(flowRateLog.toTypedArray())
 

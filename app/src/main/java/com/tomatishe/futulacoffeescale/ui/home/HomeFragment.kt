@@ -6,6 +6,8 @@ import android.bluetooth.le.ScanFilter
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -17,6 +19,7 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartAnimationType
@@ -29,6 +32,14 @@ import com.google.android.material.snackbar.Snackbar
 import com.tomatishe.futulacoffeescale.Dependencies
 import com.tomatishe.futulacoffeescale.R
 import com.tomatishe.futulacoffeescale.WeightRecord
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.DataCoordinator
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoAll
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoButtons
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoDose
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoStart
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoSwitches
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoTare
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getIgnoreDose
 import com.tomatishe.futulacoffeescale.databinding.FragmentHomeBinding
 import com.welie.blessed.BluetoothCentralManager
 import com.welie.blessed.BluetoothPeripheral
@@ -88,8 +99,21 @@ class HomeFragment : Fragment() {
                 waitWatch.reset()
                 waitWatch.start()
                 weightText.text = "%.1f".format(weightRecord)
-                if (autoStartSwitch.isChecked && !autoDoseSwitch.isChecked && !autoTareSwitch.isChecked && doseRecord > 0 && !isTimerWorking && weightRecord > 0.1) {
-                    startStopWatch()
+                if (autoFuncSettingsSwitchChecked && autoStartSettingsSwitchChecked) {
+                    if (
+                        autoStartSwitch.isChecked &&
+                        (if (autoDoseSettingsSwitchChecked) {
+                            !autoDoseSwitch.isChecked
+                        } else true) &&
+                        (if (autoTareSettingsSwitchChecked) {
+                            !autoTareSwitch.isChecked
+                        } else true) &&
+                        (doseRecord > 0 || ignoreDoseSettingsSwitchChecked) &&
+                        !isTimerWorking &&
+                        weightRecord > 0.1
+                    ) {
+                        startStopWatch()
+                    }
                 }
             }
         }
@@ -187,7 +211,7 @@ class HomeFragment : Fragment() {
     private lateinit var autoStartSwitch: MaterialSwitch
     private lateinit var autoTareSwitch: MaterialSwitch
     private lateinit var autoDoseSwitch: MaterialSwitch
-    private lateinit var switchesFrameLayout: FrameLayout
+    private lateinit var switchesLayout: ConstraintLayout
     private lateinit var buttonsLayout: LinearLayout
     private lateinit var chartWeightView: AAChartView
     private lateinit var chartFlowRateView: AAChartView
@@ -242,22 +266,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private suspend fun connectToScale(peripheral: BluetoothPeripheral) {
-        currentScanButtonText = "CONNECTING"
-        try {
-            central.connectPeripheral(peripheral)
-            sendCommandToScale(peripheral, unitGramCommand)
-            isConnected = true
-        } catch (exception: ConnectionFailedException) {
-            Log.d("ERROR", "Connection to ${peripheral.name} failed")
-            isConnected = false
-            isScanning = false
-            if (isTimerWorking && !isTimerPaused) {
-                stopwatch.stop()
-                isTimerPaused = true
-            }
-            currentScanButtonText = "CONNECT"
-        }
+    private suspend fun observeWeightData(peripheral: BluetoothPeripheral) {
 
         weightCharacteristic = peripheral.getCharacteristic(
             UUID.fromString(scaleServiceUuidString), UUID.fromString(
@@ -322,6 +331,25 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private suspend fun connectToScale(peripheral: BluetoothPeripheral) {
+        currentScanButtonText = "CONNECTING"
+        try {
+            central.connectPeripheral(peripheral)
+            sendCommandToScale(peripheral, unitGramCommand)
+            isConnected = true
+            observeWeightData(peripheral)
+        } catch (exception: ConnectionFailedException) {
+            Log.d("ERROR", "Connection to ${peripheral.name} failed")
+            isConnected = false
+            isScanning = false
+            if (isTimerWorking && !isTimerPaused) {
+                stopwatch.stop()
+                isTimerPaused = true
+            }
+            currentScanButtonText = "CONNECT"
+        }
+    }
+
     @SuppressLint("MissingPermission")
     private fun stopBleScan() {
         central.stopScan()
@@ -335,23 +363,25 @@ class HomeFragment : Fragment() {
         useExactDelay(true)
         startTime(2, TimeUnit.SECONDS)
         actionWhen(1, TimeUnit.SECONDS) {
-            if (autoDoseSwitch.isChecked && !autoTareSwitch.isChecked && !isTimerWorking && weightRecord > 0.2) {
-                doseRecord = weightRecord
-                scope.launch {
-                    sendCommandToScale(
-                        scalePeripheral, resetCommand
-                    )
+            if (autoFuncSettingsSwitchChecked) {
+                if (autoDoseSwitch.isChecked && !autoTareSwitch.isChecked && !isTimerWorking && weightRecord > 0.2) {
+                    doseRecord = weightRecord
+                    scope.launch {
+                        sendCommandToScale(
+                            scalePeripheral, resetCommand
+                        )
+                    }
+                    autoDoseSwitch.isChecked = false
                 }
-                autoDoseSwitch.isChecked = false
-            }
-            if (autoTareSwitch.isChecked && !isTimerWorking && weightRecord > 0.2) {
-                weightRecord = 0.0F
-                scope.launch {
-                    sendCommandToScale(
-                        scalePeripheral, resetCommand
-                    )
+                if (autoTareSwitch.isChecked && !isTimerWorking && weightRecord > 0.2) {
+                    weightRecord = 0.0F
+                    scope.launch {
+                        sendCommandToScale(
+                            scalePeripheral, resetCommand
+                        )
+                    }
+                    autoTareSwitch.isChecked = false
                 }
-                autoTareSwitch.isChecked = false
             }
         }
     }
@@ -411,7 +441,9 @@ class HomeFragment : Fragment() {
             }
 
             if (flowRateLog.size > 0) {
-                flowRateAvg = flowRateLog.average().toFloat()
+                val flt = flowRateLog.toMutableList()
+                flt.retainAll { it >= 0.1F }
+                flowRateAvg = flt.average().toFloat()
             }
 
             if (flowRateLog.size % 10 == 0 && flowRateLog.size > 1) {
@@ -476,10 +508,14 @@ class HomeFragment : Fragment() {
                     currentScanButtonText = "PAUSE"
                     currentDoseButtonText = "FINISH"
                     isDoseBecameFinish = true
-                    switchesFrameLayout.visibility = View.GONE
+                    if (autoFuncSettingsSwitchChecked && autoHideSwitchesSettingsSwitchChecked) {
+                        switchesLayout.visibility = View.GONE
+                    }
                 } else {
                     currentScanButtonText = "GO ON"
-                    switchesFrameLayout.visibility = View.VISIBLE
+                    if (autoFuncSettingsSwitchChecked && autoHideSwitchesSettingsSwitchChecked) {
+                        switchesLayout.visibility = View.VISIBLE
+                    }
                 }
             }
         }
@@ -512,6 +548,85 @@ class HomeFragment : Fragment() {
 
     private var showFlowRateAvg = false
     private var isDoseBecameFinish = false
+
+    private var autoFuncSettingsSwitchChecked = true
+    private var autoStartSettingsSwitchChecked = true
+    private var ignoreDoseSettingsSwitchChecked = false
+    private var autoDoseSettingsSwitchChecked = true
+    private var autoTareSettingsSwitchChecked = true
+    private var autoHideSwitchesSettingsSwitchChecked = true
+    private var autoHideButtonsSettingsSwitchChecked = true
+
+    private var isSettingsLoaded = false
+        set(value) {
+            field = value
+            if (isSettingsLoaded) {
+                Handler(Looper.getMainLooper()).postDelayed(
+                    {
+                        if (autoTareSettingsSwitchChecked || autoDoseSettingsSwitchChecked || autoStartSettingsSwitchChecked) {
+                            switchesLayout.visibility = View.VISIBLE
+                        }
+
+                        if (autoTareSettingsSwitchChecked) {
+                            autoTareSwitch.visibility = View.VISIBLE
+                        } else {
+                            autoTareSwitch.visibility = View.GONE
+                        }
+
+                        if (autoDoseSettingsSwitchChecked) {
+                            autoDoseSwitch.visibility = View.VISIBLE
+                        } else {
+                            autoDoseSwitch.visibility = View.GONE
+                        }
+
+                        if (autoStartSettingsSwitchChecked) {
+                            autoStartSwitch.visibility = View.VISIBLE
+                        } else {
+                            autoStartSwitch.visibility = View.GONE
+                        }
+
+                        if (autoFuncSettingsSwitchChecked) {
+                            switchesLayout.visibility = View.VISIBLE
+                        } else {
+                            switchesLayout.visibility = View.GONE
+                        }
+
+                        if (isTimerWorking && autoHideSwitchesSettingsSwitchChecked && switchesLayout.visibility == View.VISIBLE) {
+                            switchesLayout.visibility = View.GONE
+                        }
+                        /*
+                        autoFuncSettingsSwitch.isChecked = autoFuncSettingsSwitchChecked
+                        autoStartSettingsSwitch.isChecked = autoStartSettingsSwitchChecked
+                        ignoreDoseSettingsSwitch.isChecked = ignoreDoseSettingsSwitchChecked
+                        autoDoseSettingsSwitch.isChecked = autoDoseSettingsSwitchChecked
+                        autoTareSettingsSwitch.isChecked = autoTareSettingsSwitchChecked
+                        autoHideSwitchesSettingsSwitch.isChecked = autoHideSwitchesSettingsSwitchChecked
+                        autoHideButtonsSettingsSwitch.isChecked = autoHideButtonsSettingsSwitchChecked
+
+                        if (autoStartSettingsSwitch.isChecked) {
+                            ignoreDoseLayout.visibility = View.VISIBLE
+                        } else {
+                            ignoreDoseLayout.visibility = View.GONE
+                        }
+
+                        if (autoFuncSettingsSwitch.isChecked) {
+                            autoStartLayout.visibility = View.VISIBLE
+                            if (autoStartSettingsSwitch.isChecked) {
+                                ignoreDoseLayout.visibility = View.VISIBLE
+                            }
+                            autoDoseLayout.visibility = View.VISIBLE
+                            autoTareLayout.visibility = View.VISIBLE
+                        } else {
+                            autoStartLayout.visibility = View.GONE
+                            ignoreDoseLayout.visibility = View.GONE
+                            autoDoseLayout.visibility = View.GONE
+                            autoTareLayout.visibility = View.GONE
+                        }
+                        */
+                    }, 100
+                )
+            }
+        }
 
     private fun checkActiveConnection() {
         val checkList = central.getConnectedPeripherals()
@@ -596,7 +711,9 @@ class HomeFragment : Fragment() {
         currentDoseButtonText = "DOSE"
         isDoseBecameFinish = false
         scanButton.isEnabled = true
-        buttonsLayout.visibility = View.VISIBLE
+        if (autoHideButtonsSettingsSwitchChecked) {
+            buttonsLayout.visibility = View.VISIBLE
+        }
         checkActiveConnection()
     }
 
@@ -713,7 +830,7 @@ class HomeFragment : Fragment() {
         autoTareSwitch = binding.autoTareSwitch
         autoDoseSwitch = binding.autoDoseSwitch
 
-        switchesFrameLayout = binding.switchesFrameLayout
+        switchesLayout = binding.switchesLayout
         buttonsLayout = binding.buttonsLayout
 
         chartWeightView = binding.chartWeightView
@@ -745,7 +862,9 @@ class HomeFragment : Fragment() {
                 }
                 scanButton.isEnabled = false
                 doseButton.isEnabled = false
-                buttonsLayout.visibility = View.GONE
+                if (autoHideButtonsSettingsSwitchChecked) {
+                    buttonsLayout.visibility = View.GONE
+                }
             } else {
                 if (isConnected) {
                     scope.launch {
@@ -800,6 +919,19 @@ class HomeFragment : Fragment() {
 
         if (currentDoseButtonText == "FINISH" && !scanButton.isEnabled) {
             doseButton.isEnabled = false
+        }
+
+        activity?.runOnUiThread {
+            scope.launch {
+                autoFuncSettingsSwitchChecked = DataCoordinator.shared.getAutoAll()
+                autoStartSettingsSwitchChecked = DataCoordinator.shared.getAutoStart()
+                ignoreDoseSettingsSwitchChecked = DataCoordinator.shared.getIgnoreDose()
+                autoDoseSettingsSwitchChecked = DataCoordinator.shared.getAutoDose()
+                autoTareSettingsSwitchChecked = DataCoordinator.shared.getAutoTare()
+                autoHideSwitchesSettingsSwitchChecked = DataCoordinator.shared.getAutoSwitches()
+                autoHideButtonsSettingsSwitchChecked = DataCoordinator.shared.getAutoButtons()
+                isSettingsLoaded = true
+            }
         }
 
         return mRootView as View
