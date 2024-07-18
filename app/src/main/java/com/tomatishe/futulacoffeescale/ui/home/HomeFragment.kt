@@ -741,6 +741,7 @@ class HomeFragment : Fragment() {
         if (autoHideButtonsSettingsSwitchChecked) {
             buttonsLayout.visibility = View.VISIBLE
         }
+        doseButton.isEnabled = true
     }
 
     private fun isSystemDarkMode(): Boolean {
