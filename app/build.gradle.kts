@@ -64,6 +64,10 @@ dependencies {
     implementation(libs.blessed.android.coroutines)
     implementation(libs.timerx)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.datastore.preferences.rxjava2)
+    implementation(libs.androidx.datastore.preferences.rxjava3)
+
     implementation("com.github.AAChartModel:AAChartCore-Kotlin:7.2.1")
 
     implementation("androidx.room:room-runtime:$room_version")

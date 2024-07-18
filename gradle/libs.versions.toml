@@ -2,6 +2,7 @@
 aachartcoreKotlin = "-SNAPSHOT"
 agp = "8.5.0"
 blessedAndroidCoroutines = "0.4.1"
+datastorePreferences = "1.1.1"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -23,6 +24,9 @@ fragmentKtx = "1.8.1"
 [libraries]
 aachartcore-kotlin = { module = "com.github.AAChartModel:AAChartCore-Kotlin", version.ref = "aachartcoreKotlin" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+androidx-datastore-preferences-rxjava2 = { module = "androidx.datastore:datastore-preferences-rxjava2", version.ref = "datastorePreferences" }
+androidx-datastore-preferences-rxjava3 = { module = "androidx.datastore:datastore-preferences-rxjava3", version.ref = "datastorePreferences" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 androidx-material3-v130beta04 = { module = "androidx.compose.material3:material3", version.ref = "material3Version" }
 androidx-navigation-safe-args-gradle-plugin = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "navigationFragmentKtx" }

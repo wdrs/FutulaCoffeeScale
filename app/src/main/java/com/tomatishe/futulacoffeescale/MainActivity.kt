@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
@@ -20,6 +21,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.tomatishe.futulacoffeescale.databinding.ActivityMainBinding
 import com.tomatishe.futulacoffeescale.AppDatabase
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.DataCoordinator
 
 private const val PERMISSION_REQUEST_CODE = 1
 
@@ -118,6 +120,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.setDecorFitsSystemWindows(false)
         } else {
@@ -126,6 +129,14 @@ class MainActivity : AppCompatActivity() {
 
         // Init database
         Dependencies.init(applicationContext)
+
+        // Init datastore
+        DataCoordinator.shared.initialize(
+            context = applicationContext,
+            onLoad = {
+                Log.d("INFO","LOADED DATASTORE")
+            }
+        )
 
         super.onCreate(savedInstanceState)
 

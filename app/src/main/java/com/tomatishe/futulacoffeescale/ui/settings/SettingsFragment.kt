@@ -1,21 +1,39 @@
 package com.tomatishe.futulacoffeescale.ui.settings
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.tomatishe.futulacoffeescale.R
-import com.tomatishe.futulacoffeescale.databinding.FragmentSettingsBinding
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.isVisible
 import com.google.android.material.materialswitch.MaterialSwitch
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.DataCoordinator
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoAll
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoButtons
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoDose
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoStart
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoSwitches
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoTare
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getIgnoreDose
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoAll
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoButtons
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoDose
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoStart
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoSwitches
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoTare
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateIgnoreDose
+import com.tomatishe.futulacoffeescale.databinding.FragmentSettingsBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 class SettingsFragment : Fragment() {
+
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private lateinit var autoAllLayout: ConstraintLayout
     private lateinit var autoStartLayout: ConstraintLayout
@@ -38,6 +56,70 @@ class SettingsFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    private var autoFuncSettingsSwitchChecked = true
+    private var autoStartSettingsSwitchChecked = true
+    private var ignoreDoseSettingsSwitchChecked = false
+    private var autoDoseSettingsSwitchChecked = true
+    private var autoTareSettingsSwitchChecked = true
+    private var autoHideSwitchesSettingsSwitchChecked = true
+    private var autoHideButtonsSettingsSwitchChecked = true
+
+    private var isSettingsLoaded = false
+        set(value) {
+            field = value
+            if (isSettingsLoaded) {
+                Handler(Looper.getMainLooper()).postDelayed(
+                    {
+                        autoFuncSettingsSwitch.isChecked = autoFuncSettingsSwitchChecked
+                        autoStartSettingsSwitch.isChecked = autoStartSettingsSwitchChecked
+                        ignoreDoseSettingsSwitch.isChecked = ignoreDoseSettingsSwitchChecked
+                        autoDoseSettingsSwitch.isChecked = autoDoseSettingsSwitchChecked
+                        autoTareSettingsSwitch.isChecked = autoTareSettingsSwitchChecked
+                        autoHideSwitchesSettingsSwitch.isChecked = autoHideSwitchesSettingsSwitchChecked
+                        autoHideButtonsSettingsSwitch.isChecked = autoHideButtonsSettingsSwitchChecked
+
+                        if (autoStartSettingsSwitch.isChecked) {
+                            ignoreDoseLayout.visibility = View.VISIBLE
+                        } else {
+                            ignoreDoseLayout.visibility = View.GONE
+                        }
+
+                        if (autoFuncSettingsSwitch.isChecked) {
+                            autoStartLayout.visibility = View.VISIBLE
+                            if (autoStartSettingsSwitch.isChecked) {
+                                ignoreDoseLayout.visibility = View.VISIBLE
+                            }
+                            autoDoseLayout.visibility = View.VISIBLE
+                            autoTareLayout.visibility = View.VISIBLE
+                        } else {
+                            autoStartLayout.visibility = View.GONE
+                            ignoreDoseLayout.visibility = View.GONE
+                            autoDoseLayout.visibility = View.GONE
+                            autoTareLayout.visibility = View.GONE
+                        }
+                    },
+                    100
+                )
+            }
+        }
+
+    override fun onStart() {
+        isSettingsLoaded = false
+        super.onStart()
+        activity?.runOnUiThread {
+            scope.launch {
+                autoFuncSettingsSwitchChecked = DataCoordinator.shared.getAutoAll()
+                autoStartSettingsSwitchChecked = DataCoordinator.shared.getAutoStart()
+                ignoreDoseSettingsSwitchChecked = DataCoordinator.shared.getIgnoreDose()
+                autoDoseSettingsSwitchChecked = DataCoordinator.shared.getAutoDose()
+                autoTareSettingsSwitchChecked = DataCoordinator.shared.getAutoTare()
+                autoHideSwitchesSettingsSwitchChecked = DataCoordinator.shared.getAutoSwitches()
+                autoHideButtonsSettingsSwitchChecked = DataCoordinator.shared.getAutoButtons()
+                isSettingsLoaded = true
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -64,6 +146,7 @@ class SettingsFragment : Fragment() {
         autoHideButtonsSettingsSwitch = binding.autoHideButtonsSettingsSwitch
 
         autoFuncSettingsSwitch.setOnClickListener {
+            DataCoordinator.shared.updateAutoAll(autoFuncSettingsSwitch.isChecked)
             if (autoFuncSettingsSwitch.isChecked) {
                 autoStartLayout.visibility = View.VISIBLE
                 if (autoStartSettingsSwitch.isChecked) {
@@ -80,6 +163,7 @@ class SettingsFragment : Fragment() {
         }
 
         autoStartSettingsSwitch.setOnClickListener {
+            DataCoordinator.shared.updateAutoStart(autoStartSettingsSwitch.isChecked)
             if (autoStartSettingsSwitch.isChecked) {
                 ignoreDoseLayout.visibility = View.VISIBLE
             } else {
@@ -90,16 +174,30 @@ class SettingsFragment : Fragment() {
             }
         }
 
+        ignoreDoseSettingsSwitch.setOnClickListener {
+            DataCoordinator.shared.updateIgnoreDose(ignoreDoseSettingsSwitch.isChecked)
+        }
+
         autoDoseSettingsSwitch.setOnClickListener {
+            DataCoordinator.shared.updateAutoDose(autoDoseSettingsSwitch.isChecked)
             if (!autoStartSettingsSwitch.isChecked && !autoDoseSettingsSwitch.isChecked && !autoTareSettingsSwitch.isChecked) {
                 autoFuncSettingsSwitch.performClick()
             }
         }
 
         autoTareSettingsSwitch.setOnClickListener {
+            DataCoordinator.shared.updateAutoTare(autoTareSettingsSwitch.isChecked)
             if (!autoStartSettingsSwitch.isChecked && !autoDoseSettingsSwitch.isChecked && !autoTareSettingsSwitch.isChecked) {
                 autoFuncSettingsSwitch.performClick()
             }
+        }
+
+        autoHideSwitchesSettingsSwitch.setOnClickListener {
+            DataCoordinator.shared.updateAutoSwitches(autoHideSwitchesSettingsSwitch.isChecked)
+        }
+
+        autoHideButtonsSettingsSwitch.setOnClickListener {
+            DataCoordinator.shared.updateAutoButtons(autoHideButtonsSettingsSwitch.isChecked)
         }
 
         //val textView: TextView = binding.textSlideshow
