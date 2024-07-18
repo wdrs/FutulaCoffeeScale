@@ -22,6 +22,8 @@ import com.google.android.material.navigation.NavigationView
 import com.tomatishe.futulacoffeescale.databinding.ActivityMainBinding
 import com.tomatishe.futulacoffeescale.AppDatabase
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.DataCoordinator
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.cancel
 
 private const val PERMISSION_REQUEST_CODE = 1
 
@@ -167,6 +169,11 @@ class MainActivity : AppCompatActivity() {
     //     menuInflater.inflate(R.menu.main, menu)
     //     return true
     // }
+
+    override fun onDestroy() {
+        GlobalScope.cancel()
+        super.onDestroy()
+    }
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)

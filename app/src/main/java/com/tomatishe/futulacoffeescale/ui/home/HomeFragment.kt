@@ -21,6 +21,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.ViewModelProvider
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartAnimationType
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartModel
@@ -48,7 +49,9 @@ import com.welie.blessed.WriteType
 import com.welie.blessed.asUInt8
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import timerx.buildStopwatch
 import timerx.buildTimer
@@ -232,7 +235,7 @@ class HomeFragment : Fragment() {
                 isScanning = false
                 scalePeripheral = peripheral
                 central.stopScan()
-                scope.launch { connectToScale(scalePeripheral) }
+                GlobalScope.launch { connectToScale(scalePeripheral) }
             },
             { scanFailure ->
                 Log.d("ERROR", "Scan failed with reason $scanFailure")
@@ -267,6 +270,7 @@ class HomeFragment : Fragment() {
     }
 
     private suspend fun observeWeightData(peripheral: BluetoothPeripheral) {
+        isConnected = true
 
         weightCharacteristic = peripheral.getCharacteristic(
             UUID.fromString(scaleServiceUuidString), UUID.fromString(
@@ -336,7 +340,6 @@ class HomeFragment : Fragment() {
         try {
             central.connectPeripheral(peripheral)
             sendCommandToScale(peripheral, unitGramCommand)
-            isConnected = true
             observeWeightData(peripheral)
         } catch (exception: ConnectionFailedException) {
             Log.d("ERROR", "Connection to ${peripheral.name} failed")
@@ -366,7 +369,7 @@ class HomeFragment : Fragment() {
             if (autoFuncSettingsSwitchChecked) {
                 if (autoDoseSwitch.isChecked && !autoTareSwitch.isChecked && !isTimerWorking && weightRecord > 0.2) {
                     doseRecord = weightRecord
-                    scope.launch {
+                    GlobalScope.launch {
                         sendCommandToScale(
                             scalePeripheral, resetCommand
                         )
@@ -375,7 +378,7 @@ class HomeFragment : Fragment() {
                 }
                 if (autoTareSwitch.isChecked && !isTimerWorking && weightRecord > 0.2) {
                     weightRecord = 0.0F
-                    scope.launch {
+                    GlobalScope.launch {
                         sendCommandToScale(
                             scalePeripheral, resetCommand
                         )
@@ -633,7 +636,7 @@ class HomeFragment : Fragment() {
         if (checkList.isEmpty()) {
             isConnected = false
             if (::scalePeripheral.isInitialized) {
-                scope.launch { connectToScale(scalePeripheral) }
+                GlobalScope.launch { connectToScale(scalePeripheral) }
             }
         } else {
             isConnected = true
@@ -770,7 +773,7 @@ class HomeFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_save -> {
-                scope.launch {
+                GlobalScope.launch {
                     saveCurrentBrew()
                 }
                 true
@@ -778,7 +781,7 @@ class HomeFragment : Fragment() {
 
             R.id.action_reset -> {
                 if (isConnected) {
-                    scope.launch {
+                    GlobalScope.launch {
                         sendCommandToScale(
                             scalePeripheral, resetCommand
                         )
@@ -857,7 +860,7 @@ class HomeFragment : Fragment() {
         doseButton.setOnClickListener {
             if (isDoseBecameFinish) {
                 pauseStopWatch()
-                scope.launch {
+                GlobalScope.launch {
                     saveCurrentBrew()
                 }
                 scanButton.isEnabled = false
@@ -867,7 +870,7 @@ class HomeFragment : Fragment() {
                 }
             } else {
                 if (isConnected) {
-                    scope.launch {
+                    GlobalScope.launch {
                         sendCommandToScale(
                             scalePeripheral, resetCommand
                         )
@@ -880,7 +883,7 @@ class HomeFragment : Fragment() {
         resetButton = binding.resetButton
         resetButton.setOnClickListener {
             if (isConnected) {
-                scope.launch {
+                GlobalScope.launch {
                     sendCommandToScale(
                         scalePeripheral, resetCommand
                     )
@@ -922,7 +925,7 @@ class HomeFragment : Fragment() {
         }
 
         activity?.runOnUiThread {
-            scope.launch {
+            GlobalScope.launch {
                 autoFuncSettingsSwitchChecked = DataCoordinator.shared.getAutoAll()
                 autoStartSettingsSwitchChecked = DataCoordinator.shared.getAutoStart()
                 ignoreDoseSettingsSwitchChecked = DataCoordinator.shared.getIgnoreDose()
