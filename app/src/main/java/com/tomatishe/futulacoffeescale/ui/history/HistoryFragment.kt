@@ -54,7 +54,6 @@ class WeightAdapter : RecyclerView.Adapter<WeightAdapter.WeightViewHolder>() {
         val context = holder.itemView.context
         with(holder.binding) {
             dateTextView.text = wData.dateString
-            summaryTextView.text = wData.summaryString
             deleteImageView.setOnClickListener {
                 scope.launch {
                     Dependencies.weightRecordRepository.deleteWeightRecordDataById(wData.id)

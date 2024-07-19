@@ -123,18 +123,6 @@ class HomeFragment : Fragment() {
             }
         }
     private var weightUnit: String = "g"
-        set(value) {
-            field = value
-            activity?.runOnUiThread {
-                weightLabel.text = "WEIGHT ($weightUnit)"
-                doseLabel.text = "DOSE ($weightUnit)"
-                if (showFlowRateAvg) {
-                    flowRateLabel.text = "FLOW AVG ($weightUnit/s)"
-                } else {
-                    flowRateLabel.text = "FLOWRATE ($weightUnit/s)"
-                }
-            }
-        }
     private var weightLog = mutableListOf<Float>()
     private var weightLogSecond = mutableListOf<Float>()
     private var weightLogGraphData =
@@ -176,26 +164,17 @@ class HomeFragment : Fragment() {
 
     private var primaryChartColor: String = (if (isSystemDarkMode()) "#BB86FC" else "#6200EE")
 
-    private var chartWeightViewModel: AAChartModel =
-        AAChartModel().chartType(AAChartType.Areaspline).yAxisTitle("Weight")
-            .animationType(AAChartAnimationType.Elastic).tooltipEnabled(false).legendEnabled(false)
-            .dataLabelsEnabled(false).series(arrayOf(weightLogGraphData))
-            .categories(chartViewCategories).colorsTheme(arrayOf(primaryChartColor))
+    private lateinit var chartWeightViewModel: AAChartModel
+    private lateinit var chartFlowRateViewModel: AAChartModel
 
-    private var chartFlowRateViewModel: AAChartModel =
-        AAChartModel().chartType(AAChartType.Areaspline).yAxisTitle("Flow rate")
-            .animationType(AAChartAnimationType.Elastic).tooltipEnabled(false).legendEnabled(false)
-            .dataLabelsEnabled(false).series(arrayOf(flowRateLogGraphData))
-            .categories(chartViewCategories).colorsTheme(arrayOf(primaryChartColor))
-
-    private var currentScanButtonText: String = "CONNECT"
+    private var currentScanButtonText: String = ""
         set(value) {
             field = value
             activity?.runOnUiThread {
                 scanButton.text = currentScanButtonText
             }
         }
-    private var currentDoseButtonText: String = "DOSE"
+    private var currentDoseButtonText: String = ""
         set(value) {
             field = value
             activity?.runOnUiThread {
@@ -217,7 +196,7 @@ class HomeFragment : Fragment() {
     private lateinit var autoTareSwitch: MaterialSwitch
     private lateinit var autoDoseSwitch: MaterialSwitch
     private lateinit var switchesLayout: ConstraintLayout
-    private lateinit var buttonsLayout: LinearLayout
+    private lateinit var buttonsLayout: ConstraintLayout
     private lateinit var chartWeightView: AAChartView
     private lateinit var chartFlowRateView: AAChartView
     private lateinit var scalePeripheral: BluetoothPeripheral
@@ -267,7 +246,7 @@ class HomeFragment : Fragment() {
             Log.d("ERROR", "Connection to ${peripheral.name} failed")
             isConnected = false
             isScanning = false
-            currentScanButtonText = "CONNECT"
+            currentScanButtonText = getString(R.string.button_connect)
         }
     }
 
@@ -320,7 +299,7 @@ class HomeFragment : Fragment() {
                             stopwatch.stop()
                             isTimerPaused = true
                         }
-                        currentScanButtonText = "CONNECT"
+                        currentScanButtonText = getString(R.string.button_connect)
                     }
                 }
 
@@ -335,7 +314,7 @@ class HomeFragment : Fragment() {
                             stopwatch.stop()
                             isTimerPaused = true
                         }
-                        currentScanButtonText = "CONNECT"
+                        currentScanButtonText = getString(R.string.button_connect)
                     }
                 }
 
@@ -350,7 +329,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun connectToScale(peripheral: BluetoothPeripheral) {
-        currentScanButtonText = "CONNECTING"
+        currentScanButtonText = getString(R.string.button_connect_connecting)
         GlobalScope.launch {
             try {
                 central.connectPeripheral(peripheral)
@@ -361,18 +340,18 @@ class HomeFragment : Fragment() {
         central.observeConnectionState { peripheralCurr, state ->
             Log.d("INFO", "Peripheral ${peripheralCurr.name} has $state")
             when (state) {
-                ConnectionState.CONNECTING -> currentScanButtonText = "CONNECTING"
+                ConnectionState.CONNECTING -> currentScanButtonText = getString(R.string.button_connect_connecting)
                 ConnectionState.CONNECTED -> {
                     isConnected = true
                     handlePeripheral(peripheral)
                 }
                 ConnectionState.DISCONNECTING -> {
-                    currentScanButtonText = "DISCONNECTING"
+                    currentScanButtonText = getString(R.string.button_connect_disconnecting)
                 }
                 ConnectionState.DISCONNECTED -> {
                     isConnected = false
 
-                    currentScanButtonText = "CONNECT"
+                    currentScanButtonText = getString(R.string.button_connect)
 
                     if (isTimerWorking && !isTimerPaused) {
                         stopwatch.stop()
@@ -382,12 +361,12 @@ class HomeFragment : Fragment() {
                     GlobalScope.launch {
                         delay(15000)
                         if (central.getPeripheral(peripheral.address).getState() == ConnectionState.DISCONNECTED) {
-                            currentScanButtonText = "CONNECTING"
+                            currentScanButtonText = getString(R.string.button_connect_connecting)
                             try {
                                 central.connectPeripheral(peripheral)
                             } catch (connectionFailed: ConnectionFailedException) {
                                 Log.d("ERROR","Connection Failed")
-                                currentScanButtonText = "CONNECT"
+                                currentScanButtonText = getString(R.string.button_connect)
                             }
                         }
                     }
@@ -523,9 +502,9 @@ class HomeFragment : Fragment() {
             field = value
             activity?.runOnUiThread {
                 if (isScanning) {
-                    currentScanButtonText = "SCANNING"
+                    currentScanButtonText = getString(R.string.button_connect_scanning)
                 } else {
-                    currentScanButtonText = "CONNECT"
+                    currentScanButtonText = getString(R.string.button_connect)
                 }
             }
         }
@@ -537,11 +516,11 @@ class HomeFragment : Fragment() {
                 if (isConnected) {
                     doseButton.isEnabled = true
                     resetButton.isEnabled = true
-                    currentScanButtonText = "GO ON"
+                    currentScanButtonText = getString(R.string.button_connect_start_brew)
                 } else {
                     doseButton.isEnabled = false
                     resetButton.isEnabled = false
-                    currentScanButtonText = "CONNECT"
+                    currentScanButtonText = getString(R.string.button_connect)
                 }
             }
         }
@@ -551,14 +530,14 @@ class HomeFragment : Fragment() {
             field = value
             activity?.runOnUiThread {
                 if (isTimerWorking) {
-                    currentScanButtonText = "PAUSE"
-                    currentDoseButtonText = "FINISH"
+                    currentScanButtonText = getString(R.string.button_connect_pause_brew)
+                    currentDoseButtonText = getString(R.string.button_dose_finish)
                     isDoseBecameFinish = true
                     if (autoFuncSettingsSwitchChecked && autoHideSwitchesSettingsSwitchChecked) {
                         switchesLayout.visibility = View.GONE
                     }
                 } else {
-                    currentScanButtonText = "GO ON"
+                    currentScanButtonText = getString(R.string.button_connect_start_brew)
                     if (autoFuncSettingsSwitchChecked && autoHideSwitchesSettingsSwitchChecked) {
                         switchesLayout.visibility = View.VISIBLE
                     }
@@ -571,19 +550,17 @@ class HomeFragment : Fragment() {
             field = value
             activity?.runOnUiThread {
                 if (isTimerPaused) {
-                    currentScanButtonText = "RESUME"
+                    currentScanButtonText = getString(R.string.button_connect_resume_brew)
                     if (isTimerWorking) {
-                        // doseButton.isEnabled = false
-                        currentDoseButtonText = "FINISH"
+                        currentDoseButtonText = getString(R.string.button_dose_finish)
                         isDoseBecameFinish = true
                     } else {
                         doseButton.isEnabled = true
                     }
                 } else {
-                    currentScanButtonText = "PAUSE"
+                    currentScanButtonText = getString(R.string.button_connect_pause_brew)
                     if (isTimerWorking) {
-                        // doseButton.isEnabled = false
-                        currentDoseButtonText = "FINISH"
+                        currentDoseButtonText = getString(R.string.button_dose_finish)
                         isDoseBecameFinish = true
                     } else {
                         doseButton.isEnabled = true
@@ -601,7 +578,7 @@ class HomeFragment : Fragment() {
     private var autoDoseSettingsSwitchChecked = true
     private var autoTareSettingsSwitchChecked = true
     private var autoHideSwitchesSettingsSwitchChecked = true
-    private var autoHideButtonsSettingsSwitchChecked = true
+    private var autoHideButtonsSettingsSwitchChecked = false
 
     private var isSettingsLoaded = false
         set(value) {
@@ -640,35 +617,7 @@ class HomeFragment : Fragment() {
                         if (isTimerWorking && autoHideSwitchesSettingsSwitchChecked && switchesLayout.visibility == View.VISIBLE) {
                             switchesLayout.visibility = View.GONE
                         }
-                        /*
-                        autoFuncSettingsSwitch.isChecked = autoFuncSettingsSwitchChecked
-                        autoStartSettingsSwitch.isChecked = autoStartSettingsSwitchChecked
-                        ignoreDoseSettingsSwitch.isChecked = ignoreDoseSettingsSwitchChecked
-                        autoDoseSettingsSwitch.isChecked = autoDoseSettingsSwitchChecked
-                        autoTareSettingsSwitch.isChecked = autoTareSettingsSwitchChecked
-                        autoHideSwitchesSettingsSwitch.isChecked = autoHideSwitchesSettingsSwitchChecked
-                        autoHideButtonsSettingsSwitch.isChecked = autoHideButtonsSettingsSwitchChecked
 
-                        if (autoStartSettingsSwitch.isChecked) {
-                            ignoreDoseLayout.visibility = View.VISIBLE
-                        } else {
-                            ignoreDoseLayout.visibility = View.GONE
-                        }
-
-                        if (autoFuncSettingsSwitch.isChecked) {
-                            autoStartLayout.visibility = View.VISIBLE
-                            if (autoStartSettingsSwitch.isChecked) {
-                                ignoreDoseLayout.visibility = View.VISIBLE
-                            }
-                            autoDoseLayout.visibility = View.VISIBLE
-                            autoTareLayout.visibility = View.VISIBLE
-                        } else {
-                            autoStartLayout.visibility = View.GONE
-                            ignoreDoseLayout.visibility = View.GONE
-                            autoDoseLayout.visibility = View.GONE
-                            autoTareLayout.visibility = View.GONE
-                        }
-                        */
                     }, 100
                 )
             }
@@ -739,7 +688,7 @@ class HomeFragment : Fragment() {
         flowRateAvg = 0.0F
         timeString = "00:00.0"
         brewRatioString = "1:0,0"
-        currentDoseButtonText = "DOSE"
+        currentDoseButtonText = getString(R.string.button_dose)
         isDoseBecameFinish = false
         scanButton.isEnabled = true
         if (autoHideButtonsSettingsSwitchChecked) {
@@ -845,11 +794,11 @@ class HomeFragment : Fragment() {
         flowRateText.setOnClickListener {
             if (showFlowRateAvg) {
                 showFlowRateAvg = false
-                flowRateLabel.text = "FLOWRATE ($weightUnit/s)"
+                flowRateLabel.text = getString(R.string.flowrate_text)
                 flowRateText.text = "%.1f".format(flowRate)
             } else {
                 showFlowRateAvg = true
-                flowRateLabel.text = "FLOW AVG ($weightUnit/s)"
+                flowRateLabel.text = getString(R.string.flowrate_avg_text)
                 flowRateText.text = "%.1f".format(flowRateAvg)
             }
         }
@@ -869,6 +818,16 @@ class HomeFragment : Fragment() {
 
         chartWeightView.isClearBackgroundColor = true
         chartFlowRateView.isClearBackgroundColor = true
+
+        chartWeightViewModel = AAChartModel().chartType(AAChartType.Areaspline).yAxisTitle(getString(R.string.weight_text))
+            .animationType(AAChartAnimationType.Elastic).tooltipEnabled(false).legendEnabled(false)
+            .dataLabelsEnabled(false).series(arrayOf(weightLogGraphData))
+            .categories(chartViewCategories).colorsTheme(arrayOf(primaryChartColor))
+
+        chartFlowRateViewModel = AAChartModel().chartType(AAChartType.Areaspline).yAxisTitle(getString(R.string.flowrate_text))
+            .animationType(AAChartAnimationType.Elastic).tooltipEnabled(false).legendEnabled(false)
+            .dataLabelsEnabled(false).series(arrayOf(flowRateLogGraphData))
+            .categories(chartViewCategories).colorsTheme(arrayOf(primaryChartColor))
 
         chartWeightView.aa_drawChartWithChartModel(chartWeightViewModel)
         chartFlowRateView.aa_drawChartWithChartModel(chartFlowRateViewModel)
@@ -946,7 +905,7 @@ class HomeFragment : Fragment() {
             weightRecord = savedInstanceState.getFloat("weightRecord")
         }
 
-        if (currentDoseButtonText == "FINISH" && !scanButton.isEnabled) {
+        if (isDoseBecameFinish && !scanButton.isEnabled) {
             doseButton.isEnabled = false
         }
 

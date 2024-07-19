@@ -11,9 +11,9 @@
     <string name="menu_history">Brew History</string>
     <string name="menu_history_info">Brew Info</string>
     <string name="menu_settings">Settings</string>
-    <string name="switch_tare_text">TARE</string>
-    <string name="switch_dose_text">DOSE</string>
-    <string name="switch_autostart_text">START</string>
+    <string name="switch_tare_text">Tare</string>
+    <string name="switch_dose_text">Dose</string>
+    <string name="switch_autostart_text">Start</string>
     <string name="enable_autostart_text">Enable autostart</string>
     <string name="enable_autodose_text">Enable autodose</string>
     <string name="enable_autotare_text">Enable autotare</string>
@@ -21,4 +21,20 @@
     <string name="enable_hide_switches">Hide switches when brewing</string>
     <string name="enable_hide_buttons">Hide buttons after brewing</string>
     <string name="enable_ignore_dose">Ignore dose</string>
+    <string name="button_dose">Dose</string>
+    <string name="button_connect">Connect</string>
+    <string name="button_reset">Reset</string>
+    <string name="weight_text">Weight</string>
+    <string name="dose_text">Dose</string>
+    <string name="flowrate_text">Flow rate</string>
+    <string name="time_text">TIME</string>
+    <string name="brew_ratio_text">Brew ratio</string>
+    <string name="flowrate_avg_text">Flow average</string>
+    <string name="button_connect_connecting">Connecting</string>
+    <string name="button_connect_disconnecting">Disconnecting</string>
+    <string name="button_connect_scanning">Scanning</string>
+    <string name="button_connect_start_brew">GO ON</string>
+    <string name="button_connect_pause_brew">Pause</string>
+    <string name="button_dose_finish">Finish</string>
+    <string name="button_connect_resume_brew">Resume</string>
 </resources>

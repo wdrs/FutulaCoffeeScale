@@ -16,6 +16,19 @@
         <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
     </style>
 
+    <style name="BackgroundListStyle">
+        <item name="android:backgroundTint">?attr/colorPrimary</item>
+    </style>
+
+    <style name="ImageViewStyle">
+        <item name="android:tint">@color/white</item>
+    </style>
+
+    <style name="FabButtonStyle">
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:foregroundTint">@color/black</item>
+    </style>
+
     <style name="Theme.FutulaCoffeeScale.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

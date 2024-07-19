@@ -24,7 +24,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:baselineAligned="false">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -36,11 +37,13 @@
                     android:id="@+id/weightLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="WEIGHT (g)"
-                    android:textAlignment="center"
+                    android:ellipsize="marquee"
+                    android:justificationMode="inter_word"
                     android:maxLines="1"
-                    app:autoSizeTextType="uniform"
-                    android:justificationMode="inter_word"/>
+                    android:text="@string/weight_text"
+                    android:textAlignment="center"
+                    android:textAllCaps="true"
+                    app:autoSizeTextType="uniform" />
 
                 <TextView
                     android:id="@+id/weightText"
@@ -65,11 +68,13 @@
                     android:id="@+id/doseLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="DOSE (g)"
-                    android:textAlignment="center"
+                    android:ellipsize="marquee"
+                    android:justificationMode="inter_word"
                     android:maxLines="1"
-                    app:autoSizeTextType="uniform"
-                    android:justificationMode="inter_word"/>
+                    android:text="@string/dose_text"
+                    android:textAlignment="center"
+                    android:textAllCaps="true"
+                    app:autoSizeTextType="uniform" />
 
                 <TextView
                     android:id="@+id/doseText"
@@ -94,11 +99,13 @@
                     android:id="@+id/flowRateLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="FLOWRATE (g/s)"
-                    android:textAlignment="center"
+                    android:ellipsize="marquee"
+                    android:justificationMode="inter_word"
                     android:maxLines="1"
-                    app:autoSizeTextType="uniform"
-                    android:justificationMode="inter_word"/>
+                    android:text="@string/flowrate_text"
+                    android:textAlignment="center"
+                    android:textAllCaps="true"
+                    app:autoSizeTextType="uniform" />
 
                 <TextView
                     android:id="@+id/flowRateText"
@@ -118,7 +125,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:baselineAligned="false">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -130,11 +138,13 @@
                     android:id="@+id/timeLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="TIME"
-                    android:textAlignment="center"
+                    android:ellipsize="marquee"
+                    android:justificationMode="inter_word"
                     android:maxLines="1"
-                    app:autoSizeTextType="uniform"
-                    android:justificationMode="inter_word"/>
+                    android:text="@string/time_text"
+                    android:textAlignment="center"
+                    android:textAllCaps="true"
+                    app:autoSizeTextType="uniform" />
 
                 <TextView
                     android:id="@+id/timeText"
@@ -159,11 +169,13 @@
                     android:id="@+id/brewRatioLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="BREW RATIO"
-                    android:textAlignment="center"
+                    android:ellipsize="marquee"
+                    android:justificationMode="inter_word"
                     android:maxLines="1"
-                    app:autoSizeTextType="uniform"
-                    android:justificationMode="inter_word"/>
+                    android:text="@string/brew_ratio_text"
+                    android:textAlignment="center"
+                    android:textAllCaps="true"
+                    app:autoSizeTextType="uniform" />
 
                 <TextView
                     android:id="@+id/brewRatioText"
@@ -208,7 +220,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/switchesLayout"
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
+                android:layout_height="48dp"
                 android:orientation="horizontal">
 
                 <com.google.android.material.materialswitch.MaterialSwitch
@@ -222,14 +234,16 @@
                     android:autoSizeMinTextSize="24sp"
                     android:checked="false"
                     android:elegantTextHeight="true"
+                    android:ellipsize="marquee"
                     android:hapticFeedbackEnabled="true"
                     android:justificationMode="inter_word"
                     android:lineSpacingExtra="8sp"
                     android:maxLines="1"
-                    android:minHeight="64dp"
+                    android:minHeight="48dp"
                     android:showText="false"
                     android:splitTrack="false"
                     android:text="@string/switch_tare_text"
+                    android:textAllCaps="true"
                     app:autoSizeTextType="uniform"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/autoDoseSwitch"
@@ -247,14 +261,16 @@
                     android:autoSizeMinTextSize="24sp"
                     android:checked="false"
                     android:elegantTextHeight="true"
+                    android:ellipsize="marquee"
                     android:hapticFeedbackEnabled="true"
                     android:justificationMode="inter_word"
                     android:lineSpacingExtra="8sp"
                     android:maxLines="1"
-                    android:minHeight="64dp"
+                    android:minHeight="48dp"
                     android:showText="false"
                     android:splitTrack="false"
                     android:text="@string/switch_dose_text"
+                    android:textAllCaps="true"
                     app:autoSizeTextType="uniform"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/autoStartSwitch"
@@ -274,14 +290,16 @@
                     android:autoSizeMinTextSize="24sp"
                     android:checked="false"
                     android:elegantTextHeight="true"
+                    android:ellipsize="marquee"
                     android:hapticFeedbackEnabled="true"
                     android:justificationMode="inter_word"
                     android:lineSpacingExtra="8sp"
                     android:maxLines="1"
-                    android:minHeight="64dp"
+                    android:minHeight="48dp"
                     android:showText="false"
                     android:splitTrack="false"
                     android:text="@string/switch_autostart_text"
+                    android:textAllCaps="true"
                     app:autoSizeTextType="uniform"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -291,53 +309,75 @@
                     tools:checked="false" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/buttonsLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="64dp"
             android:layout_weight="0"
             android:orientation="horizontal">
 
             <Button
                 android:id="@+id/doseButton"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_weight="1"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:elegantTextHeight="true"
+                android:ellipsize="marquee"
                 android:enabled="false"
                 android:hapticFeedbackEnabled="true"
                 android:justificationMode="inter_word"
                 android:maxLines="1"
-                android:text="DOSE"
-                app:autoSizeTextType="uniform" />
+                android:text="@string/button_dose"
+                android:textAllCaps="true"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/scanButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <Button
                 android:id="@+id/scanButton"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:ellipsize="marquee"
                 android:hapticFeedbackEnabled="true"
                 android:justificationMode="inter_word"
                 android:maxLines="1"
-                android:text="CONNECT"
-                app:autoSizeTextType="uniform" />
+                android:text="@string/button_connect"
+                android:textAllCaps="true"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio=""
+                app:layout_constraintEnd_toStartOf="@+id/resetButton"
+                app:layout_constraintStart_toEndOf="@+id/doseButton"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <Button
                 android:id="@+id/resetButton"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="8dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:layout_weight="1"
+                android:layout_marginBottom="8dp"
+                android:elegantTextHeight="true"
+                android:ellipsize="marquee"
                 android:enabled="false"
                 android:hapticFeedbackEnabled="true"
                 android:justificationMode="inter_word"
                 android:maxLines="1"
-                android:text="RESET"
-                app:autoSizeTextType="uniform" />
+                android:text="@string/button_reset"
+                android:textAllCaps="true"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/scanButton"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
 

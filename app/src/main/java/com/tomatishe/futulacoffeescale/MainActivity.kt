@@ -171,7 +171,11 @@ class MainActivity : AppCompatActivity() {
     // }
 
     override fun onDestroy() {
-        GlobalScope.cancel()
+        try {
+            GlobalScope.cancel()
+        } catch (exception: Exception) {
+            Log.d("INFO","NO ACTIVE ACTIVITY, IGNORE")
+        }
         super.onDestroy()
     }
 

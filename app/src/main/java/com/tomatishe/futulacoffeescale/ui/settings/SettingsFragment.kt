@@ -63,7 +63,7 @@ class SettingsFragment : Fragment() {
     private var autoDoseSettingsSwitchChecked = true
     private var autoTareSettingsSwitchChecked = true
     private var autoHideSwitchesSettingsSwitchChecked = true
-    private var autoHideButtonsSettingsSwitchChecked = true
+    private var autoHideButtonsSettingsSwitchChecked = false
 
     private var isSettingsLoaded = false
         set(value) {

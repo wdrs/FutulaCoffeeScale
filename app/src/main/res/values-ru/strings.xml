@@ -11,9 +11,9 @@
     <string name="menu_history">История</string>
     <string name="menu_history_info">Информация</string>
     <string name="menu_settings">Настройки</string>
-    <string name="switch_tare_text">TARE</string>
-    <string name="switch_dose_text">DOSE</string>
-    <string name="switch_autostart_text">START</string>
+    <string name="switch_tare_text">Тара</string>
+    <string name="switch_dose_text">Доза</string>
+    <string name="switch_autostart_text">Старт</string>
     <string name="enable_autostart_text">Включить автостарт</string>
     <string name="enable_autodose_text">Включить автодозу</string>
     <string name="enable_autotare_text">Включить автотару</string>
@@ -21,4 +21,20 @@
     <string name="enable_hide_switches">Прятать переключатели при работе</string>
     <string name="enable_hide_buttons">Прятать кнопки после работы</string>
     <string name="enable_ignore_dose">Игнорировать дозу</string>
+    <string name="button_dose">Доза</string>
+    <string name="button_connect">Подключить</string>
+    <string name="button_reset">Сброс</string>
+    <string name="weight_text">Вес</string>
+    <string name="dose_text">Доза</string>
+    <string name="flowrate_text">Скорость пролива</string>
+    <string name="time_text">Время</string>
+    <string name="brew_ratio_text">Пропорция</string>
+    <string name="flowrate_avg_text">Средняя скорость</string>
+    <string name="button_connect_connecting">Подключение</string>
+    <string name="button_connect_disconnecting">Отключение</string>
+    <string name="button_connect_scanning">Сканирование</string>
+    <string name="button_connect_start_brew">Старт</string>
+    <string name="button_connect_pause_brew">Пауза</string>
+    <string name="button_dose_finish">Финиш</string>
+    <string name="button_connect_resume_brew">Продолжить</string>
 </resources>

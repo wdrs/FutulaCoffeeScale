@@ -35,11 +35,13 @@
                     android:id="@+id/weightLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="WEIGHT (g)"
-                    android:textAlignment="center"
+                    android:ellipsize="marquee"
+                    android:justificationMode="inter_word"
                     android:maxLines="1"
-                    app:autoSizeTextType="uniform"
-                    android:justificationMode="inter_word"/>
+                    android:text="@string/weight_text"
+                    android:textAlignment="center"
+                    android:textAllCaps="true"
+                    app:autoSizeTextType="uniform" />
 
                 <TextView
                     android:id="@+id/weightText"
@@ -64,11 +66,13 @@
                     android:id="@+id/doseLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="DOSE (g)"
-                    android:textAlignment="center"
+                    android:ellipsize="marquee"
+                    android:justificationMode="inter_word"
                     android:maxLines="1"
-                    app:autoSizeTextType="uniform"
-                    android:justificationMode="inter_word"/>
+                    android:text="@string/dose_text"
+                    android:textAlignment="center"
+                    android:textAllCaps="true"
+                    app:autoSizeTextType="uniform" />
 
                 <TextView
                     android:id="@+id/doseText"
@@ -94,11 +98,13 @@
                     android:id="@+id/flowRateLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="FLOWRATE (g/s)"
-                    android:textAlignment="center"
+                    android:ellipsize="marquee"
+                    android:justificationMode="inter_word"
                     android:maxLines="1"
-                    app:autoSizeTextType="uniform"
-                    android:justificationMode="inter_word"/>
+                    android:text="@string/flowrate_avg_text"
+                    android:textAlignment="center"
+                    android:textAllCaps="true"
+                    app:autoSizeTextType="uniform" />
 
                 <TextView
                     android:id="@+id/flowRateText"
@@ -130,11 +136,13 @@
                     android:id="@+id/timeLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="TIME"
-                    android:textAlignment="center"
+                    android:ellipsize="marquee"
+                    android:justificationMode="inter_word"
                     android:maxLines="1"
-                    app:autoSizeTextType="uniform"
-                    android:justificationMode="inter_word"/>
+                    android:text="@string/time_text"
+                    android:textAlignment="center"
+                    android:textAllCaps="true"
+                    app:autoSizeTextType="uniform" />
 
                 <TextView
                     android:id="@+id/timeText"
@@ -159,11 +167,13 @@
                     android:id="@+id/brewRatioLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="BREW RATIO"
-                    android:textAlignment="center"
+                    android:ellipsize="marquee"
+                    android:justificationMode="inter_word"
                     android:maxLines="1"
-                    app:autoSizeTextType="uniform"
-                    android:justificationMode="inter_word"/>
+                    android:text="@string/brew_ratio_text"
+                    android:textAlignment="center"
+                    android:textAllCaps="true"
+                    app:autoSizeTextType="uniform" />
 
                 <TextView
                     android:id="@+id/brewRatioText"

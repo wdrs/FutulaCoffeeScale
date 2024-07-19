@@ -16,6 +16,7 @@ import com.github.aachartmodel.aainfographics.aachartcreator.AAChartType
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartView
 import com.github.aachartmodel.aainfographics.aachartcreator.AASeriesElement
 import com.tomatishe.futulacoffeescale.Dependencies
+import com.tomatishe.futulacoffeescale.R
 import com.tomatishe.futulacoffeescale.WeightRecordInfoTuple
 import com.tomatishe.futulacoffeescale.databinding.FragmentHistoryInfoBinding
 import kotlinx.coroutines.CoroutineScope
@@ -71,18 +72,6 @@ class HistoryInfoFragment : Fragment() {
             }
         }
     private var weightUnit: String = "g"
-        set(value) {
-            field = value
-            activity?.runOnUiThread {
-                weightLabel.text = "WEIGHT ($weightUnit)"
-                doseLabel.text = "DOSE ($weightUnit)"
-                if (showFlowRateAvg) {
-                    flowRateLabel.text = "FLOW AVG ($weightUnit/s)"
-                } else {
-                    flowRateLabel.text = "FLOWRATE ($weightUnit/s)"
-                }
-            }
-        }
     private var flowRate: Float = 0.0F
         set(value) {
             field = value
@@ -163,12 +152,13 @@ class HistoryInfoFragment : Fragment() {
         weightLogGraphData = AASeriesElement().name("Weight").data(weightLog.toTypedArray())
         flowRateLogGraphData = AASeriesElement().name("Flowrate").data(flowRateLog.toTypedArray())
 
-        chartWeightViewModel = AAChartModel().chartType(AAChartType.Areaspline).yAxisTitle("Weight")
+        chartWeightViewModel = AAChartModel().chartType(AAChartType.Areaspline).yAxisTitle(getString(
+            R.string.weight_text))
             .animationType(AAChartAnimationType.Elastic).tooltipEnabled(false).legendEnabled(false)
             .dataLabelsEnabled(false).series(arrayOf(weightLogGraphData))
             .categories(chartViewCategories).colorsTheme(arrayOf(primaryChartColor))
         chartFlowRateViewModel =
-            AAChartModel().chartType(AAChartType.Areaspline).yAxisTitle("Flow rate")
+            AAChartModel().chartType(AAChartType.Areaspline).yAxisTitle(getString(R.string.flowrate_text))
                 .animationType(AAChartAnimationType.Elastic).tooltipEnabled(false)
                 .legendEnabled(false).dataLabelsEnabled(false).series(arrayOf(flowRateLogGraphData))
                 .categories(chartViewCategories).colorsTheme(arrayOf(primaryChartColor))
@@ -194,18 +184,6 @@ class HistoryInfoFragment : Fragment() {
         chartWeightView.isClearBackgroundColor = true
         chartFlowRateView.isClearBackgroundColor = true
 
-        /*        chartFlowRateView.aa_onlyRefreshTheChartDataWithChartOptionsSeriesArray(
-                    arrayOf(
-                        flowRateLogGraphData
-                    )
-                )
-
-                chartWeightView.aa_onlyRefreshTheChartDataWithChartOptionsSeriesArray(
-                    arrayOf(
-                        weightLogGraphData
-                    )
-                )*/
-
         weightText = binding.weightText
         doseText = binding.doseText
         flowRateText = binding.flowRateText
@@ -217,11 +195,11 @@ class HistoryInfoFragment : Fragment() {
         flowRateText.setOnClickListener {
             if (showFlowRateAvg) {
                 showFlowRateAvg = false
-                flowRateLabel.text = "FLOWRATE ($weightUnit/s)"
+                flowRateLabel.text = getString(R.string.flowrate_text)
                 flowRateText.text = "%.1f".format(flowRate)
             } else {
                 showFlowRateAvg = true
-                flowRateLabel.text = "FLOW AVG ($weightUnit/s)"
+                flowRateLabel.text = getString(R.string.flowrate_avg_text)
                 flowRateText.text = "%.1f".format(flowRateAvg)
             }
         }

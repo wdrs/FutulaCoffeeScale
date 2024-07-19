@@ -28,8 +28,8 @@ class DataCoordinator {
     val defaultAutoTare: Boolean = true
     var autoSwitches: Boolean = true
     val defaultAutoSwitches: Boolean = true
-    var autoButtons: Boolean = true
-    val defaultAutoButtons: Boolean = true
+    var autoButtons: Boolean = false
+    val defaultAutoButtons: Boolean = false
 
     // MARK: Data Store Variables
     private val USER_PREFERENCES_NAME = "fCoffeeScapePreferences"

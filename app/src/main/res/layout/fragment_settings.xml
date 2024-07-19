@@ -35,6 +35,7 @@
                 android:text="@string/enable_autofunctions_text"
                 android:textAlignment="textStart"
                 android:elegantTextHeight="true"
+                android:ellipsize="marquee"
                 app:autoSizeTextType="uniform"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/autoFuncSettingsSwitch"
@@ -81,6 +82,7 @@
                 android:justificationMode="inter_word"
                 android:text="@string/enable_autostart_text"
                 android:textAlignment="textStart"
+                android:ellipsize="marquee"
                 app:autoSizeTextType="uniform"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/autoStartSettingsSwitch"
@@ -127,6 +129,7 @@
                 android:justificationMode="inter_word"
                 android:text="@string/enable_ignore_dose"
                 android:textAlignment="textStart"
+                android:ellipsize="marquee"
                 app:autoSizeTextType="uniform"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/ignoreDoseSettingsSwitch"
@@ -173,6 +176,7 @@
                 android:justificationMode="inter_word"
                 android:text="@string/enable_autodose_text"
                 android:textAlignment="textStart"
+                android:ellipsize="marquee"
                 app:autoSizeTextType="uniform"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/autoDoseSettingsSwitch"
@@ -219,6 +223,7 @@
                 android:justificationMode="inter_word"
                 android:text="@string/enable_autotare_text"
                 android:textAlignment="textStart"
+                android:ellipsize="marquee"
                 app:autoSizeTextType="uniform"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/autoTareSettingsSwitch"
@@ -265,6 +270,7 @@
                 android:text="@string/enable_hide_switches"
                 android:textAlignment="textStart"
                 android:elegantTextHeight="true"
+                android:ellipsize="marquee"
                 app:autoSizeTextType="uniform"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/autoHideSwitchesSettingsSwitch"
@@ -311,6 +317,7 @@
                 android:text="@string/enable_hide_buttons"
                 android:textAlignment="textStart"
                 android:elegantTextHeight="true"
+                android:ellipsize="marquee"
                 app:autoSizeTextType="uniform"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/autoHideButtonsSettingsSwitch"
@@ -322,7 +329,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:checked="true"
+                android:checked="false"
                 android:hapticFeedbackEnabled="true"
                 android:lineSpacingExtra="8sp"
                 android:maxLines="1"
@@ -335,7 +342,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:switchPadding="8dp"
-                tools:checked="true" />
+                tools:checked="false" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
