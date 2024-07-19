@@ -382,9 +382,13 @@ class HomeFragment : Fragment() {
                     GlobalScope.launch {
                         delay(15000)
                         if (central.getPeripheral(peripheral.address).getState() == ConnectionState.DISCONNECTED) {
-                                central.cancelConnection(peripheral)
-                                delay(5000)
+                            currentScanButtonText = "CONNECTING"
+                            try {
                                 central.connectPeripheral(peripheral)
+                            } catch (connectionFailed: ConnectionFailedException) {
+                                Log.d("ERROR","Connection Failed")
+                                currentScanButtonText = "CONNECT"
+                            }
                         }
                     }
                 }
