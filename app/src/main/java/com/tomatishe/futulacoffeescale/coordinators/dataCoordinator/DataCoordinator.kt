@@ -30,6 +30,12 @@ class DataCoordinator {
     val defaultAutoSwitches: Boolean = true
     var autoButtons: Boolean = false
     val defaultAutoButtons: Boolean = false
+    var replaceResetWithTare: Boolean = false
+    val defaultReplaceResetWithTare: Boolean = false
+    var stopTimerWhenLostConnection: Boolean = true
+    val defaultStopTimerWhenLostConnection: Boolean = true
+    var startSearchAfterLaunch: Boolean = false
+    val defaultStartSearchAfterLaunch: Boolean = false
 
     // MARK: Data Store Variables
     private val USER_PREFERENCES_NAME = "fCoffeeScapePreferences"
@@ -51,6 +57,9 @@ class DataCoordinator {
             autoTare = getAutoTare()
             autoSwitches = getAutoSwitches()
             autoButtons = getAutoButtons()
+            replaceResetWithTare = getReplaceResetWithTare()
+            stopTimerWhenLostConnection = getStopTimerWhenLostConnection()
+            startSearchAfterLaunch = getStartSearchAfterLaunch()
             // Callback
             onLoad()
         }

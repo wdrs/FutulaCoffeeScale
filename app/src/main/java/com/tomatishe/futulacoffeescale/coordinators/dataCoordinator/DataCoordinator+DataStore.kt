@@ -106,3 +106,48 @@ suspend fun DataCoordinator.setAutoButtons(value: Boolean) {
         preferences[PreferencesKeys.autoButtons] = value
     }
 }
+
+// ---
+
+suspend fun DataCoordinator.getReplaceResetWithTare(): Boolean {
+    val context = this.context ?: return defaultReplaceResetWithTare
+    return context.dataStore.data.firstOrNull()?.get(PreferencesKeys.replaceResetWithTare)
+        ?: defaultReplaceResetWithTare
+}
+
+suspend fun DataCoordinator.setReplaceResetWithTare(value: Boolean) {
+    val context = this.context ?: return
+    context.dataStore.edit { preferences ->
+        preferences[PreferencesKeys.replaceResetWithTare] = value
+    }
+}
+
+// ---
+
+suspend fun DataCoordinator.getStopTimerWhenLostConnection(): Boolean {
+    val context = this.context ?: return defaultStopTimerWhenLostConnection
+    return context.dataStore.data.firstOrNull()?.get(PreferencesKeys.stopTimerWhenLostConnection)
+        ?: defaultStopTimerWhenLostConnection
+}
+
+suspend fun DataCoordinator.setStopTimerWhenLostConnection(value: Boolean) {
+    val context = this.context ?: return
+    context.dataStore.edit { preferences ->
+        preferences[PreferencesKeys.stopTimerWhenLostConnection] = value
+    }
+}
+
+// ---
+
+suspend fun DataCoordinator.getStartSearchAfterLaunch(): Boolean {
+    val context = this.context ?: return defaultStartSearchAfterLaunch
+    return context.dataStore.data.firstOrNull()?.get(PreferencesKeys.startSearchAfterLaunch)
+        ?: defaultStartSearchAfterLaunch
+}
+
+suspend fun DataCoordinator.setStartSearchAfterLaunch(value: Boolean) {
+    val context = this.context ?: return
+    context.dataStore.edit { preferences ->
+        preferences[PreferencesKeys.startSearchAfterLaunch] = value
+    }
+}

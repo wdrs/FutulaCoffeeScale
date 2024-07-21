@@ -10,4 +10,7 @@ object PreferencesKeys {
     val autoTare = booleanPreferencesKey("autoTareSettings")
     val autoSwitches = booleanPreferencesKey("autoSwitchesSettings")
     val autoButtons = booleanPreferencesKey("autoButtonsSettings")
+    val replaceResetWithTare = booleanPreferencesKey("replaceResetWithTare")
+    val stopTimerWhenLostConnection = booleanPreferencesKey("stopTimerWhenLostConnection")
+    val startSearchAfterLaunch = booleanPreferencesKey("startSearchAfterLaunch")
 }

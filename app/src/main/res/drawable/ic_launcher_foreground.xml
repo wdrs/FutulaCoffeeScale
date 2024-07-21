@@ -11,6 +11,11 @@
         />
 
     <path
+        android:fillColor="@color/black"
+        android:pathData="M0,55h108v23h-108z"
+        />
+
+    <path
         android:fillType="evenOdd"
         android:strokeColor="#7a7a7a"
         android:strokeWidth="3"

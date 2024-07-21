@@ -18,6 +18,9 @@ import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoStart
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoSwitches
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoTare
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getIgnoreDose
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getReplaceResetWithTare
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getStartSearchAfterLaunch
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getStopTimerWhenLostConnection
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoAll
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoButtons
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoDose
@@ -25,6 +28,9 @@ import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoSt
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoSwitches
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoTare
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateIgnoreDose
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateReplaceResetWithTare
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateStartSearchAfterLaunch
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateStopTimerWhenLostConnection
 import com.tomatishe.futulacoffeescale.databinding.FragmentSettingsBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -50,6 +56,9 @@ class SettingsFragment : Fragment() {
     private lateinit var autoTareSettingsSwitch: MaterialSwitch
     private lateinit var autoHideSwitchesSettingsSwitch: MaterialSwitch
     private lateinit var autoHideButtonsSettingsSwitch: MaterialSwitch
+    private lateinit var replaceResetWithTareSwitch: MaterialSwitch
+    private lateinit var stopTimerWhenLostConnectionSwitch: MaterialSwitch
+    private lateinit var startSearchAfterLaunchSwitch: MaterialSwitch
 
     private var _binding: FragmentSettingsBinding? = null
 
@@ -64,6 +73,9 @@ class SettingsFragment : Fragment() {
     private var autoTareSettingsSwitchChecked = true
     private var autoHideSwitchesSettingsSwitchChecked = true
     private var autoHideButtonsSettingsSwitchChecked = false
+    private var replaceResetWithTareSwitchChecked = false
+    private var stopTimerWhenLostConnectionChecked = true
+    private var startSearchAfterLaunchChecked = false
 
     private var isSettingsLoaded = false
         set(value) {
@@ -76,8 +88,14 @@ class SettingsFragment : Fragment() {
                         ignoreDoseSettingsSwitch.isChecked = ignoreDoseSettingsSwitchChecked
                         autoDoseSettingsSwitch.isChecked = autoDoseSettingsSwitchChecked
                         autoTareSettingsSwitch.isChecked = autoTareSettingsSwitchChecked
-                        autoHideSwitchesSettingsSwitch.isChecked = autoHideSwitchesSettingsSwitchChecked
-                        autoHideButtonsSettingsSwitch.isChecked = autoHideButtonsSettingsSwitchChecked
+                        autoHideSwitchesSettingsSwitch.isChecked =
+                            autoHideSwitchesSettingsSwitchChecked
+                        autoHideButtonsSettingsSwitch.isChecked =
+                            autoHideButtonsSettingsSwitchChecked
+                        replaceResetWithTareSwitch.isChecked = replaceResetWithTareSwitchChecked
+                        stopTimerWhenLostConnectionSwitch.isChecked =
+                            stopTimerWhenLostConnectionChecked
+                        startSearchAfterLaunchSwitch.isChecked = startSearchAfterLaunchChecked
 
                         if (autoStartSettingsSwitch.isChecked) {
                             ignoreDoseLayout.visibility = View.VISIBLE
@@ -116,6 +134,10 @@ class SettingsFragment : Fragment() {
                 autoTareSettingsSwitchChecked = DataCoordinator.shared.getAutoTare()
                 autoHideSwitchesSettingsSwitchChecked = DataCoordinator.shared.getAutoSwitches()
                 autoHideButtonsSettingsSwitchChecked = DataCoordinator.shared.getAutoButtons()
+                replaceResetWithTareSwitchChecked = DataCoordinator.shared.getReplaceResetWithTare()
+                stopTimerWhenLostConnectionChecked =
+                    DataCoordinator.shared.getStopTimerWhenLostConnection()
+                startSearchAfterLaunchChecked = DataCoordinator.shared.getStartSearchAfterLaunch()
                 isSettingsLoaded = true
             }
         }
@@ -144,6 +166,9 @@ class SettingsFragment : Fragment() {
         autoTareSettingsSwitch = binding.autoTareSettingsSwitch
         autoHideSwitchesSettingsSwitch = binding.autoHideSwitchesSettingsSwitch
         autoHideButtonsSettingsSwitch = binding.autoHideButtonsSettingsSwitch
+        replaceResetWithTareSwitch = binding.replaceResetWithTareSwitch
+        stopTimerWhenLostConnectionSwitch = binding.stopTimerWhenLostConnectionSwitch
+        startSearchAfterLaunchSwitch = binding.startSearchAfterLaunchSwitch
 
         autoFuncSettingsSwitch.setOnClickListener {
             DataCoordinator.shared.updateAutoAll(autoFuncSettingsSwitch.isChecked)
@@ -198,6 +223,22 @@ class SettingsFragment : Fragment() {
 
         autoHideButtonsSettingsSwitch.setOnClickListener {
             DataCoordinator.shared.updateAutoButtons(autoHideButtonsSettingsSwitch.isChecked)
+        }
+
+        replaceResetWithTareSwitch.setOnClickListener {
+            DataCoordinator.shared.updateReplaceResetWithTare(replaceResetWithTareSwitch.isChecked)
+        }
+
+        stopTimerWhenLostConnectionSwitch.setOnClickListener {
+            DataCoordinator.shared.updateStopTimerWhenLostConnection(
+                stopTimerWhenLostConnectionSwitch.isChecked
+            )
+        }
+
+        startSearchAfterLaunchSwitch.setOnClickListener {
+            DataCoordinator.shared.updateStartSearchAfterLaunch(
+                startSearchAfterLaunchSwitch.isChecked
+            )
         }
 
         //val textView: TextView = binding.textSlideshow

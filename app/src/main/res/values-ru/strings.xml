@@ -37,4 +37,8 @@
     <string name="button_connect_pause_brew">Пауза</string>
     <string name="button_dose_finish">Финиш</string>
     <string name="button_connect_resume_brew">Продолжить</string>
+    <string name="enable_reset_as_tare">Заменить сброс на тару</string>
+    <string name="button_reset_as_tare">Тара</string>
+    <string name="stop_timer_on_lost">Остановить таймер при отключении</string>
+    <string name="search_after_launch">Подключиться при запуске</string>
 </resources>

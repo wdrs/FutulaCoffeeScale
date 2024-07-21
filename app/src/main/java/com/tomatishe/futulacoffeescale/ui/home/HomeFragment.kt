@@ -8,7 +8,6 @@ import android.content.res.Resources
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.provider.Settings.Global
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -17,7 +16,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
@@ -40,11 +38,13 @@ import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoStart
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoSwitches
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoTare
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getIgnoreDose
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getReplaceResetWithTare
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getStartSearchAfterLaunch
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getStopTimerWhenLostConnection
 import com.tomatishe.futulacoffeescale.databinding.FragmentHomeBinding
 import com.welie.blessed.BluetoothCentralManager
 import com.welie.blessed.BluetoothPeripheral
 import com.welie.blessed.ConnectionFailedException
-import com.welie.blessed.ConnectionPriority
 import com.welie.blessed.ConnectionState
 import com.welie.blessed.GattException
 import com.welie.blessed.WriteType
@@ -243,7 +243,7 @@ class HomeFragment : Fragment() {
                 )
             }
         } catch (exception: Exception) {
-            Log.d("ERROR", "Connection to ${peripheral.name} failed")
+            Log.d("ERROR", "Connection to ${peripheral.name} failed while sending command")
             isConnected = false
             isScanning = false
             currentScanButtonText = getString(R.string.button_connect)
@@ -253,8 +253,6 @@ class HomeFragment : Fragment() {
     private fun handlePeripheral(peripheral: BluetoothPeripheral) {
         GlobalScope.launch {
             try {
-                peripheral.requestConnectionPriority(ConnectionPriority.HIGH)
-
                 weightCharacteristic = peripheral.getCharacteristic(
                     UUID.fromString(scaleServiceUuidString), UUID.fromString(
                         scaleGetWeightUuidString
@@ -292,7 +290,7 @@ class HomeFragment : Fragment() {
                         weightRecord =
                             (intFrom2ByteArray(value.sliceArray(3..4)).toFloat() / 10) * weightSign.toFloat() * weightUnitMultiplier.toFloat()
                     } catch (exception: Exception) {
-                        Log.d("ERROR", "Connection to ${peripheral.name} failed")
+                        Log.d("ERROR", "Connection to ${peripheral.name} failed while observing weight")
                         isConnected = false
                         isScanning = false
                         if (isTimerWorking && !isTimerPaused) {
@@ -307,7 +305,7 @@ class HomeFragment : Fragment() {
                     try {
                         Log.d("INFO", "BATTERY = ${value.asUInt8()?.toInt()}")
                     } catch (exception: Exception) {
-                        Log.d("ERROR", "Connection to ${peripheral.name} failed")
+                        Log.d("ERROR", "Connection to ${peripheral.name} failed while observing battery")
                         isConnected = false
                         isScanning = false
                         if (isTimerWorking && !isTimerPaused) {
@@ -321,9 +319,11 @@ class HomeFragment : Fragment() {
                 sendCommandToScale(peripheral, unitGramCommand)
 
             } catch (e: IllegalArgumentException) {
-                Log.d("ERROR","$e")
+                Log.d("ERROR", "$e")
             } catch (b: GattException) {
-                Log.d("ERROR","$b")
+                Log.d("ERROR", "$b")
+            } catch (n: NullPointerException) {
+                Log.d("ERROR", "$n")
             }
         }
     }
@@ -334,38 +334,44 @@ class HomeFragment : Fragment() {
             try {
                 central.connectPeripheral(peripheral)
             } catch (connectionFailed: ConnectionFailedException) {
-                Log.d("ERROR","Connection Failed")
+                Log.d("ERROR", "Connection Failed")
             }
         }
         central.observeConnectionState { peripheralCurr, state ->
             Log.d("INFO", "Peripheral ${peripheralCurr.name} has $state")
             when (state) {
-                ConnectionState.CONNECTING -> currentScanButtonText = getString(R.string.button_connect_connecting)
+                ConnectionState.CONNECTING -> currentScanButtonText =
+                    getString(R.string.button_connect_connecting)
+
                 ConnectionState.CONNECTED -> {
                     isConnected = true
                     handlePeripheral(peripheral)
                 }
+
                 ConnectionState.DISCONNECTING -> {
                     currentScanButtonText = getString(R.string.button_connect_disconnecting)
                 }
+
                 ConnectionState.DISCONNECTED -> {
                     isConnected = false
 
                     currentScanButtonText = getString(R.string.button_connect)
 
-                    if (isTimerWorking && !isTimerPaused) {
+                    if (isTimerWorking && !isTimerPaused && stopTimerWhenLostConnectionChecked) {
                         stopwatch.stop()
                         isTimerPaused = true
                     }
 
                     GlobalScope.launch {
-                        delay(15000)
-                        if (central.getPeripheral(peripheral.address).getState() == ConnectionState.DISCONNECTED) {
+                        delay(10000)
+                        if (central.getPeripheral(peripheral.address)
+                                .getState() == ConnectionState.DISCONNECTED
+                        ) {
                             currentScanButtonText = getString(R.string.button_connect_connecting)
                             try {
                                 central.connectPeripheral(peripheral)
                             } catch (connectionFailed: ConnectionFailedException) {
-                                Log.d("ERROR","Connection Failed")
+                                Log.d("ERROR", "Connection Failed")
                                 currentScanButtonText = getString(R.string.button_connect)
                             }
                         }
@@ -579,6 +585,15 @@ class HomeFragment : Fragment() {
     private var autoTareSettingsSwitchChecked = true
     private var autoHideSwitchesSettingsSwitchChecked = true
     private var autoHideButtonsSettingsSwitchChecked = false
+    private var replaceResetWithTareSwitchChecked = false
+    private var stopTimerWhenLostConnectionChecked = true
+    private var startSearchAfterLaunchChecked = false
+        set(value) {
+            field = value
+            if (startSearchAfterLaunchChecked && !isConnected) {
+                startBleScan()
+            }
+        }
 
     private var isSettingsLoaded = false
         set(value) {
@@ -588,6 +603,12 @@ class HomeFragment : Fragment() {
                     {
                         if (autoTareSettingsSwitchChecked || autoDoseSettingsSwitchChecked || autoStartSettingsSwitchChecked) {
                             switchesLayout.visibility = View.VISIBLE
+                        }
+
+                        if (replaceResetWithTareSwitchChecked) {
+                            resetButton.text = getString(R.string.button_reset_as_tare)
+                        } else {
+                            resetButton.text = getString(R.string.button_reset)
                         }
 
                         if (autoTareSettingsSwitchChecked) {
@@ -763,9 +784,9 @@ class HomeFragment : Fragment() {
                             scalePeripheral, resetCommand
                         )
                     }
-                    resetStopWatch()
-                    resetValues()
                 }
+                resetStopWatch()
+                resetValues()
                 true
             }
 
@@ -819,12 +840,14 @@ class HomeFragment : Fragment() {
         chartWeightView.isClearBackgroundColor = true
         chartFlowRateView.isClearBackgroundColor = true
 
-        chartWeightViewModel = AAChartModel().chartType(AAChartType.Areaspline).yAxisTitle(getString(R.string.weight_text))
+        chartWeightViewModel = AAChartModel().chartType(AAChartType.Areaspline)
+            .yAxisTitle(getString(R.string.weight_text))
             .animationType(AAChartAnimationType.Elastic).tooltipEnabled(false).legendEnabled(false)
             .dataLabelsEnabled(false).series(arrayOf(weightLogGraphData))
             .categories(chartViewCategories).colorsTheme(arrayOf(primaryChartColor))
 
-        chartFlowRateViewModel = AAChartModel().chartType(AAChartType.Areaspline).yAxisTitle(getString(R.string.flowrate_text))
+        chartFlowRateViewModel = AAChartModel().chartType(AAChartType.Areaspline)
+            .yAxisTitle(getString(R.string.flowrate_text))
             .animationType(AAChartAnimationType.Elastic).tooltipEnabled(false).legendEnabled(false)
             .dataLabelsEnabled(false).series(arrayOf(flowRateLogGraphData))
             .categories(chartViewCategories).colorsTheme(arrayOf(primaryChartColor))
@@ -876,8 +899,10 @@ class HomeFragment : Fragment() {
                     )
                 }
             }
-            resetStopWatch()
-            resetValues()
+            if (!replaceResetWithTareSwitchChecked) {
+                resetStopWatch()
+                resetValues()
+            }
         }
 
         scanButton = binding.scanButton
@@ -918,6 +943,9 @@ class HomeFragment : Fragment() {
                 autoTareSettingsSwitchChecked = DataCoordinator.shared.getAutoTare()
                 autoHideSwitchesSettingsSwitchChecked = DataCoordinator.shared.getAutoSwitches()
                 autoHideButtonsSettingsSwitchChecked = DataCoordinator.shared.getAutoButtons()
+                replaceResetWithTareSwitchChecked = DataCoordinator.shared.getReplaceResetWithTare()
+                stopTimerWhenLostConnectionChecked = DataCoordinator.shared.getStopTimerWhenLostConnection()
+                startSearchAfterLaunchChecked = DataCoordinator.shared.getStartSearchAfterLaunch()
                 isSettingsLoaded = true
             }
         }

@@ -81,3 +81,36 @@ fun DataCoordinator.updateAutoButtons(value: Boolean) {
         // OPTIONAL - Send Broadcast
     }
 }
+
+fun DataCoordinator.updateReplaceResetWithTare(value: Boolean) {
+    // Update Value
+    this.replaceResetWithTare = value
+    // Save to System
+    GlobalScope.launch(Dispatchers.Default) {
+        // Update DataStore
+        setReplaceResetWithTare(value)
+        // OPTIONAL - Send Broadcast
+    }
+}
+
+fun DataCoordinator.updateStopTimerWhenLostConnection(value: Boolean) {
+    // Update Value
+    this.stopTimerWhenLostConnection = value
+    // Save to System
+    GlobalScope.launch(Dispatchers.Default) {
+        // Update DataStore
+        setStopTimerWhenLostConnection(value)
+        // OPTIONAL - Send Broadcast
+    }
+}
+
+fun DataCoordinator.updateStartSearchAfterLaunch(value: Boolean) {
+    // Update Value
+    this.startSearchAfterLaunch = value
+    // Save to System
+    GlobalScope.launch(Dispatchers.Default) {
+        // Update DataStore
+        setStartSearchAfterLaunch(value)
+        // OPTIONAL - Send Broadcast
+    }
+}
