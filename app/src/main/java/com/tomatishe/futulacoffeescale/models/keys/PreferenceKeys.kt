@@ -13,4 +13,5 @@ object PreferencesKeys {
     val replaceResetWithTare = booleanPreferencesKey("replaceResetWithTare")
     val stopTimerWhenLostConnection = booleanPreferencesKey("stopTimerWhenLostConnection")
     val startSearchAfterLaunch = booleanPreferencesKey("startSearchAfterLaunch")
+    val oneGraphInHistory = booleanPreferencesKey("oneGraphInHistory")
 }

@@ -114,3 +114,14 @@ fun DataCoordinator.updateStartSearchAfterLaunch(value: Boolean) {
         // OPTIONAL - Send Broadcast
     }
 }
+
+fun DataCoordinator.updateOneGraphInHistory(value: Boolean) {
+    // Update Value
+    this.oneGraphInHistory = value
+    // Save to System
+    GlobalScope.launch(Dispatchers.Default) {
+        // Update DataStore
+        setOneGraphInHistory(value)
+        // OPTIONAL - Send Broadcast
+    }
+}

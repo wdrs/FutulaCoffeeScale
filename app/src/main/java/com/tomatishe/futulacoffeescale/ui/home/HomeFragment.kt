@@ -49,10 +49,7 @@ import com.welie.blessed.ConnectionState
 import com.welie.blessed.GattException
 import com.welie.blessed.WriteType
 import com.welie.blessed.asUInt8
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timerx.buildStopwatch
@@ -88,7 +85,6 @@ class HomeFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var batteryLevel: Int = 100
     private var doseRecord: Float = 0.0F
         set(value) {
@@ -293,7 +289,7 @@ class HomeFragment : Fragment() {
                         Log.d("ERROR", "Connection to ${peripheral.name} failed while observing weight")
                         isConnected = false
                         isScanning = false
-                        if (isTimerWorking && !isTimerPaused) {
+                        if (isTimerWorking && !isTimerPaused && stopTimerWhenLostConnectionChecked) {
                             stopwatch.stop()
                             isTimerPaused = true
                         }
@@ -303,12 +299,13 @@ class HomeFragment : Fragment() {
 
                 peripheral.observe(batteryCharacteristic) { value ->
                     try {
-                        Log.d("INFO", "BATTERY = ${value.asUInt8()?.toInt()}")
+                        batteryLevel = value.asUInt8()?.toInt()!!
+                        Log.d("INFO", "BATTERY = ${batteryLevel}")
                     } catch (exception: Exception) {
                         Log.d("ERROR", "Connection to ${peripheral.name} failed while observing battery")
                         isConnected = false
                         isScanning = false
-                        if (isTimerWorking && !isTimerPaused) {
+                        if (isTimerWorking && !isTimerPaused && stopTimerWhenLostConnectionChecked) {
                             stopwatch.stop()
                             isTimerPaused = true
                         }
@@ -474,7 +471,11 @@ class HomeFragment : Fragment() {
             if (flowRateLog.size > 0) {
                 val flt = flowRateLog.toMutableList()
                 flt.retainAll { it >= 0.1F }
-                flowRateAvg = flt.average().toFloat()
+                flowRateAvg = if (flt.size > 0) {
+                    flt.average().toFloat()
+                } else {
+                    0.0F
+                }
             }
 
             if (flowRateLog.size % 10 == 0 && flowRateLog.size > 1) {
@@ -524,7 +525,9 @@ class HomeFragment : Fragment() {
                     resetButton.isEnabled = true
                     currentScanButtonText = getString(R.string.button_connect_start_brew)
                 } else {
-                    doseButton.isEnabled = false
+                    if (!isTimerWorking && !stopTimerWhenLostConnectionChecked) {
+                        doseButton.isEnabled = false
+                    }
                     resetButton.isEnabled = false
                     currentScanButtonText = getString(R.string.button_connect)
                 }
@@ -569,7 +572,9 @@ class HomeFragment : Fragment() {
                         currentDoseButtonText = getString(R.string.button_dose_finish)
                         isDoseBecameFinish = true
                     } else {
-                        doseButton.isEnabled = true
+                        if (isConnected) {
+                            doseButton.isEnabled = true
+                        }
                     }
                 }
             }
@@ -711,11 +716,20 @@ class HomeFragment : Fragment() {
         brewRatioString = "1:0,0"
         currentDoseButtonText = getString(R.string.button_dose)
         isDoseBecameFinish = false
-        scanButton.isEnabled = true
         if (autoHideButtonsSettingsSwitchChecked) {
             buttonsLayout.visibility = View.VISIBLE
         }
-        doseButton.isEnabled = true
+        if (isConnected) {
+            doseButton.isEnabled = true
+        }
+        scanButton.isEnabled = true
+        if (!isConnected) {
+            Log.d("INFO", "${weightLog.size}")
+            if (weightLog.size > 0) {
+                doseButton.isEnabled = true
+            }
+            currentScanButtonText = getString(R.string.button_connect)
+        }
     }
 
     private fun isSystemDarkMode(): Boolean {
@@ -841,13 +855,13 @@ class HomeFragment : Fragment() {
         chartFlowRateView.isClearBackgroundColor = true
 
         chartWeightViewModel = AAChartModel().chartType(AAChartType.Areaspline)
-            .yAxisTitle(getString(R.string.weight_text))
+            .yAxisTitle(getString(R.string.weight_text)).markerRadius(0)
             .animationType(AAChartAnimationType.Elastic).tooltipEnabled(false).legendEnabled(false)
             .dataLabelsEnabled(false).series(arrayOf(weightLogGraphData))
             .categories(chartViewCategories).colorsTheme(arrayOf(primaryChartColor))
 
         chartFlowRateViewModel = AAChartModel().chartType(AAChartType.Areaspline)
-            .yAxisTitle(getString(R.string.flowrate_text))
+            .yAxisTitle(getString(R.string.flowrate_text)).markerRadius(0)
             .animationType(AAChartAnimationType.Elastic).tooltipEnabled(false).legendEnabled(false)
             .dataLabelsEnabled(false).series(arrayOf(flowRateLogGraphData))
             .categories(chartViewCategories).colorsTheme(arrayOf(primaryChartColor))

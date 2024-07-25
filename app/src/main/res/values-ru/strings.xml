@@ -41,4 +41,5 @@
     <string name="button_reset_as_tare">Тара</string>
     <string name="stop_timer_on_lost">Остановить таймер при отключении</string>
     <string name="search_after_launch">Подключиться при запуске</string>
+    <string name="one_graph">Один график в истории</string>
 </resources>

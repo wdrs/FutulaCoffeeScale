@@ -41,4 +41,5 @@
     <string name="button_reset_as_tare">Tare</string>
     <string name="stop_timer_on_lost">Stop timer on connection lost</string>
     <string name="search_after_launch">Connect after app launch</string>
+    <string name="one_graph">Show one graph in history</string>
 </resources>

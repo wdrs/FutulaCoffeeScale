@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -20,7 +19,6 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.tomatishe.futulacoffeescale.databinding.ActivityMainBinding
-import com.tomatishe.futulacoffeescale.AppDatabase
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.DataCoordinator
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.cancel

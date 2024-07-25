@@ -18,6 +18,7 @@ import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoStart
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoSwitches
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoTare
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getIgnoreDose
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getOneGraphInHistory
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getReplaceResetWithTare
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getStartSearchAfterLaunch
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getStopTimerWhenLostConnection
@@ -28,6 +29,7 @@ import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoSt
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoSwitches
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoTare
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateIgnoreDose
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateOneGraphInHistory
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateReplaceResetWithTare
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateStartSearchAfterLaunch
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateStopTimerWhenLostConnection
@@ -59,6 +61,7 @@ class SettingsFragment : Fragment() {
     private lateinit var replaceResetWithTareSwitch: MaterialSwitch
     private lateinit var stopTimerWhenLostConnectionSwitch: MaterialSwitch
     private lateinit var startSearchAfterLaunchSwitch: MaterialSwitch
+    private lateinit var showOneGraphInHistorySwitch: MaterialSwitch
 
     private var _binding: FragmentSettingsBinding? = null
 
@@ -76,6 +79,7 @@ class SettingsFragment : Fragment() {
     private var replaceResetWithTareSwitchChecked = false
     private var stopTimerWhenLostConnectionChecked = true
     private var startSearchAfterLaunchChecked = false
+    private var oneGraphInHistory = false
 
     private var isSettingsLoaded = false
         set(value) {
@@ -96,6 +100,7 @@ class SettingsFragment : Fragment() {
                         stopTimerWhenLostConnectionSwitch.isChecked =
                             stopTimerWhenLostConnectionChecked
                         startSearchAfterLaunchSwitch.isChecked = startSearchAfterLaunchChecked
+                        showOneGraphInHistorySwitch.isChecked = oneGraphInHistory
 
                         if (autoStartSettingsSwitch.isChecked) {
                             ignoreDoseLayout.visibility = View.VISIBLE
@@ -138,6 +143,7 @@ class SettingsFragment : Fragment() {
                 stopTimerWhenLostConnectionChecked =
                     DataCoordinator.shared.getStopTimerWhenLostConnection()
                 startSearchAfterLaunchChecked = DataCoordinator.shared.getStartSearchAfterLaunch()
+                oneGraphInHistory = DataCoordinator.shared.getOneGraphInHistory()
                 isSettingsLoaded = true
             }
         }
@@ -169,6 +175,7 @@ class SettingsFragment : Fragment() {
         replaceResetWithTareSwitch = binding.replaceResetWithTareSwitch
         stopTimerWhenLostConnectionSwitch = binding.stopTimerWhenLostConnectionSwitch
         startSearchAfterLaunchSwitch = binding.startSearchAfterLaunchSwitch
+        showOneGraphInHistorySwitch = binding.showOneGraphInHistorySwitch
 
         autoFuncSettingsSwitch.setOnClickListener {
             DataCoordinator.shared.updateAutoAll(autoFuncSettingsSwitch.isChecked)
@@ -238,6 +245,12 @@ class SettingsFragment : Fragment() {
         startSearchAfterLaunchSwitch.setOnClickListener {
             DataCoordinator.shared.updateStartSearchAfterLaunch(
                 startSearchAfterLaunchSwitch.isChecked
+            )
+        }
+
+        showOneGraphInHistorySwitch.setOnClickListener {
+            DataCoordinator.shared.updateOneGraphInHistory(
+                showOneGraphInHistorySwitch.isChecked
             )
         }
 

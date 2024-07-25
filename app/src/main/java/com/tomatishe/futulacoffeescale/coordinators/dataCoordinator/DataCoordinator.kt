@@ -36,6 +36,8 @@ class DataCoordinator {
     val defaultStopTimerWhenLostConnection: Boolean = true
     var startSearchAfterLaunch: Boolean = false
     val defaultStartSearchAfterLaunch: Boolean = false
+    var oneGraphInHistory: Boolean = false
+    val defaultOneGraphInHistory: Boolean = false
 
     // MARK: Data Store Variables
     private val USER_PREFERENCES_NAME = "fCoffeeScapePreferences"
@@ -60,6 +62,7 @@ class DataCoordinator {
             replaceResetWithTare = getReplaceResetWithTare()
             stopTimerWhenLostConnection = getStopTimerWhenLostConnection()
             startSearchAfterLaunch = getStartSearchAfterLaunch()
+            oneGraphInHistory = getOneGraphInHistory()
             // Callback
             onLoad()
         }

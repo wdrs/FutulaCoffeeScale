@@ -151,3 +151,18 @@ suspend fun DataCoordinator.setStartSearchAfterLaunch(value: Boolean) {
         preferences[PreferencesKeys.startSearchAfterLaunch] = value
     }
 }
+
+// ---
+
+suspend fun DataCoordinator.getOneGraphInHistory(): Boolean {
+    val context = this.context ?: return defaultOneGraphInHistory
+    return context.dataStore.data.firstOrNull()?.get(PreferencesKeys.oneGraphInHistory)
+        ?: defaultOneGraphInHistory
+}
+
+suspend fun DataCoordinator.setOneGraphInHistory(value: Boolean) {
+    val context = this.context ?: return
+    context.dataStore.edit { preferences ->
+        preferences[PreferencesKeys.oneGraphInHistory] = value
+    }
+}
