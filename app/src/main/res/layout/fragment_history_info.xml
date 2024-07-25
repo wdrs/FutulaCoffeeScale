@@ -47,13 +47,13 @@
                     android:id="@+id/weightText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:justificationMode="inter_word"
+                    android:maxLines="1"
                     android:text="0,0"
                     android:textAlignment="center"
                     android:textSize="34sp"
                     android:textStyle="bold"
-                    android:maxLines="1"
-                    app:autoSizeTextType="uniform"
-                    android:justificationMode="inter_word"/>
+                    app:autoSizeTextType="uniform" />
             </LinearLayout>
 
             <LinearLayout
@@ -78,13 +78,13 @@
                     android:id="@+id/doseText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:justificationMode="inter_word"
+                    android:maxLines="1"
                     android:text="0,0"
                     android:textAlignment="center"
                     android:textSize="34sp"
                     android:textStyle="bold"
-                    android:maxLines="1"
-                    app:autoSizeTextType="uniform"
-                    android:justificationMode="inter_word"/>
+                    app:autoSizeTextType="uniform" />
 
             </LinearLayout>
 
@@ -110,13 +110,13 @@
                     android:id="@+id/flowRateText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:justificationMode="inter_word"
+                    android:maxLines="1"
                     android:text="0,0"
                     android:textAlignment="center"
                     android:textSize="34sp"
                     android:textStyle="bold"
-                    android:maxLines="1"
-                    app:autoSizeTextType="uniform"
-                    android:justificationMode="inter_word"/>
+                    app:autoSizeTextType="uniform" />
             </LinearLayout>
 
         </LinearLayout>
@@ -148,13 +148,13 @@
                     android:id="@+id/timeText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:justificationMode="inter_word"
+                    android:maxLines="1"
                     android:text="00:00.0"
                     android:textAlignment="center"
                     android:textSize="34sp"
                     android:textStyle="bold"
-                    android:maxLines="1"
-                    app:autoSizeTextType="uniform"
-                    android:justificationMode="inter_word"/>
+                    app:autoSizeTextType="uniform" />
             </LinearLayout>
 
             <LinearLayout
@@ -179,13 +179,13 @@
                     android:id="@+id/brewRatioText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:justificationMode="inter_word"
+                    android:maxLines="1"
                     android:text="1:0,0"
                     android:textAlignment="center"
                     android:textSize="34sp"
                     android:textStyle="bold"
-                    android:maxLines="1"
-                    app:autoSizeTextType="uniform"
-                    android:justificationMode="inter_word"/>
+                    app:autoSizeTextType="uniform" />
             </LinearLayout>
         </LinearLayout>
 

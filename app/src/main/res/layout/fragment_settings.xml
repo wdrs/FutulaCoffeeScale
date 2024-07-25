@@ -66,6 +66,59 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/stopTimerWhenLostConnectionLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:elegantTextHeight="true"
+                android:ellipsize="marquee"
+                android:gravity="center"
+                android:justificationMode="inter_word"
+                android:text="@string/stop_timer_on_lost"
+                android:textAlignment="textStart"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/stopTimerWhenLostConnectionSwitch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/stopTimerWhenLostConnectionSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:checked="true"
+                android:hapticFeedbackEnabled="true"
+                android:lineSpacingExtra="8sp"
+                android:maxLines="1"
+                android:minHeight="48dp"
+                android:showText="false"
+                android:splitTrack="false"
+                android:textSize="20sp"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:switchPadding="8dp"
+                tools:checked="true" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/autoAllLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -120,16 +173,16 @@
                 android:id="@+id/textView1"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:elegantTextHeight="true"
+                android:ellipsize="marquee"
                 android:gravity="center"
                 android:justificationMode="inter_word"
                 android:text="@string/enable_autostart_text"
                 android:textAlignment="textStart"
-                android:ellipsize="marquee"
                 app:autoSizeTextType="uniform"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/autoStartSettingsSwitch"
@@ -167,16 +220,16 @@
                 android:id="@+id/textView6"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginStart="24dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:elegantTextHeight="true"
+                android:ellipsize="marquee"
                 android:gravity="center"
                 android:justificationMode="inter_word"
                 android:text="@string/enable_ignore_dose"
                 android:textAlignment="textStart"
-                android:ellipsize="marquee"
                 app:autoSizeTextType="uniform"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/ignoreDoseSettingsSwitch"
@@ -214,16 +267,16 @@
                 android:id="@+id/textView2"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:elegantTextHeight="true"
+                android:ellipsize="marquee"
                 android:gravity="center"
                 android:justificationMode="inter_word"
                 android:text="@string/enable_autodose_text"
                 android:textAlignment="textStart"
-                android:ellipsize="marquee"
                 app:autoSizeTextType="uniform"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/autoDoseSettingsSwitch"
@@ -261,16 +314,16 @@
                 android:id="@+id/textView3"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:elegantTextHeight="true"
+                android:ellipsize="marquee"
                 android:gravity="center"
                 android:justificationMode="inter_word"
                 android:text="@string/enable_autotare_text"
                 android:textAlignment="textStart"
-                android:ellipsize="marquee"
                 app:autoSizeTextType="uniform"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/autoTareSettingsSwitch"
@@ -298,6 +351,12 @@
                 tools:checked="true" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/replaceResetWithTareLayout"
@@ -346,52 +405,11 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/stopTimerWhenLostConnectionLayout"
+        <View
+            android:id="@+id/divider3"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/textView8"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:gravity="center"
-                android:justificationMode="inter_word"
-                android:text="@string/stop_timer_on_lost"
-                android:textAlignment="textStart"
-                android:elegantTextHeight="true"
-                android:ellipsize="marquee"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/stopTimerWhenLostConnectionSwitch"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/stopTimerWhenLostConnectionSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:checked="true"
-                android:hapticFeedbackEnabled="true"
-                android:lineSpacingExtra="8sp"
-                android:maxLines="1"
-                android:minHeight="48dp"
-                android:showText="false"
-                android:splitTrack="false"
-                android:textSize="20sp"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:switchPadding="8dp"
-                tools:checked="true" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/autoSwitchesLayout"
@@ -486,6 +504,12 @@
                 tools:checked="false" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/divider5"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/showOneGraphInHistoryLayout"
