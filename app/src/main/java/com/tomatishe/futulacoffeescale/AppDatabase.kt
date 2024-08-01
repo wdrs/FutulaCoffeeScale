@@ -5,11 +5,14 @@ import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -28,6 +31,27 @@ data class WeightRecordDbEntity(
     @ColumnInfo(name = "brew_ratio_string") val brewRatioString: String,
 )
 
+@Entity(
+    tableName = "weight_history_extra",
+    foreignKeys = [
+        ForeignKey(
+            entity = WeightRecordDbEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["weight_id"]
+        )
+    ]
+)
+data class WeightRecordDbEntityExtra(
+    @PrimaryKey(autoGenerate = true) val id: Long,
+    @ColumnInfo(name = "weight_id") val weightId: Long,
+    @ColumnInfo(name = "coffee_bean") val coffeeBean: String?,
+    @ColumnInfo(name = "coffee_grinder") val coffeeGrinder: String?,
+    @ColumnInfo(name = "coffee_grinder_level") val coffeeGrinderLevel: String?,
+    @ColumnInfo(name = "gadget_name") val gadgetName: String?,
+    @ColumnInfo(name = "water_temp") val waterTemp: String?,
+    @ColumnInfo(name = "extra_info") val extraInfo: String?,
+)
+
 data class WeightRecordInfoTuple(
     val id: Long,
     @ColumnInfo(name = "brew_date") val brewDate: Long,
@@ -40,6 +64,17 @@ data class WeightRecordInfoTuple(
     @ColumnInfo(name = "flow_rate_log") val flowRateLog: String,
     @ColumnInfo(name = "time_string") val timeString: String,
     @ColumnInfo(name = "brew_ratio_string") val brewRatioString: String,
+)
+
+data class WeightRecordInfoTupleExtra(
+    val id: Long,
+    @ColumnInfo(name = "weight_id") val weightId: Long,
+    @ColumnInfo(name = "coffee_bean") val coffeeBean: String?,
+    @ColumnInfo(name = "coffee_grinder") val coffeeGrinder: String?,
+    @ColumnInfo(name = "coffee_grinder_level") val coffeeGrinderLevel: String?,
+    @ColumnInfo(name = "gadget_name") val gadgetName: String?,
+    @ColumnInfo(name = "water_temp") val waterTemp: String?,
+    @ColumnInfo(name = "extra_info") val extraInfo: String?,
 )
 
 data class WeightRecord(
@@ -70,6 +105,28 @@ data class WeightRecord(
     )
 }
 
+data class WeightRecordExtra(
+    val weightId: Long,
+    val coffeeBean: String?,
+    val coffeeGrinder: String?,
+    val coffeeGrinderLevel: String?,
+    val gadgetName: String?,
+    val waterTemp: String?,
+    val extraInfo: String?,
+) {
+
+    fun toWeightRecordDbEntityExtra(): WeightRecordDbEntityExtra = WeightRecordDbEntityExtra(
+        id = 0,
+        weightId = weightId,
+        coffeeBean = coffeeBean,
+        coffeeGrinder = coffeeGrinder,
+        coffeeGrinderLevel = coffeeGrinderLevel,
+        gadgetName = gadgetName,
+        waterTemp = waterTemp,
+        extraInfo = extraInfo,
+    )
+}
+
 
 @Dao
 interface WeightRecordDao {
@@ -96,14 +153,53 @@ interface WeightRecordDao {
     fun deleteWeightRecordDataById(wightRecordId: Long)
 }
 
+@Dao
+interface WeightRecordExtraDao {
+    @Insert(entity = WeightRecordDbEntityExtra::class)
+    fun insertWeightRecordExtraData(weightRecordExtra: WeightRecordDbEntityExtra)
+
+    @Query(
+        "SELECT id, weight_id, coffee_bean, coffee_grinder, coffee_grinder_level,\n " +
+                "gadget_name, water_temp, extra_info\n" +
+                "FROM weight_history_extra \n" +
+                "ORDER BY id DESC"
+    )
+    fun getAllWeightRecordExtraData(): List<WeightRecordInfoTupleExtra>
+
+    @Query(
+        "SELECT id, weight_id, coffee_bean, coffee_grinder, coffee_grinder_level,\n " +
+                "gadget_name, water_temp, extra_info\n" +
+                "FROM weight_history_extra \n" +
+                "WHERE id = :weightExtraRecordId"
+    )
+    fun getOneWeightRecordExtraDataById(weightExtraRecordId: Long): WeightRecordInfoTupleExtra
+
+    @Query(
+        "SELECT id, weight_id, coffee_bean, coffee_grinder, coffee_grinder_level,\n " +
+                "gadget_name, water_temp, extra_info\n" +
+                "FROM weight_history_extra \n" +
+                "WHERE weight_id = :weightRecordId"
+    )
+    fun getOneWeightRecordExtraDataByWeightId(weightRecordId: Long): WeightRecordInfoTupleExtra
+
+    @Query("DELETE FROM weight_history_extra WHERE id = :weightExtraRecordId")
+    fun deleteWeightRecordExtraDataById(weightExtraRecordId: Long)
+
+    @Query("DELETE FROM weight_history_extra WHERE weight_id = :weightRecordId")
+    fun deleteWeightRecordExtraDataByWeightId(weightRecordId: Long)
+}
+
 @Database(
-    version = 1,
+    version = 2,
     entities = [
         WeightRecordDbEntity::class,
-    ]
+        WeightRecordDbEntityExtra::class,
+    ],
+    exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getWeightRecordDao(): WeightRecordDao
+    abstract fun getWeightRecordExtraDao(): WeightRecordExtraDao
 }
 
 object Dependencies {
@@ -114,14 +210,31 @@ object Dependencies {
         applicationContext = context
     }
 
+    val MIGRATION_1_2: Migration = object : Migration(1, 2) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                "CREATE TABLE IF NOT EXISTS `weight_history_extra`" +
+                        "(`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `weight_id` INTEGER NOT NULL," +
+                        " `coffee_bean` TEXT, `coffee_grinder` TEXT, `coffee_grinder_level` TEXT," +
+                        " `gadget_name` TEXT, `water_temp` TEXT, `extra_info` TEXT," +
+                        " FOREIGN KEY(`weight_id`) REFERENCES `weight_history`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )"
+            )
+        }
+    }
+
     private val appDatabase: AppDatabase by lazy {
         Room.databaseBuilder(
             applicationContext, AppDatabase::class.java, "futula_coffee_scale_database.db"
-        ).build()
+        ).fallbackToDestructiveMigration().allowMainThreadQueries().addMigrations(MIGRATION_1_2)
+            .build()
     }
 
     val weightRecordRepository: WeightRecordRepository by lazy {
         WeightRecordRepository(appDatabase.getWeightRecordDao())
+    }
+
+    val weightRecordRepositoryExtra: WeightRecordRepositoryExtra by lazy {
+        WeightRecordRepositoryExtra(appDatabase.getWeightRecordExtraDao())
     }
 }
 
@@ -148,6 +261,45 @@ class WeightRecordRepository(private val weightRecordDao: WeightRecordDao) {
     suspend fun deleteWeightRecordDataById(id: Long) {
         withContext(Dispatchers.IO) {
             weightRecordDao.deleteWeightRecordDataById(id)
+        }
+    }
+}
+
+class WeightRecordRepositoryExtra(private val weightRecordExtraDao: WeightRecordExtraDao) {
+
+    suspend fun insertWeightRecordExtraData(weightRecordDbEntityExtra: WeightRecordDbEntityExtra) {
+        withContext(Dispatchers.IO) {
+            weightRecordExtraDao.insertWeightRecordExtraData(weightRecordDbEntityExtra)
+        }
+    }
+
+    suspend fun getAllWeightRecordExtraData(): List<WeightRecordInfoTupleExtra> {
+        return withContext(Dispatchers.IO) {
+            return@withContext weightRecordExtraDao.getAllWeightRecordExtraData()
+        }
+    }
+
+    suspend fun getOneWeightRecordExtraDataById(id: Long): WeightRecordInfoTupleExtra {
+        return withContext(Dispatchers.IO) {
+            return@withContext weightRecordExtraDao.getOneWeightRecordExtraDataById(id)
+        }
+    }
+
+    suspend fun getOneWeightRecordExtraDataByWeightId(id: Long): WeightRecordInfoTupleExtra {
+        return withContext(Dispatchers.IO) {
+            return@withContext weightRecordExtraDao.getOneWeightRecordExtraDataByWeightId(id)
+        }
+    }
+
+    suspend fun deleteWeightRecordExtraDataById(id: Long) {
+        withContext(Dispatchers.IO) {
+            weightRecordExtraDao.deleteWeightRecordExtraDataById(id)
+        }
+    }
+
+    suspend fun deleteWeightRecordExtraDataByWeightId(id: Long) {
+        withContext(Dispatchers.IO) {
+            weightRecordExtraDao.deleteWeightRecordExtraDataByWeightId(id)
         }
     }
 }
