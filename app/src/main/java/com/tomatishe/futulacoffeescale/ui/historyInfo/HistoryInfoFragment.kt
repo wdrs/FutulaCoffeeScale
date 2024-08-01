@@ -106,7 +106,13 @@ class HistoryInfoFragment : Fragment() {
     private var showOneGraphInHistory = false
 
     companion object {
-        fun newInstance() = HistoryInfoFragment()
+        fun newInstance(historyRecordId: Long): Fragment {
+            val fragment = HistoryInfoFragment()
+            fragment.arguments = Bundle().apply {
+                putLong("historyRecordId", historyRecordId)
+            }
+            return fragment
+        }
     }
 
     private val viewModel: HistoryInfoViewModel by viewModels()

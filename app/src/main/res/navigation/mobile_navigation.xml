@@ -37,9 +37,9 @@
 
     <fragment
         android:id="@+id/nav_history_info"
-        android:name="com.tomatishe.futulacoffeescale.ui.historyInfo.HistoryInfoFragment"
+        android:name="com.tomatishe.futulacoffeescale.ui.historyDetails.HistoryDetailsFragment"
         android:label="@string/menu_history_info"
-        tools:layout="@layout/fragment_history_info" >
+        tools:layout="@layout/fragment_history_details" >
         <argument
             android:name="historyRecordId"
             app:argType="long" />
