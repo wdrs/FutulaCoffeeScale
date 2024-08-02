@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Futula Coffee Scale</string>
     <string name="nav_header_title">Futula Coffee Scale</string>
-    <string name="nav_header_subtitle">И простите за баги!</string>
+    <string name="nav_header_subtitle">0.9.3</string>
     <string name="nav_header_desc">Панель навигации</string>
     <string name="action_save">Сохранить</string>
     <string name="action_saved">Сохранено в историю</string>
@@ -44,4 +44,16 @@
     <string name="one_graph">Один график в истории</string>
     <string name="history_data_main">Данные</string>
     <string name="history_data_extra">Дополнительно</string>
+    <string name="coffee_bean">Зерно</string>
+    <string name="coffee_grinder">Кофемолка</string>
+    <string name="coffee_grinder_level">Настройка помола</string>
+    <string name="gadget_name">Способ готовки</string>
+    <string name="water_temp">Температура воды</string>
+    <string name="extra_info">Дополнительно</string>
+    <string name="extra_save_button">Сохранить</string>
+    <string name="extra_clear_button">Очистить</string>
+    <string name="action_saved_extra">Данные сохранены</string>
+    <string name="action_updated_extra">Данные обновлены</string>
+    <string name="action_deleted_extra">Данные удалены</string>
+    <string name="extra_save_button_alt">Обновить</string>
 </resources>

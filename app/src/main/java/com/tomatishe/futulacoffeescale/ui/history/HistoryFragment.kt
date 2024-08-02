@@ -57,6 +57,15 @@ class WeightAdapter : RecyclerView.Adapter<WeightAdapter.WeightViewHolder>() {
             deleteImageView.setOnClickListener {
                 scope.launch {
                     Dependencies.weightRecordRepository.deleteWeightRecordDataById(wData.id)
+                    val checkIfGotExtra =
+                        Dependencies.weightRecordRepositoryExtra.getOneWeightRecordExtraDataByWeightId(
+                            wData.id
+                        )
+                    if (checkIfGotExtra != null) {
+                        Dependencies.weightRecordRepositoryExtra.deleteWeightRecordExtraDataByWeightId(
+                            wData.id
+                        )
+                    }
                 }
                 data.removeAt(position)
                 notifyItemRemoved(position)

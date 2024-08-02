@@ -31,7 +31,7 @@ class ViewPager2Adapter(
     override fun createFragment(position: Int): Fragment {
         return when (position) {
             0 -> HistoryInfoFragment.newInstance(historyRecordId)
-            1 -> HistoryExtraFragment()
+            1 -> HistoryExtraFragment.newInstance(historyRecordId)
             else -> throw AssertionError()
         }
     }

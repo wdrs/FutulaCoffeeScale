@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Futula Coffee Scale</string>
     <string name="nav_header_title">Futula Coffee Scale</string>
-    <string name="nav_header_subtitle">WIP! Sorry for bugs</string>
+    <string name="nav_header_subtitle">0.9.3</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_save">Save</string>
     <string name="action_saved">Saved brew to history</string>
@@ -44,4 +44,16 @@
     <string name="one_graph">Show one graph in history</string>
     <string name="history_data_main">Data</string>
     <string name="history_data_extra">Extra</string>
+    <string name="coffee_bean">Coffee bean</string>
+    <string name="coffee_grinder">Сoffee Grinder</string>
+    <string name="coffee_grinder_level">Grind level</string>
+    <string name="gadget_name">Brew method</string>
+    <string name="water_temp">Water temperature</string>
+    <string name="extra_info">Extra info</string>
+    <string name="extra_save_button">Save</string>
+    <string name="extra_clear_button">Clear</string>
+    <string name="action_saved_extra">Saved extra data</string>
+    <string name="action_updated_extra">Updated extra data</string>
+    <string name="action_deleted_extra">Deleted extra data</string>
+    <string name="extra_save_button_alt">Update</string>
 </resources>

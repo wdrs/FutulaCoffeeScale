@@ -77,6 +77,26 @@ data class WeightRecordInfoTupleExtra(
     @ColumnInfo(name = "extra_info") val extraInfo: String?,
 )
 
+data class WeightRecordInfoTupleBeans(
+    @ColumnInfo(name = "coffee_bean") val coffeeBean: String?,
+)
+
+data class WeightRecordInfoTupleGrinders(
+    @ColumnInfo(name = "coffee_grinder") val coffeeGrinder: String?,
+)
+
+data class WeightRecordInfoTupleGrindLevels(
+    @ColumnInfo(name = "coffee_grinder_level") val coffeeGrinderLevel: String?,
+)
+
+data class WeightRecordInfoTupleGadgets(
+    @ColumnInfo(name = "gadget_name") val gadgetName: String?,
+)
+
+data class WeightRecordInfoTupleWaterTemps(
+    @ColumnInfo(name = "water_temp") val waterTemp: String?,
+)
+
 data class WeightRecord(
     val brewDate: Long,
     val weightUnit: String,
@@ -175,12 +195,55 @@ interface WeightRecordExtraDao {
     fun getOneWeightRecordExtraDataById(weightExtraRecordId: Long): WeightRecordInfoTupleExtra
 
     @Query(
+        "UPDATE weight_history_extra\n" +
+                "SET weight_id = :weightId, coffee_bean = :coffeeBean,\n" +
+                "coffee_grinder = :coffeeGrinder, coffee_grinder_level = :coffeeGrinderLevel,\n" +
+                "gadget_name = :gadgetName, water_temp = :waterTemp, extra_info = :extraInfo \n" +
+                "WHERE id = :weightExtraRecordId"
+    )
+    fun updateWeightRecordExtraDataById(
+        weightExtraRecordId: Long,
+        weightId: Long,
+        coffeeBean: String?,
+        coffeeGrinder: String?,
+        coffeeGrinderLevel: String?,
+        gadgetName: String?,
+        waterTemp: String?,
+        extraInfo: String?,
+    )
+
+    @Query(
         "SELECT id, weight_id, coffee_bean, coffee_grinder, coffee_grinder_level,\n " +
                 "gadget_name, water_temp, extra_info\n" +
                 "FROM weight_history_extra \n" +
                 "WHERE weight_id = :weightRecordId"
     )
     fun getOneWeightRecordExtraDataByWeightId(weightRecordId: Long): WeightRecordInfoTupleExtra
+
+    @Query(
+        "SELECT DISTINCT coffee_bean FROM weight_history_extra ORDER BY coffee_bean"
+    )
+    fun getDistinctCoffeeBeans(): List<WeightRecordInfoTupleBeans>
+
+    @Query(
+        "SELECT DISTINCT coffee_grinder FROM weight_history_extra ORDER BY coffee_grinder"
+    )
+    fun getDistinctGrinders(): List<WeightRecordInfoTupleGrinders>
+
+    @Query(
+        "SELECT DISTINCT coffee_grinder_level FROM weight_history_extra ORDER BY coffee_grinder_level"
+    )
+    fun getDistinctGrinderLevels(): List<WeightRecordInfoTupleGrindLevels>
+
+    @Query(
+        "SELECT DISTINCT gadget_name FROM weight_history_extra ORDER BY gadget_name"
+    )
+    fun getDistinctGadgets(): List<WeightRecordInfoTupleGadgets>
+
+    @Query(
+        "SELECT DISTINCT water_temp FROM weight_history_extra ORDER BY water_temp"
+    )
+    fun getDistinctWaterTemps(): List<WeightRecordInfoTupleWaterTemps>
 
     @Query("DELETE FROM weight_history_extra WHERE id = :weightExtraRecordId")
     fun deleteWeightRecordExtraDataById(weightExtraRecordId: Long)
@@ -285,9 +348,57 @@ class WeightRecordRepositoryExtra(private val weightRecordExtraDao: WeightRecord
         }
     }
 
+    suspend fun updateWeightRecordExtraDataById(
+        weightExtraRecordId: Long,
+        weightRecordDbEntityExtra: WeightRecordDbEntityExtra
+    ) {
+        return withContext(Dispatchers.IO) {
+            return@withContext weightRecordExtraDao.updateWeightRecordExtraDataById(
+                weightExtraRecordId,
+                weightRecordDbEntityExtra.weightId,
+                weightRecordDbEntityExtra.coffeeBean,
+                weightRecordDbEntityExtra.coffeeGrinder,
+                weightRecordDbEntityExtra.coffeeGrinderLevel,
+                weightRecordDbEntityExtra.gadgetName,
+                weightRecordDbEntityExtra.waterTemp,
+                weightRecordDbEntityExtra.extraInfo
+            )
+        }
+    }
+
     suspend fun getOneWeightRecordExtraDataByWeightId(id: Long): WeightRecordInfoTupleExtra {
         return withContext(Dispatchers.IO) {
             return@withContext weightRecordExtraDao.getOneWeightRecordExtraDataByWeightId(id)
+        }
+    }
+
+    suspend fun getDistinctCoffeeBeans(): List<WeightRecordInfoTupleBeans> {
+        return withContext(Dispatchers.IO) {
+            return@withContext weightRecordExtraDao.getDistinctCoffeeBeans()
+        }
+    }
+
+    suspend fun getDistinctGrinders(): List<WeightRecordInfoTupleGrinders> {
+        return withContext(Dispatchers.IO) {
+            return@withContext weightRecordExtraDao.getDistinctGrinders()
+        }
+    }
+
+    suspend fun getDistinctGrinderLevels(): List<WeightRecordInfoTupleGrindLevels> {
+        return withContext(Dispatchers.IO) {
+            return@withContext weightRecordExtraDao.getDistinctGrinderLevels()
+        }
+    }
+
+    suspend fun getDistinctGadgets(): List<WeightRecordInfoTupleGadgets> {
+        return withContext(Dispatchers.IO) {
+            return@withContext weightRecordExtraDao.getDistinctGadgets()
+        }
+    }
+
+    suspend fun getDistinctWaterTemps(): List<WeightRecordInfoTupleWaterTemps> {
+        return withContext(Dispatchers.IO) {
+            return@withContext weightRecordExtraDao.getDistinctWaterTemps()
         }
     }
 
