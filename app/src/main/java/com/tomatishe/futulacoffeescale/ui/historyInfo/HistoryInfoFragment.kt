@@ -29,6 +29,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class HistoryInfoFragment : Fragment() {
+    private fun String.replaceLast(oldValue: String, newValue: String): String {
+        val lastIndex = lastIndexOf(oldValue)
+        if (lastIndex == -1) {
+            return this
+        }
+        val prefix = substring(0, lastIndex)
+        val suffix = substring(lastIndex + oldValue.length)
+        return "$prefix$newValue$suffix"
+    }
 
     private var _binding: FragmentHistoryInfoBinding? = null
     private val binding get() = _binding!!
@@ -211,7 +220,11 @@ class HistoryInfoFragment : Fragment() {
         weightUnit = brewData.weightUnit
         flowRateAvg = brewData.flowRateAvg
         flowRate = brewData.flowRate
-        timeString = brewData.timeString
+        timeString = if (brewData.timeString.count { it == ':' } == 2) {
+            brewData.timeString.replaceLast(":", ".")
+        } else {
+            brewData.timeString
+        }
         brewRatioString = brewData.brewRatioString
 
         try {

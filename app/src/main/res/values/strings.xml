@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">Futula Coffee Scale</string>
     <string name="nav_header_title">Futula Coffee Scale</string>
-    <string name="nav_header_subtitle">0.9.3</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_save">Save</string>
     <string name="action_saved">Saved brew to history</string>
@@ -56,4 +55,19 @@
     <string name="action_updated_extra">Updated extra data</string>
     <string name="action_deleted_extra">Deleted extra data</string>
     <string name="extra_save_button_alt">Update</string>
+    <string name="weight_text_locked">🔒 Weight</string>
+    <string name="dose_edit_hint">0.0</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">CANCEL</string>
+    <string name="dose_edit_title">Edit dose</string>
+    <string name="menu_about">About...</string>
+    <string name="nav_header_subtitle">For Futula Kitchen Scale 3</string>
+    <string name="app_version_label">Application version</string>
+    <string name="app_link_label">Latest release</string>
+    <string name="app_idea_label">Original idea</string>
+    <string name="app_author_label">Created by</string>
+    <string name="location_permission_required">Location permission required</string>
+    <string name="bluetooth_permission_required">Bluetooth permission required</string>
+    <string name="location_permission_required_text">Starting from Android M (6.0), the system requires apps to be granted location access in order to scan for BLE devices.</string>
+    <string name="bluetooth_permission_required_text">Starting from Android 12, the system requires apps to be granted Bluetooth access in order to scan for and connect to BLE devices.</string>
 </resources>

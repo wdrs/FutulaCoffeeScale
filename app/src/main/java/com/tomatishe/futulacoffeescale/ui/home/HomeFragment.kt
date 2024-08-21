@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -16,8 +17,12 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartAnimationType
@@ -59,6 +64,7 @@ import java.util.Date
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
+
 private const val SCALE_NAME = "LFSmart Scale"
 private const val scaleServiceUuidString = "0000fff0-0000-1000-8000-00805f9b34fb"
 private const val scaleSendCommandUuidString = "0000fff1-0000-1000-8000-00805f9b34fb"
@@ -78,6 +84,36 @@ private const val deviceFirmwareRevisionUuidString = "00002a26-0000-1000-8000-00
 private const val deviceSystemIDUuidString = "00002a23-0000-1000-8000-00805f9b34fb" */
 
 class HomeFragment : Fragment() {
+
+    abstract class DoubleClickListener : View.OnClickListener {
+        var lastClickTime: Long = 0
+
+        override fun onClick(v: View?) {
+            val clickTime = System.currentTimeMillis()
+            if (clickTime - lastClickTime < DOUBLE_CLICK_TIME_DELTA) {
+                onDoubleClick(v)
+            }
+            lastClickTime = clickTime
+        }
+
+        abstract fun onDoubleClick(v: View?)
+
+        companion object {
+            //milliseconds
+            private const val DOUBLE_CLICK_TIME_DELTA: Long = 300
+        }
+    }
+
+    private fun String.replaceLast(oldValue: String, newValue: String): String {
+        val lastIndex = lastIndexOf(oldValue)
+        if (lastIndex == -1) {
+            return this
+        }
+        val prefix = substring(0, lastIndex)
+        val suffix = substring(lastIndex + oldValue.length)
+        return "$prefix$newValue$suffix"
+    }
+
     private var mRootView: View? = null
     private var _binding: FragmentHomeBinding? = null
 
@@ -93,6 +129,8 @@ class HomeFragment : Fragment() {
                 doseText.text = "%.1f".format(doseRecord)
             }
         }
+
+    private var weightRecordLocked: Float = 0.0F
     private var weightRecord: Float = 0.0F
         set(value) {
             field = value
@@ -143,7 +181,11 @@ class HomeFragment : Fragment() {
         set(value) {
             field = value
             activity?.runOnUiThread {
-                timeText.text = timeString
+                if (timeString.count { it == ':' } == 2) {
+                    timeText.text = timeString.replaceLast(":", ".")
+                } else {
+                    timeText.text = timeString
+                }
             }
         }
     private var brewRatioString: String = "1:0,0"
@@ -283,10 +325,17 @@ class HomeFragment : Fragment() {
                                 1.0
                             }
                         }
-                        weightRecord =
-                            (intFrom2ByteArray(value.sliceArray(3..4)).toFloat() / 10) * weightSign.toFloat() * weightUnitMultiplier.toFloat()
+                        if (isWeightLocked) {
+                            weightRecord = weightRecordLocked
+                        } else {
+                            weightRecord =
+                                (intFrom2ByteArray(value.sliceArray(3..4)).toFloat() / 10) * weightSign.toFloat() * weightUnitMultiplier.toFloat()
+                        }
                     } catch (exception: Exception) {
-                        Log.d("ERROR", "Connection to ${peripheral.name} failed while observing weight")
+                        Log.d(
+                            "ERROR",
+                            "Connection to ${peripheral.name} failed while observing weight"
+                        )
                         isConnected = false
                         isScanning = false
                         if (isTimerWorking && !isTimerPaused && stopTimerWhenLostConnectionChecked) {
@@ -302,7 +351,10 @@ class HomeFragment : Fragment() {
                         batteryLevel = value.asUInt8()?.toInt()!!
                         Log.d("INFO", "BATTERY = ${batteryLevel}")
                     } catch (exception: Exception) {
-                        Log.d("ERROR", "Connection to ${peripheral.name} failed while observing battery")
+                        Log.d(
+                            "ERROR",
+                            "Connection to ${peripheral.name} failed while observing battery"
+                        )
                         isConnected = false
                         isScanning = false
                         if (isTimerWorking && !isTimerPaused && stopTimerWhenLostConnectionChecked) {
@@ -582,6 +634,19 @@ class HomeFragment : Fragment() {
 
     private var showFlowRateAvg = false
     private var isDoseBecameFinish = false
+    private var isWeightLocked = false
+        set(value) {
+            field = value
+            activity?.runOnUiThread {
+                if (isWeightLocked) {
+                    weightLabel.text = getString(R.string.weight_text_locked)
+                    weightRecordLocked = weightRecord
+                } else {
+                    weightLabel.text = getString(R.string.weight_text)
+                    weightRecordLocked = 0.0F
+                }
+            }
+        }
 
     private var autoFuncSettingsSwitchChecked = true
     private var autoStartSettingsSwitchChecked = true
@@ -693,6 +758,8 @@ class HomeFragment : Fragment() {
     private fun resetValues() {
         doseRecord = 0.0F
         weightRecord = 0.0F
+        weightRecordLocked = 0.0F
+        isWeightLocked = false
         weightLog = mutableListOf<Float>()
         weightLogSecond = mutableListOf<Float>()
         weightLogGraphData = AASeriesElement().name("Weight").data(weightLogSecond.toTypedArray())
@@ -838,6 +905,14 @@ class HomeFragment : Fragment() {
             }
         }
 
+        weightLabel.setOnClickListener {
+            isWeightLocked = !isWeightLocked
+        }
+
+        weightText.setOnClickListener {
+            isWeightLocked = !isWeightLocked
+        }
+
         timeText = binding.timeText
         brewRatioText = binding.brewRatioText
 
@@ -948,6 +1023,51 @@ class HomeFragment : Fragment() {
             doseButton.isEnabled = false
         }
 
+        val manualDoseTextField = EditText(requireActivity())
+        manualDoseTextField.inputType =
+            android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+        manualDoseTextField.hint = getString(R.string.dose_edit_hint)
+
+        val manualDoseDialog = AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.dose_edit_title))
+            //.setMessage("Message")
+            .setView(manualDoseTextField)
+            .setPositiveButton(getString(R.string.dialog_ok)) { _, _ ->
+                doseRecord = manualDoseTextField.text.toString().toFloat()
+                if (autoDoseSettingsSwitchChecked && autoDoseSwitch.isChecked) {
+                    autoDoseSwitch.isChecked = false
+                }
+                if (weightLog.size > 0 && weightLog.last() > 0 && doseRecord > 0) {
+                    val percentRatio = weightLog.last() / doseRecord
+                    brewRatioString = "1:${"%.1f".format(percentRatio)}"
+                }
+            }
+            .setNegativeButton(getString(R.string.dialog_cancel), null)
+            .create()
+
+        val computedMargin =
+            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, resources.displayMetrics)
+                .toInt()
+
+        doseText.setOnClickListener(object : DoubleClickListener() {
+            override fun onDoubleClick(v: View?) {
+                manualDoseDialog.show()
+                manualDoseTextField.updateLayoutParams<FrameLayout.LayoutParams> {
+                    this.leftMargin = computedMargin
+                    this.rightMargin = computedMargin
+                }
+            }
+        })
+        doseLabel.setOnClickListener(object : DoubleClickListener() {
+            override fun onDoubleClick(v: View?) {
+                manualDoseDialog.show()
+                manualDoseTextField.updateLayoutParams<FrameLayout.LayoutParams> {
+                    this.leftMargin = computedMargin
+                    this.rightMargin = computedMargin
+                }
+            }
+        })
+
         activity?.runOnUiThread {
             GlobalScope.launch {
                 autoFuncSettingsSwitchChecked = DataCoordinator.shared.getAutoAll()
@@ -958,10 +1078,12 @@ class HomeFragment : Fragment() {
                 autoHideSwitchesSettingsSwitchChecked = DataCoordinator.shared.getAutoSwitches()
                 autoHideButtonsSettingsSwitchChecked = DataCoordinator.shared.getAutoButtons()
                 replaceResetWithTareSwitchChecked = DataCoordinator.shared.getReplaceResetWithTare()
-                stopTimerWhenLostConnectionChecked = DataCoordinator.shared.getStopTimerWhenLostConnection()
+                stopTimerWhenLostConnectionChecked =
+                    DataCoordinator.shared.getStopTimerWhenLostConnection()
                 startSearchAfterLaunchChecked = DataCoordinator.shared.getStartSearchAfterLaunch()
                 isSettingsLoaded = true
             }
+
         }
 
         return mRootView as View

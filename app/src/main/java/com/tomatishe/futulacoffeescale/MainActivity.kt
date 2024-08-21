@@ -64,9 +64,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestLocationPermission() = runOnUiThread {
-        AlertDialog.Builder(this).setTitle("Location permission required").setMessage(
-            "Starting from Android M (6.0), the system requires apps to be granted " + "location access in order to scan for BLE devices."
-        ).setCancelable(false).setPositiveButton(android.R.string.ok) { _, _ ->
+        AlertDialog.Builder(this).setTitle(getString(R.string.location_permission_required))
+            .setMessage(
+                getString(R.string.location_permission_required_text)
+            ).setCancelable(false).setPositiveButton(android.R.string.ok) { _, _ ->
             ActivityCompat.requestPermissions(
                 this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), PERMISSION_REQUEST_CODE
             )
@@ -74,9 +75,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestBluetoothPermissions() = runOnUiThread {
-        AlertDialog.Builder(this).setTitle("Bluetooth permission required").setMessage(
-            "Starting from Android 12, the system requires apps to be granted " + "Bluetooth access in order to scan for and connect to BLE devices."
-        ).setCancelable(false).setPositiveButton(android.R.string.ok) { _, _ ->
+        AlertDialog.Builder(this).setTitle(getString(R.string.bluetooth_permission_required))
+            .setMessage(
+                getString(R.string.bluetooth_permission_required_text)
+            ).setCancelable(false).setPositiveButton(android.R.string.ok) { _, _ ->
             ActivityCompat.requestPermissions(
                 this, arrayOf(
                     Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT
@@ -134,7 +136,7 @@ class MainActivity : AppCompatActivity() {
         DataCoordinator.shared.initialize(
             context = applicationContext,
             onLoad = {
-                Log.d("INFO","LOADED DATASTORE")
+                Log.d("INFO", "LOADED DATASTORE")
             }
         )
 
@@ -152,7 +154,7 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_history, R.id.nav_settings
+                R.id.nav_home, R.id.nav_history, R.id.nav_settings, R.id.nav_about
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -163,7 +165,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
+    // Inflate the menu; this adds items to the action bar if it is present.
     //     menuInflater.inflate(R.menu.main, menu)
     //     return true
     // }
@@ -172,7 +174,7 @@ class MainActivity : AppCompatActivity() {
         try {
             GlobalScope.cancel()
         } catch (exception: Exception) {
-            Log.d("INFO","NO ACTIVE ACTIVITY, IGNORE")
+            Log.d("INFO", "NO ACTIVE ACTIVITY, IGNORE")
         }
         super.onDestroy()
     }

@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Futula Coffee Scale</string>
     <string name="nav_header_title">Futula Coffee Scale</string>
-    <string name="nav_header_subtitle">0.9.3</string>
+    <string name="nav_header_subtitle">Для Futula Kitchen Scale 3</string>
     <string name="nav_header_desc">Панель навигации</string>
     <string name="action_save">Сохранить</string>
     <string name="action_saved">Сохранено в историю</string>
@@ -56,4 +56,18 @@
     <string name="action_updated_extra">Данные обновлены</string>
     <string name="action_deleted_extra">Данные удалены</string>
     <string name="extra_save_button_alt">Обновить</string>
+    <string name="weight_text_locked">🔒 Вес</string>
+    <string name="dose_edit_hint">0.0</string>
+    <string name="dialog_ok">ОК</string>
+    <string name="dialog_cancel">ОТМЕНА</string>
+    <string name="dose_edit_title">Ввести дозу</string>
+    <string name="menu_about">О программе...</string>
+    <string name="app_version_label">Версия приложения</string>
+    <string name="app_link_label">Последний релиз</string>
+    <string name="app_idea_label">Автор идеи</string>
+    <string name="app_author_label">Автор приложения</string>
+    <string name="location_permission_required">Требуются права на местоположение</string>
+    <string name="bluetooth_permission_required">Требуются права на Bluetooth</string>
+    <string name="location_permission_required_text">Начиная с Android M (6.0) система требует, чтобы приложениям был предоставлен доступ к местоположению для сканирования устройств BLE.</string>
+    <string name="bluetooth_permission_required_text">Начиная с Android 12, система требует, чтобы приложениям был предоставлен доступ по Bluetooth для сканирования и подключения к устройствам BLE.</string>
 </resources>
