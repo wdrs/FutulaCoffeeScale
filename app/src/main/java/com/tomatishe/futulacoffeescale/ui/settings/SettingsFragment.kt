@@ -17,6 +17,7 @@ import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoDose
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoStart
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoSwitches
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoTare
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getEnableServerWeight
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getIgnoreDose
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getOneGraphInHistory
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getReplaceResetWithTare
@@ -28,6 +29,7 @@ import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoDo
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoStart
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoSwitches
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoTare
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateEnableServerWeight
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateIgnoreDose
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateOneGraphInHistory
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateReplaceResetWithTare
@@ -62,6 +64,7 @@ class SettingsFragment : Fragment() {
     private lateinit var stopTimerWhenLostConnectionSwitch: MaterialSwitch
     private lateinit var startSearchAfterLaunchSwitch: MaterialSwitch
     private lateinit var showOneGraphInHistorySwitch: MaterialSwitch
+    private lateinit var enableServerWeightSwitch: MaterialSwitch
 
     private var _binding: FragmentSettingsBinding? = null
 
@@ -80,6 +83,7 @@ class SettingsFragment : Fragment() {
     private var stopTimerWhenLostConnectionChecked = true
     private var startSearchAfterLaunchChecked = false
     private var oneGraphInHistory = false
+    private var enableServerWeightChecked = false
 
     private var isSettingsLoaded = false
         set(value) {
@@ -101,6 +105,7 @@ class SettingsFragment : Fragment() {
                             stopTimerWhenLostConnectionChecked
                         startSearchAfterLaunchSwitch.isChecked = startSearchAfterLaunchChecked
                         showOneGraphInHistorySwitch.isChecked = oneGraphInHistory
+                        enableServerWeightSwitch.isChecked = enableServerWeightChecked
 
                         if (autoStartSettingsSwitch.isChecked) {
                             ignoreDoseLayout.visibility = View.VISIBLE
@@ -144,6 +149,7 @@ class SettingsFragment : Fragment() {
                     DataCoordinator.shared.getStopTimerWhenLostConnection()
                 startSearchAfterLaunchChecked = DataCoordinator.shared.getStartSearchAfterLaunch()
                 oneGraphInHistory = DataCoordinator.shared.getOneGraphInHistory()
+                enableServerWeightChecked = DataCoordinator.shared.getEnableServerWeight()
                 isSettingsLoaded = true
             }
         }
@@ -176,6 +182,7 @@ class SettingsFragment : Fragment() {
         stopTimerWhenLostConnectionSwitch = binding.stopTimerWhenLostConnectionSwitch
         startSearchAfterLaunchSwitch = binding.startSearchAfterLaunchSwitch
         showOneGraphInHistorySwitch = binding.showOneGraphInHistorySwitch
+        enableServerWeightSwitch = binding.enableServerWeightSwitch
 
         autoFuncSettingsSwitch.setOnClickListener {
             DataCoordinator.shared.updateAutoAll(autoFuncSettingsSwitch.isChecked)
@@ -251,6 +258,12 @@ class SettingsFragment : Fragment() {
         showOneGraphInHistorySwitch.setOnClickListener {
             DataCoordinator.shared.updateOneGraphInHistory(
                 showOneGraphInHistorySwitch.isChecked
+            )
+        }
+
+        enableServerWeightSwitch.setOnClickListener {
+            DataCoordinator.shared.updateEnableServerWeight(
+                enableServerWeightSwitch.isChecked
             )
         }
 

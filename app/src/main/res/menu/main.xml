@@ -2,9 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_server"
+        android:orderInCategory="1"
+        android:title="@string/button_reset"
+        android:icon="@drawable/outline_filter_alt_24"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/action_reset"
         android:orderInCategory="10"
-        android:title="@string/action_save"
+        android:title="@string/button_reset"
         android:icon="@drawable/baseline_restart_alt_24"
         app:showAsAction="ifRoom" />
     <item

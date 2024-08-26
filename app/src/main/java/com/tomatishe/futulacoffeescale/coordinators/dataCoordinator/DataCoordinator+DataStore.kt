@@ -166,3 +166,18 @@ suspend fun DataCoordinator.setOneGraphInHistory(value: Boolean) {
         preferences[PreferencesKeys.oneGraphInHistory] = value
     }
 }
+
+// ---
+
+suspend fun DataCoordinator.getEnableServerWeight(): Boolean {
+    val context = this.context ?: return defaultEnableServerWeight
+    return context.dataStore.data.firstOrNull()?.get(PreferencesKeys.enableServerWeight)
+        ?: defaultEnableServerWeight
+}
+
+suspend fun DataCoordinator.setEnableServerWeight(value: Boolean) {
+    val context = this.context ?: return
+    context.dataStore.edit { preferences ->
+        preferences[PreferencesKeys.enableServerWeight] = value
+    }
+}

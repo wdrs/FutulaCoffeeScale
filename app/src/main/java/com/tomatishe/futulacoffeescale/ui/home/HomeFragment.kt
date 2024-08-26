@@ -22,6 +22,8 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.get
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -42,6 +44,7 @@ import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoDose
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoStart
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoSwitches
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoTare
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getEnableServerWeight
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getIgnoreDose
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getReplaceResetWithTare
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getStartSearchAfterLaunch
@@ -161,6 +164,7 @@ class HomeFragment : Fragment() {
     private var weightLogSecond = mutableListOf<Float>()
     private var weightLogGraphData =
         AASeriesElement().name("Weight").data(weightLogSecond.toTypedArray())
+    private var serverWeight: Float = 0.0F
     private var flowRate: Float = 0.0F
         set(value) {
             field = value
@@ -664,6 +668,7 @@ class HomeFragment : Fragment() {
                 startBleScan()
             }
         }
+    private var enableServerWeightChecked = false
 
     private var isSettingsLoaded = false
         set(value) {
@@ -847,10 +852,39 @@ class HomeFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.main, menu)
+        GlobalScope.launch {
+            enableServerWeightChecked = DataCoordinator.shared.getEnableServerWeight()
+            Handler(Looper.getMainLooper()).post {
+                menu.findItem(R.id.action_server).isVisible = enableServerWeightChecked
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            R.id.action_server -> {
+                if (serverWeight == 0.0F) {
+                    if (weightRecord > 0) {
+                        serverWeight = weightRecord
+                        Handler(Looper.getMainLooper()).post {
+                            item.setIcon(R.drawable.baseline_filter_alt_24)
+                        }
+                    }
+                } else {
+                    weightRecord += doseRecord + serverWeight
+                    isWeightLocked = true
+                    serverWeight = 0.0F
+                    if (weightRecord > 0 && doseRecord > 0) {
+                        val percentRatio = weightRecord / doseRecord
+                        brewRatioString = "1:${"%.1f".format(percentRatio)}"
+                    }
+                    Handler(Looper.getMainLooper()).post {
+                        item.setIcon(R.drawable.outline_filter_alt_24)
+                    }
+                }
+                true
+            }
+
             R.id.action_save -> {
                 GlobalScope.launch {
                     saveCurrentBrew()

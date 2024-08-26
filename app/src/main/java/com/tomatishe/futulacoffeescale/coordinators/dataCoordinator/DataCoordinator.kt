@@ -38,6 +38,8 @@ class DataCoordinator {
     val defaultStartSearchAfterLaunch: Boolean = false
     var oneGraphInHistory: Boolean = false
     val defaultOneGraphInHistory: Boolean = false
+    var enableServerWeight: Boolean = false
+    val defaultEnableServerWeight: Boolean = false
 
     // MARK: Data Store Variables
     private val USER_PREFERENCES_NAME = "fCoffeeScapePreferences"
@@ -63,6 +65,7 @@ class DataCoordinator {
             stopTimerWhenLostConnection = getStopTimerWhenLostConnection()
             startSearchAfterLaunch = getStartSearchAfterLaunch()
             oneGraphInHistory = getOneGraphInHistory()
+            enableServerWeight = getEnableServerWeight()
             // Callback
             onLoad()
         }

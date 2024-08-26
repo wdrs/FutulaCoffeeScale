@@ -125,3 +125,14 @@ fun DataCoordinator.updateOneGraphInHistory(value: Boolean) {
         // OPTIONAL - Send Broadcast
     }
 }
+
+fun DataCoordinator.updateEnableServerWeight(value: Boolean) {
+    // Update Value
+    this.enableServerWeight = value
+    // Save to System
+    GlobalScope.launch(Dispatchers.Default) {
+        // Update DataStore
+        setEnableServerWeight(value)
+        // OPTIONAL - Send Broadcast
+    }
+}
