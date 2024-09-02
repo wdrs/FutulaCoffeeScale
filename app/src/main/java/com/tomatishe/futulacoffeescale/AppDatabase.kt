@@ -293,7 +293,7 @@ object Dependencies {
                 "CREATE TABLE IF NOT EXISTS `weight_history_extra`" +
                         "(`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `weight_id` INTEGER NOT NULL," +
                         " `coffee_bean` TEXT, `coffee_grinder` TEXT, `coffee_grinder_level` TEXT," +
-                        " `gadget_name` TEXT, `water_temp` TEXT, `extra_info` TEXT, `coffee_roaster` TEXT," +
+                        " `gadget_name` TEXT, `water_temp` TEXT, `extra_info` TEXT," +
                         " FOREIGN KEY(`weight_id`) REFERENCES `weight_history`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )"
             )
         }
