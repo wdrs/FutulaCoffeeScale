@@ -20,6 +20,7 @@ navigationUiKtx = "2.7.7"
 timerx = "3.1.0"
 legacySupportV4 = "1.0.0"
 fragmentKtx = "1.8.1"
+roomRxjava2 = "2.6.1"
 
 [libraries]
 aachartcore-kotlin = { module = "com.github.AAChartModel:AAChartCore-Kotlin", version.ref = "aachartcoreKotlin" }
@@ -44,6 +45,7 @@ androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation
 timerx = { module = "com.github.arsvechkarev:TimerX", version.ref = "timerx" }
 androidx-legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupportV4" }
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
+androidx-room-rxjava2 = { group = "androidx.room", name = "room-rxjava2", version.ref = "roomRxjava2" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

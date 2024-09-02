@@ -3,6 +3,8 @@ package com.tomatishe.futulacoffeescale.ui.history
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -10,7 +12,10 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.EmptyResultSetException
+import com.google.android.material.snackbar.Snackbar
 import com.tomatishe.futulacoffeescale.Dependencies
+import com.tomatishe.futulacoffeescale.R
 import com.tomatishe.futulacoffeescale.databinding.FragmentHistoryBinding
 import com.tomatishe.futulacoffeescale.databinding.ItemWeightDataBinding
 import kotlinx.coroutines.CoroutineScope
@@ -53,18 +58,18 @@ class WeightAdapter : RecyclerView.Adapter<WeightAdapter.WeightViewHolder>() {
         val wData = data[position]
         val context = holder.itemView.context
         with(holder.binding) {
-            dateTextView.text = wData.dateString
+            dateTextBlock.text = wData.dateString
+            dateTextView.text = wData.summaryString
             deleteImageView.setOnClickListener {
                 scope.launch {
-                    Dependencies.weightRecordRepository.deleteWeightRecordDataById(wData.id)
-                    val checkIfGotExtra =
-                        Dependencies.weightRecordRepositoryExtra.getOneWeightRecordExtraDataByWeightId(
-                            wData.id
-                        )
-                    if (checkIfGotExtra != null) {
+                    try {
                         Dependencies.weightRecordRepositoryExtra.deleteWeightRecordExtraDataByWeightId(
                             wData.id
                         )
+                    } catch (_: Exception) {
+
+                    } finally {
+                        Dependencies.weightRecordRepository.deleteWeightRecordDataById(wData.id)
                     }
                 }
                 data.removeAt(position)
@@ -107,23 +112,57 @@ class HistoryFragment : Fragment() {
     private fun getWeightData() {
         scope.launch {
             val weightRecords = Dependencies.weightRecordRepository.getAllWeightRecordData()
-
             for (weightRecord in weightRecords) {
+                var sumString = ""
                 val currId = weightRecord.id
                 val backToDate: Date = Date(weightRecord.brewDate)
+                val dateBlockFormat = SimpleDateFormat("dd.MM")
                 val dateFormat = SimpleDateFormat("yyyy.MM.dd HH:mm:ss")
                 val flowRateAvgString = "%.1f".format(weightRecord.flowRateAvg)
                 val weightRecordString = "%.1f".format(weightRecord.weightRecord)
-                val sumString =
-                    "T: ${weightRecord.timeString} FR: ${flowRateAvgString} W: ${weightRecordString} ${weightRecord.weightUnit}"
+                val currInfoRecord =
+                    Dependencies.weightRecordRepositoryExtra.getOneWeightRecordExtraDataByWeightId(
+                        weightRecord.id
+                    )
+                if (currInfoRecord != null) {
+                    if (currInfoRecord.coffeeBean != null && currInfoRecord.coffeeBean.length > 0) {
+                        sumString = currInfoRecord.coffeeBean
+                    }
+                    if (currInfoRecord.coffeeRoaster != null && currInfoRecord.coffeeRoaster.length > 0) {
+                        if (sumString.isNotEmpty()) {
+                            sumString += " | " + currInfoRecord.coffeeRoaster
+                        } else {
+                            sumString = currInfoRecord.coffeeRoaster
+                        }
+                    }
+                    if (currInfoRecord.gadgetName != null && currInfoRecord.gadgetName.length > 0) {
+                        if (sumString.isNotEmpty()) {
+                            sumString += " | " + currInfoRecord.gadgetName
+                        } else {
+                            sumString = currInfoRecord.gadgetName
+                        }
+                    }
+                }
+                if (sumString.length == 0) {
+                    sumString = dateFormat.format(backToDate)
+                }
                 val currRecord: wRecord = wRecord(
-                    currId, dateFormat.format(backToDate), sumString
+                    currId, dateBlockFormat.format(backToDate), sumString
                 )
                 weightRecordsListData.add(currRecord)
             }
 
             gotHistory = true
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.history, menu)
     }
 
     override fun onCreateView(

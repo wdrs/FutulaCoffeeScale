@@ -71,4 +71,6 @@
     <string name="location_permission_required_text">Начиная с Android M (6.0) система требует, чтобы приложениям был предоставлен доступ к местоположению для сканирования устройств BLE.</string>
     <string name="bluetooth_permission_required_text">Начиная с Android 12, система требует, чтобы приложениям был предоставлен доступ по Bluetooth для сканирования и подключения к устройствам BLE.</string>
     <string name="enable_server_weight">Включить сохранение веса воронки</string>
+    <string name="coffee_roaster">Обжарщик</string>
+    <string name="search_in_history">Поиск...</string>
 </resources>

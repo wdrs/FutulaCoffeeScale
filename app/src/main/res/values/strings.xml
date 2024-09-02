@@ -71,4 +71,6 @@
     <string name="location_permission_required_text">Starting from Android M (6.0), the system requires apps to be granted location access in order to scan for BLE devices.</string>
     <string name="bluetooth_permission_required_text">Starting from Android 12, the system requires apps to be granted Bluetooth access in order to scan for and connect to BLE devices.</string>
     <string name="enable_server_weight">Enable saving dripper weight</string>
+    <string name="coffee_roaster">Coffe Roaster</string>
+    <string name="search_in_history">Search...</string>
 </resources>

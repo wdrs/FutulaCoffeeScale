@@ -21,6 +21,7 @@ import com.tomatishe.futulacoffeescale.WeightRecordInfoTupleExtra
 import com.tomatishe.futulacoffeescale.WeightRecordInfoTupleGadgets
 import com.tomatishe.futulacoffeescale.WeightRecordInfoTupleGrindLevels
 import com.tomatishe.futulacoffeescale.WeightRecordInfoTupleGrinders
+import com.tomatishe.futulacoffeescale.WeightRecordInfoTupleRoasters
 import com.tomatishe.futulacoffeescale.WeightRecordInfoTupleWaterTemps
 import com.tomatishe.futulacoffeescale.databinding.FragmentHistoryExtraBinding
 import kotlinx.coroutines.GlobalScope
@@ -36,6 +37,7 @@ class HistoryExtraFragment : Fragment() {
     private var historyRecordId: Long? = -1
 
     private lateinit var coffeeBeanDataAuto: AppCompatAutoCompleteTextView
+    private lateinit var coffeeRoastDataAuto: AppCompatAutoCompleteTextView
     private lateinit var coffeeGrinderDataAuto: AppCompatAutoCompleteTextView
     private lateinit var coffeeGrinderLevelAuto: AppCompatAutoCompleteTextView
     private lateinit var gadgetNameAuto: AppCompatAutoCompleteTextView
@@ -60,6 +62,7 @@ class HistoryExtraFragment : Fragment() {
     private suspend fun deleteCurrentExtraData() {
         Handler(Looper.getMainLooper()).post {
             coffeeBeanDataAuto.text = null
+            coffeeRoastDataAuto.text = null
             coffeeGrinderDataAuto.text = null
             coffeeGrinderLevelAuto.text = null
             gadgetNameAuto.text = null
@@ -87,6 +90,7 @@ class HistoryExtraFragment : Fragment() {
             gadgetNameAuto.text.toString(),
             waterTempAuto.text.toString(),
             extraInfoAuto.text.toString(),
+            coffeeRoastDataAuto.text.toString()
         )
         if (currentExtraId >= 0) {
             Dependencies.weightRecordRepositoryExtra.updateWeightRecordExtraDataById(
@@ -110,7 +114,8 @@ class HistoryExtraFragment : Fragment() {
                 com.tomatishe.futulacoffeescale.R.string.action_saved_extra,
                 Snackbar.LENGTH_SHORT
             ).setAnchorView(binding.divider4).show()
-            saveButton.text = getString(com.tomatishe.futulacoffeescale.R.string.extra_save_button_alt)
+            saveButton.text =
+                getString(com.tomatishe.futulacoffeescale.R.string.extra_save_button_alt)
         }
     }
 
@@ -137,6 +142,8 @@ class HistoryExtraFragment : Fragment() {
                     )
                 val beanListData: List<WeightRecordInfoTupleBeans> =
                     Dependencies.weightRecordRepositoryExtra.getDistinctCoffeeBeans()
+                val roasterListData: List<WeightRecordInfoTupleRoasters> =
+                    Dependencies.weightRecordRepositoryExtra.getDistinctCoffeeRoasters()
                 val grinderListData: List<WeightRecordInfoTupleGrinders> =
                     Dependencies.weightRecordRepositoryExtra.getDistinctGrinders()
                 val grinderLevelListData: List<WeightRecordInfoTupleGrindLevels> =
@@ -147,12 +154,14 @@ class HistoryExtraFragment : Fragment() {
                     Dependencies.weightRecordRepositoryExtra.getDistinctWaterTemps()
 
                 val beanDataFinal = beanListData?.map { it.coffeeBean }
+                val roasterDataFinal = roasterListData?.map { it.coffeeRoaster }
                 val grinderDataFinal = grinderListData?.map { it.coffeeGrinder }
                 val grinderLevelDataFinal = grinderLevelListData?.map { it.coffeeGrinderLevel }
                 val gadgetDataFinal = gadgetListData?.map { it.gadgetName }
                 val waterTempDataFinal = waterTempListData?.map { it.waterTemp }
 
                 coffeeBeanDataAuto = binding.coffeeBeanDataAuto
+                coffeeRoastDataAuto = binding.coffeeRoastDataAuto
                 coffeeGrinderDataAuto = binding.coffeeGrinderDataAuto
                 coffeeGrinderLevelAuto = binding.coffeeGrinderLevelAuto
                 gadgetNameAuto = binding.gadgetNameAuto
@@ -168,6 +177,15 @@ class HistoryExtraFragment : Fragment() {
                             ArrayAdapter(
                                 binding.root.context,
                                 R.layout.simple_list_item_1, beanDataFinal.toMutableList()
+                            )
+                        )
+                    }
+
+                    if (roasterDataFinal != null) {
+                        coffeeRoastDataAuto.setAdapter(
+                            ArrayAdapter(
+                                binding.root.context,
+                                R.layout.simple_list_item_1, roasterDataFinal.toMutableList()
                             )
                         )
                     }
@@ -213,12 +231,14 @@ class HistoryExtraFragment : Fragment() {
                     currentExtraId = brewDataExtra.id
                     Handler(Looper.getMainLooper()).post {
                         coffeeBeanDataAuto.setText(brewDataExtra.coffeeBean)
+                        coffeeRoastDataAuto.setText(brewDataExtra.coffeeRoaster)
                         coffeeGrinderDataAuto.setText(brewDataExtra.coffeeGrinder)
                         coffeeGrinderLevelAuto.setText(brewDataExtra.coffeeGrinderLevel)
                         gadgetNameAuto.setText(brewDataExtra.gadgetName)
                         waterTempAuto.setText(brewDataExtra.waterTemp)
                         extraInfoAuto.setText(brewDataExtra.extraInfo)
-                        saveButton.text = getString(com.tomatishe.futulacoffeescale.R.string.extra_save_button_alt)
+                        saveButton.text =
+                            getString(com.tomatishe.futulacoffeescale.R.string.extra_save_button_alt)
                     }
                 }
 

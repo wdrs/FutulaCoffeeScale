@@ -50,6 +50,7 @@ data class WeightRecordDbEntityExtra(
     @ColumnInfo(name = "gadget_name") val gadgetName: String?,
     @ColumnInfo(name = "water_temp") val waterTemp: String?,
     @ColumnInfo(name = "extra_info") val extraInfo: String?,
+    @ColumnInfo(name = "coffee_roaster") val coffeeRoaster: String?,
 )
 
 data class WeightRecordInfoTuple(
@@ -75,10 +76,15 @@ data class WeightRecordInfoTupleExtra(
     @ColumnInfo(name = "gadget_name") val gadgetName: String?,
     @ColumnInfo(name = "water_temp") val waterTemp: String?,
     @ColumnInfo(name = "extra_info") val extraInfo: String?,
+    @ColumnInfo(name = "coffee_roaster") val coffeeRoaster: String?,
 )
 
 data class WeightRecordInfoTupleBeans(
     @ColumnInfo(name = "coffee_bean") val coffeeBean: String?,
+)
+
+data class WeightRecordInfoTupleRoasters(
+    @ColumnInfo(name = "coffee_roaster") val coffeeRoaster: String?,
 )
 
 data class WeightRecordInfoTupleGrinders(
@@ -133,6 +139,7 @@ data class WeightRecordExtra(
     val gadgetName: String?,
     val waterTemp: String?,
     val extraInfo: String?,
+    val coffeeRoaster: String?,
 ) {
 
     fun toWeightRecordDbEntityExtra(): WeightRecordDbEntityExtra = WeightRecordDbEntityExtra(
@@ -144,6 +151,7 @@ data class WeightRecordExtra(
         gadgetName = gadgetName,
         waterTemp = waterTemp,
         extraInfo = extraInfo,
+        coffeeRoaster = coffeeRoaster,
     )
 }
 
@@ -180,7 +188,7 @@ interface WeightRecordExtraDao {
 
     @Query(
         "SELECT id, weight_id, coffee_bean, coffee_grinder, coffee_grinder_level,\n " +
-                "gadget_name, water_temp, extra_info\n" +
+                "gadget_name, water_temp, extra_info, coffee_roaster\n" +
                 "FROM weight_history_extra \n" +
                 "ORDER BY id DESC"
     )
@@ -188,7 +196,7 @@ interface WeightRecordExtraDao {
 
     @Query(
         "SELECT id, weight_id, coffee_bean, coffee_grinder, coffee_grinder_level,\n " +
-                "gadget_name, water_temp, extra_info\n" +
+                "gadget_name, water_temp, extra_info, coffee_roaster\n" +
                 "FROM weight_history_extra \n" +
                 "WHERE id = :weightExtraRecordId"
     )
@@ -198,8 +206,8 @@ interface WeightRecordExtraDao {
         "UPDATE weight_history_extra\n" +
                 "SET weight_id = :weightId, coffee_bean = :coffeeBean,\n" +
                 "coffee_grinder = :coffeeGrinder, coffee_grinder_level = :coffeeGrinderLevel,\n" +
-                "gadget_name = :gadgetName, water_temp = :waterTemp, extra_info = :extraInfo \n" +
-                "WHERE id = :weightExtraRecordId"
+                "gadget_name = :gadgetName, water_temp = :waterTemp, extra_info = :extraInfo,\n" +
+                "coffee_roaster = :coffeeRoaster WHERE id = :weightExtraRecordId"
     )
     fun updateWeightRecordExtraDataById(
         weightExtraRecordId: Long,
@@ -210,38 +218,44 @@ interface WeightRecordExtraDao {
         gadgetName: String?,
         waterTemp: String?,
         extraInfo: String?,
+        coffeeRoaster: String?,
     )
 
     @Query(
         "SELECT id, weight_id, coffee_bean, coffee_grinder, coffee_grinder_level,\n " +
-                "gadget_name, water_temp, extra_info\n" +
+                "gadget_name, water_temp, extra_info, coffee_roaster\n" +
                 "FROM weight_history_extra \n" +
                 "WHERE weight_id = :weightRecordId"
     )
     fun getOneWeightRecordExtraDataByWeightId(weightRecordId: Long): WeightRecordInfoTupleExtra
 
     @Query(
-        "SELECT DISTINCT coffee_bean FROM weight_history_extra ORDER BY coffee_bean"
+        "SELECT DISTINCT coffee_bean FROM weight_history_extra WHERE length(coffee_bean)>0 ORDER BY coffee_bean"
     )
     fun getDistinctCoffeeBeans(): List<WeightRecordInfoTupleBeans>
 
     @Query(
-        "SELECT DISTINCT coffee_grinder FROM weight_history_extra ORDER BY coffee_grinder"
+        "SELECT DISTINCT coffee_roaster FROM weight_history_extra WHERE length(coffee_roaster)>0 ORDER BY coffee_roaster"
+    )
+    fun getDistinctCoffeeRoasters(): List<WeightRecordInfoTupleRoasters>
+
+    @Query(
+        "SELECT DISTINCT coffee_grinder FROM weight_history_extra WHERE length(coffee_grinder)>0 ORDER BY coffee_grinder"
     )
     fun getDistinctGrinders(): List<WeightRecordInfoTupleGrinders>
 
     @Query(
-        "SELECT DISTINCT coffee_grinder_level FROM weight_history_extra ORDER BY coffee_grinder_level"
+        "SELECT DISTINCT coffee_grinder_level FROM weight_history_extra WHERE length(coffee_grinder_level)>0 ORDER BY coffee_grinder_level"
     )
     fun getDistinctGrinderLevels(): List<WeightRecordInfoTupleGrindLevels>
 
     @Query(
-        "SELECT DISTINCT gadget_name FROM weight_history_extra ORDER BY gadget_name"
+        "SELECT DISTINCT gadget_name FROM weight_history_extra WHERE length(gadget_name)>0 ORDER BY gadget_name"
     )
     fun getDistinctGadgets(): List<WeightRecordInfoTupleGadgets>
 
     @Query(
-        "SELECT DISTINCT water_temp FROM weight_history_extra ORDER BY water_temp"
+        "SELECT DISTINCT water_temp FROM weight_history_extra WHERE length(water_temp)>0 ORDER BY water_temp"
     )
     fun getDistinctWaterTemps(): List<WeightRecordInfoTupleWaterTemps>
 
@@ -253,7 +267,7 @@ interface WeightRecordExtraDao {
 }
 
 @Database(
-    version = 2,
+    version = 3,
     entities = [
         WeightRecordDbEntity::class,
         WeightRecordDbEntityExtra::class,
@@ -273,13 +287,36 @@ object Dependencies {
         applicationContext = context
     }
 
-    val MIGRATION_1_2: Migration = object : Migration(1, 2) {
+    private val MIGRATION_1_2: Migration = object : Migration(1, 2) {
         override fun migrate(db: SupportSQLiteDatabase) {
             db.execSQL(
                 "CREATE TABLE IF NOT EXISTS `weight_history_extra`" +
                         "(`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `weight_id` INTEGER NOT NULL," +
                         " `coffee_bean` TEXT, `coffee_grinder` TEXT, `coffee_grinder_level` TEXT," +
-                        " `gadget_name` TEXT, `water_temp` TEXT, `extra_info` TEXT," +
+                        " `gadget_name` TEXT, `water_temp` TEXT, `extra_info` TEXT, `coffee_roaster` TEXT," +
+                        " FOREIGN KEY(`weight_id`) REFERENCES `weight_history`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )"
+            )
+        }
+    }
+
+    private val MIGRATION_2_3: Migration = object : Migration(2, 3) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                "ALTER TABLE `weight_history_extra` ADD COLUMN `coffee_roaster` TEXT"
+            )
+            db.execSQL(
+                "UPDATE `weight_history_extra` SET `coffee_roaster`=''"
+            )
+        }
+    }
+
+    private val MIGRATION_1_3: Migration = object : Migration(1, 3) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                "CREATE TABLE IF NOT EXISTS `weight_history_extra`" +
+                        "(`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `weight_id` INTEGER NOT NULL," +
+                        " `coffee_bean` TEXT, `coffee_grinder` TEXT, `coffee_grinder_level` TEXT," +
+                        " `gadget_name` TEXT, `water_temp` TEXT, `extra_info` TEXT, `coffee_roaster` TEXT," +
                         " FOREIGN KEY(`weight_id`) REFERENCES `weight_history`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )"
             )
         }
@@ -288,7 +325,8 @@ object Dependencies {
     private val appDatabase: AppDatabase by lazy {
         Room.databaseBuilder(
             applicationContext, AppDatabase::class.java, "futula_coffee_scale_database.db"
-        ).fallbackToDestructiveMigration().allowMainThreadQueries().addMigrations(MIGRATION_1_2)
+        ).allowMainThreadQueries()
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_1_3)
             .build()
     }
 
@@ -361,7 +399,8 @@ class WeightRecordRepositoryExtra(private val weightRecordExtraDao: WeightRecord
                 weightRecordDbEntityExtra.coffeeGrinderLevel,
                 weightRecordDbEntityExtra.gadgetName,
                 weightRecordDbEntityExtra.waterTemp,
-                weightRecordDbEntityExtra.extraInfo
+                weightRecordDbEntityExtra.extraInfo,
+                weightRecordDbEntityExtra.coffeeRoaster,
             )
         }
     }
@@ -375,6 +414,12 @@ class WeightRecordRepositoryExtra(private val weightRecordExtraDao: WeightRecord
     suspend fun getDistinctCoffeeBeans(): List<WeightRecordInfoTupleBeans> {
         return withContext(Dispatchers.IO) {
             return@withContext weightRecordExtraDao.getDistinctCoffeeBeans()
+        }
+    }
+
+    suspend fun getDistinctCoffeeRoasters(): List<WeightRecordInfoTupleRoasters> {
+        return withContext(Dispatchers.IO) {
+            return@withContext weightRecordExtraDao.getDistinctCoffeeRoasters()
         }
     }
 

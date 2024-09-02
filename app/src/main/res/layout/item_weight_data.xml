@@ -9,13 +9,20 @@
     android:background="@drawable/bg_layout"
     style="@style/BackgroundListStyle">
 
-    <ImageView
-        android:id="@+id/imageView"
+    <TextView
+        android:id="@+id/dateTextBlock"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_marginStart="12dp"
-        style="@style/ImageViewStyle"
-        android:src="@drawable/baseline_monitor_weight_24"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="01.01"
+        android:textColor="@color/white"
+        android:textAlignment="textStart"
+        android:textSize="18sp"
+        android:justificationMode="inter_word"
+        android:maxLines="1"
+        android:elegantTextHeight="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -34,13 +41,11 @@
         android:maxLines="1"
         android:text="Date Time Label"
         android:textAlignment="textStart"
-
-        android:textAllCaps="true"
         android:textColor="@color/white"
-        app:autoSizeTextType="uniform"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/deleteImageView"
-        app:layout_constraintStart_toEndOf="@id/imageView"
+        app:layout_constraintStart_toEndOf="@id/dateTextBlock"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

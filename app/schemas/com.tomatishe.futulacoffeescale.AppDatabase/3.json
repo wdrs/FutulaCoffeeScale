@@ -1,0 +1,174 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 3,
+    "identityHash": "d70e9d1b28bb917d00224f0407501125",
+    "entities": [
+      {
+        "tableName": "weight_history",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `brew_date` INTEGER NOT NULL, `weight_unit` TEXT NOT NULL, `dose_record` REAL NOT NULL, `weight_record` REAL NOT NULL, `weight_log` TEXT NOT NULL, `flow_rate` REAL NOT NULL, `flow_rate_avg` REAL NOT NULL, `flow_rate_log` TEXT NOT NULL, `time_string` TEXT NOT NULL, `brew_ratio_string` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "brewDate",
+            "columnName": "brew_date",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weightUnit",
+            "columnName": "weight_unit",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "doseRecord",
+            "columnName": "dose_record",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weightRecord",
+            "columnName": "weight_record",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weightLog",
+            "columnName": "weight_log",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "flowRate",
+            "columnName": "flow_rate",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "flowRateAvg",
+            "columnName": "flow_rate_avg",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "flowRateLog",
+            "columnName": "flow_rate_log",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timeString",
+            "columnName": "time_string",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "brewRatioString",
+            "columnName": "brew_ratio_string",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "weight_history_extra",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `weight_id` INTEGER NOT NULL, `coffee_bean` TEXT, `coffee_grinder` TEXT, `coffee_grinder_level` TEXT, `gadget_name` TEXT, `water_temp` TEXT, `extra_info` TEXT, `coffee_roaster` TEXT, FOREIGN KEY(`weight_id`) REFERENCES `weight_history`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weightId",
+            "columnName": "weight_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "coffeeBean",
+            "columnName": "coffee_bean",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "coffeeGrinder",
+            "columnName": "coffee_grinder",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "coffeeGrinderLevel",
+            "columnName": "coffee_grinder_level",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "gadgetName",
+            "columnName": "gadget_name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "waterTemp",
+            "columnName": "water_temp",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "extraInfo",
+            "columnName": "extra_info",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "coffeeRoaster",
+            "columnName": "coffee_roaster",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "weight_history",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "weight_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd70e9d1b28bb917d00224f0407501125')"
+    ]
+  }
+}
