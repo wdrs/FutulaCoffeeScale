@@ -969,7 +969,7 @@ class HomeFragment : Fragment() {
             .dataLabelsEnabled(false).series(arrayOf(weightLogGraphData))
             .categories(chartViewCategories).colorsTheme(arrayOf(primaryChartColor))
 
-        chartFlowRateViewModel = AAChartModel().chartType(AAChartType.Areaspline)
+        chartFlowRateViewModel = AAChartModel().chartType(AAChartType.Column)
             .yAxisTitle(getString(R.string.flowrate_text)).markerRadius(0)
             .animationType(AAChartAnimationType.Elastic).tooltipEnabled(false).legendEnabled(false)
             .dataLabelsEnabled(false).series(arrayOf(flowRateLogGraphData))

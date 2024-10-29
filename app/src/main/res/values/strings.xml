@@ -73,4 +73,7 @@
     <string name="enable_server_weight">Enable saving dripper weight</string>
     <string name="coffee_roaster">Coffe Roaster</string>
     <string name="search_in_history">Search...</string>
+    <string name="water_unit">ml</string>
+    <string name="weight_unit">g</string>
+    <string name="search_hint">Search...</string>
 </resources>

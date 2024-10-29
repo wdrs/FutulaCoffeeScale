@@ -346,7 +346,7 @@ class HistoryInfoFragment : Fragment() {
                     .dataLabelsEnabled(false).series(arrayOf(weightLogGraphData))
                     .categories(chartViewCategories).colorsTheme(arrayOf(primaryChartColor))
                 chartFlowRateViewModel =
-                    AAChartModel().chartType(AAChartType.Areaspline)
+                    AAChartModel().chartType(AAChartType.Column)
                         .yAxisTitle(getString(R.string.flowrate_text))
                         .animationType(AAChartAnimationType.Elastic).tooltipEnabled(true)
                         .legendEnabled(false).markerRadius(0).dataLabelsEnabled(false)

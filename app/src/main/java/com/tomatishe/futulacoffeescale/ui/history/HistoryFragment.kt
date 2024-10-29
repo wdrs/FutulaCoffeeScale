@@ -1,21 +1,21 @@
 package com.tomatishe.futulacoffeescale.ui.history
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.EmptyResultSetException
 import com.google.android.material.snackbar.Snackbar
 import com.tomatishe.futulacoffeescale.Dependencies
 import com.tomatishe.futulacoffeescale.R
+import com.tomatishe.futulacoffeescale.WeightRecordInfoTuple
 import com.tomatishe.futulacoffeescale.databinding.FragmentHistoryBinding
 import com.tomatishe.futulacoffeescale.databinding.ItemWeightDataBinding
 import kotlinx.coroutines.CoroutineScope
@@ -25,10 +25,14 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 
+
 data class wRecord(
     val id: Long,
     val dateString: String,
     val summaryString: String,
+    val waterString: String,
+    val doseString: String,
+    val timeString: String,
 )
 
 class WeightAdapter : RecyclerView.Adapter<WeightAdapter.WeightViewHolder>() {
@@ -60,6 +64,9 @@ class WeightAdapter : RecyclerView.Adapter<WeightAdapter.WeightViewHolder>() {
         with(holder.binding) {
             dateTextBlock.text = wData.dateString
             dateTextView.text = wData.summaryString
+            waterTextBlock.text = wData.waterString
+            doseTextBlock.text = wData.doseString
+            timeTextBlock.text = wData.timeString
             deleteImageView.setOnClickListener {
                 scope.launch {
                     try {
@@ -89,6 +96,7 @@ class HistoryFragment : Fragment() {
     private lateinit var weightRecordsList: RecyclerView
     private lateinit var weightRecordsListData: ArrayList<wRecord>
     private lateinit var adapter: WeightAdapter
+    private lateinit var weightRecords: List<WeightRecordInfoTuple>
 
     private var _binding: FragmentHistoryBinding? = null
 
@@ -109,9 +117,28 @@ class HistoryFragment : Fragment() {
             }
         }
 
-    private fun getWeightData() {
+    private fun String.replaceLast(oldValue: String, newValue: String): String {
+        val lastIndex = lastIndexOf(oldValue)
+        if (lastIndex == -1) {
+            return this
+        }
+        val prefix = substring(0, lastIndex)
+        val suffix = substring(lastIndex + oldValue.length)
+        return "$prefix$newValue$suffix"
+    }
+
+    private fun getWeightData(searchString: String?) {
         scope.launch {
-            val weightRecords = Dependencies.weightRecordRepository.getAllWeightRecordData()
+            gotHistory = false
+            weightRecordsListData = ArrayList()
+            if (!searchString.isNullOrEmpty()) {
+                weightRecords =
+                    Dependencies.weightRecordRepository.searchInWeightRecordsMainByString(
+                        searchString = searchString
+                    )
+            } else {
+                weightRecords = Dependencies.weightRecordRepository.getAllWeightRecordData()
+            }
             for (weightRecord in weightRecords) {
                 var sumString = ""
                 val currId = weightRecord.id
@@ -120,6 +147,13 @@ class HistoryFragment : Fragment() {
                 val dateFormat = SimpleDateFormat("yyyy.MM.dd HH:mm:ss")
                 val flowRateAvgString = "%.1f".format(weightRecord.flowRateAvg)
                 val weightRecordString = "%.1f".format(weightRecord.weightRecord)
+                val waterString = weightRecord.weightRecord.toString()
+                val doseString = weightRecord.doseRecord.toString()
+                val timeString = if (weightRecord.timeString.count { it == ':' } == 2) {
+                    weightRecord.timeString.replaceLast(":", ".")
+                } else {
+                    weightRecord.timeString
+                }
                 val currInfoRecord =
                     Dependencies.weightRecordRepositoryExtra.getOneWeightRecordExtraDataByWeightId(
                         weightRecord.id
@@ -147,7 +181,12 @@ class HistoryFragment : Fragment() {
                     sumString = dateFormat.format(backToDate)
                 }
                 val currRecord: wRecord = wRecord(
-                    currId, dateBlockFormat.format(backToDate), sumString
+                    currId,
+                    dateBlockFormat.format(backToDate),
+                    sumString,
+                    waterString,
+                    doseString,
+                    timeString
                 )
                 weightRecordsListData.add(currRecord)
             }
@@ -163,6 +202,20 @@ class HistoryFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.history, menu)
+        val item = menu.findItem(R.id.search)
+        val searchView = item.actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                // Here is where we are going to implement the filter logic
+                gotHistory = false
+                getWeightData(searchString = newText)
+                return true
+            }
+        })
     }
 
     override fun onCreateView(
@@ -173,8 +226,6 @@ class HistoryFragment : Fragment() {
         val root: View = binding.root
 
         gotHistory = false
-
-        weightRecordsListData = ArrayList()
 
         val manager = LinearLayoutManager(activity?.applicationContext)
         val navController = findNavController(this)
@@ -187,7 +238,7 @@ class HistoryFragment : Fragment() {
         weightRecordsList.layoutManager = manager
         weightRecordsList.adapter = adapter
 
-        getWeightData()
+        getWeightData(searchString = null)
 
         return root
     }

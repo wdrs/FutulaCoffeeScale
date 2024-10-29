@@ -177,6 +177,21 @@ interface WeightRecordDao {
     )
     fun getOneWeightRecordDataById(wightRecordId: Long): WeightRecordInfoTuple
 
+    @Query(
+        "SELECT wh.id, wh.brew_date, wh.weight_unit, wh.dose_record, wh.weight_record,\n " +
+                "wh.weight_log, wh.flow_rate, wh.flow_rate_avg, wh.flow_rate_log,\n" +
+                "wh.time_string, wh.brew_ratio_string\n" +
+                "FROM weight_history wh\n" +
+                "INNER JOIN weight_history_extra whe ON wh.id = whe.weight_id\n" +
+                "WHERE LOWER(whe.coffee_bean) LIKE '%' || :searchString || '%'\n" +
+                "OR LOWER(whe.coffee_grinder) LIKE '%' || :searchString || '%'\n" +
+                "OR LOWER(whe.gadget_name) LIKE '%' || :searchString || '%'\n" +
+                "OR LOWER(whe.extra_info) LIKE '%' || :searchString || '%'\n" +
+                "OR LOWER(whe.coffee_roaster) LIKE '%' || :searchString || '%'\n" +
+                "ORDER BY wh.id DESC"
+    )
+    fun searchInWeightRecordsMain(searchString: String): List<WeightRecordInfoTuple>
+
     @Query("DELETE FROM weight_history WHERE id = :wightRecordId")
     fun deleteWeightRecordDataById(wightRecordId: Long)
 }
@@ -228,6 +243,19 @@ interface WeightRecordExtraDao {
                 "WHERE weight_id = :weightRecordId"
     )
     fun getOneWeightRecordExtraDataByWeightId(weightRecordId: Long): WeightRecordInfoTupleExtra
+
+    @Query(
+        "SELECT id, weight_id, coffee_bean, coffee_grinder, coffee_grinder_level,\n " +
+                "gadget_name, water_temp, extra_info, coffee_roaster\n" +
+                "FROM weight_history_extra \n" +
+                "WHERE LOWER(coffee_bean) LIKE '%' || :searchString || '%'\n" +
+                "OR LOWER(coffee_grinder) LIKE '%' || :searchString || '%'\n" +
+                "OR LOWER(gadget_name) LIKE '%' || :searchString || '%'\n" +
+                "OR LOWER(extra_info) LIKE '%' || :searchString || '%'\n" +
+                "OR LOWER(coffee_roaster) LIKE '%' || :searchString || '%'\n" +
+                "ORDER BY id DESC"
+    )
+    fun searchInWeightRecords(searchString: String): List<WeightRecordInfoTupleExtra>
 
     @Query(
         "SELECT DISTINCT coffee_bean FROM weight_history_extra WHERE length(coffee_bean)>0 ORDER BY coffee_bean"
@@ -359,6 +387,12 @@ class WeightRecordRepository(private val weightRecordDao: WeightRecordDao) {
         }
     }
 
+    suspend fun searchInWeightRecordsMainByString(searchString: String): List<WeightRecordInfoTuple> {
+        return withContext(Dispatchers.IO) {
+            return@withContext weightRecordDao.searchInWeightRecordsMain(searchString.lowercase())
+        }
+    }
+
     suspend fun deleteWeightRecordDataById(id: Long) {
         withContext(Dispatchers.IO) {
             weightRecordDao.deleteWeightRecordDataById(id)
@@ -408,6 +442,12 @@ class WeightRecordRepositoryExtra(private val weightRecordExtraDao: WeightRecord
     suspend fun getOneWeightRecordExtraDataByWeightId(id: Long): WeightRecordInfoTupleExtra {
         return withContext(Dispatchers.IO) {
             return@withContext weightRecordExtraDao.getOneWeightRecordExtraDataByWeightId(id)
+        }
+    }
+
+    suspend fun searchInWeightRecordsByString(searchString: String): List<WeightRecordInfoTupleExtra> {
+        return withContext(Dispatchers.IO) {
+            return@withContext weightRecordExtraDao.searchInWeightRecords(searchString.lowercase())
         }
     }
 

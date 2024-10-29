@@ -73,4 +73,7 @@
     <string name="enable_server_weight">Включить сохранение веса воронки</string>
     <string name="coffee_roaster">Обжарщик</string>
     <string name="search_in_history">Поиск...</string>
+    <string name="weight_unit">г</string>
+    <string name="water_unit">мл</string>
+    <string name="search_hint">Поиск...</string>
 </resources>
