@@ -45,10 +45,12 @@ import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoStart
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoSwitches
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoTare
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getEnableServerWeight
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getFlowRateChartType
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getIgnoreDose
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getReplaceResetWithTare
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getStartSearchAfterLaunch
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getStopTimerWhenLostConnection
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getWeightChartType
 import com.tomatishe.futulacoffeescale.databinding.FragmentHomeBinding
 import com.welie.blessed.BluetoothCentralManager
 import com.welie.blessed.BluetoothPeripheral
@@ -116,6 +118,21 @@ class HomeFragment : Fragment() {
         val suffix = substring(lastIndex + oldValue.length)
         return "$prefix$newValue$suffix"
     }
+
+    private fun returnChartType(chartType: String): AAChartType {
+        val returnChartType: AAChartType = when (chartType) {
+            "Area" -> AAChartType.Area
+            "AreaSpline" -> AAChartType.Areaspline
+            "Column" -> AAChartType.Column
+            "Line" -> AAChartType.Line
+            "Spline" -> AAChartType.Spline
+            else -> AAChartType.Areaspline
+        }
+        return returnChartType
+    }
+
+    private var weightChartType: String = "AreaSpline"
+    private var flowRateChartType: String = "AreaSpline"
 
     private var mRootView: View? = null
     private var _binding: FragmentHomeBinding? = null
@@ -714,6 +731,37 @@ class HomeFragment : Fragment() {
                             switchesLayout.visibility = View.GONE
                         }
 
+                        chartWeightViewModel =
+                            AAChartModel().chartType(returnChartType(weightChartType))
+                                .yAxisTitle(getString(R.string.weight_text)).markerRadius(0)
+                                .animationType(AAChartAnimationType.Elastic).tooltipEnabled(false)
+                                .legendEnabled(false)
+                                .dataLabelsEnabled(false).series(arrayOf(weightLogGraphData))
+                                .categories(chartViewCategories)
+                                .colorsTheme(arrayOf(primaryChartColor))
+
+                        chartFlowRateViewModel =
+                            AAChartModel().chartType(returnChartType(flowRateChartType))
+                                .yAxisTitle(getString(R.string.flowrate_text)).markerRadius(0)
+                                .animationType(AAChartAnimationType.Elastic).tooltipEnabled(false)
+                                .legendEnabled(false)
+                                .dataLabelsEnabled(false).series(arrayOf(flowRateLogGraphData))
+                                .categories(chartViewCategories)
+                                .colorsTheme(arrayOf(primaryChartColor))
+
+                        chartWeightView.aa_drawChartWithChartModel(chartWeightViewModel)
+                        chartFlowRateView.aa_drawChartWithChartModel(chartFlowRateViewModel)
+
+                        chartFlowRateView.aa_onlyRefreshTheChartDataWithChartOptionsSeriesArray(
+                            arrayOf(
+                                flowRateLogGraphData
+                            )
+                        )
+                        chartWeightView.aa_onlyRefreshTheChartDataWithChartOptionsSeriesArray(
+                            arrayOf(
+                                weightLogGraphData
+                            )
+                        )
                     }, 100
                 )
             }
@@ -963,32 +1011,6 @@ class HomeFragment : Fragment() {
         chartWeightView.isClearBackgroundColor = true
         chartFlowRateView.isClearBackgroundColor = true
 
-        chartWeightViewModel = AAChartModel().chartType(AAChartType.Areaspline)
-            .yAxisTitle(getString(R.string.weight_text)).markerRadius(0)
-            .animationType(AAChartAnimationType.Elastic).tooltipEnabled(false).legendEnabled(false)
-            .dataLabelsEnabled(false).series(arrayOf(weightLogGraphData))
-            .categories(chartViewCategories).colorsTheme(arrayOf(primaryChartColor))
-
-        chartFlowRateViewModel = AAChartModel().chartType(AAChartType.Column)
-            .yAxisTitle(getString(R.string.flowrate_text)).markerRadius(0)
-            .animationType(AAChartAnimationType.Elastic).tooltipEnabled(false).legendEnabled(false)
-            .dataLabelsEnabled(false).series(arrayOf(flowRateLogGraphData))
-            .categories(chartViewCategories).colorsTheme(arrayOf(primaryChartColor))
-
-        chartWeightView.aa_drawChartWithChartModel(chartWeightViewModel)
-        chartFlowRateView.aa_drawChartWithChartModel(chartFlowRateViewModel)
-
-        chartFlowRateView.aa_onlyRefreshTheChartDataWithChartOptionsSeriesArray(
-            arrayOf(
-                flowRateLogGraphData
-            )
-        )
-        chartWeightView.aa_onlyRefreshTheChartDataWithChartOptionsSeriesArray(
-            arrayOf(
-                weightLogGraphData
-            )
-        )
-
         doseButton = binding.doseButton
         doseButton.setOnClickListener {
             if (isDoseBecameFinish) {
@@ -1115,6 +1137,8 @@ class HomeFragment : Fragment() {
                 stopTimerWhenLostConnectionChecked =
                     DataCoordinator.shared.getStopTimerWhenLostConnection()
                 startSearchAfterLaunchChecked = DataCoordinator.shared.getStartSearchAfterLaunch()
+                weightChartType = DataCoordinator.shared.getWeightChartType()
+                flowRateChartType = DataCoordinator.shared.getFlowRateChartType()
                 isSettingsLoaded = true
             }
 

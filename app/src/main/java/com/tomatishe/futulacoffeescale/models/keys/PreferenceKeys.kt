@@ -1,6 +1,7 @@
 package com.tomatishe.futulacoffeescale.models.keys
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 
 object PreferencesKeys {
     val autoAll = booleanPreferencesKey("autoAllSettings")
@@ -15,4 +16,6 @@ object PreferencesKeys {
     val startSearchAfterLaunch = booleanPreferencesKey("startSearchAfterLaunch")
     val oneGraphInHistory = booleanPreferencesKey("oneGraphInHistory")
     val enableServerWeight = booleanPreferencesKey("enableServerWeight")
+    val weightChartType = stringPreferencesKey("weightChartType")
+    val flowRateChartType = stringPreferencesKey("flowRateChartType")
 }

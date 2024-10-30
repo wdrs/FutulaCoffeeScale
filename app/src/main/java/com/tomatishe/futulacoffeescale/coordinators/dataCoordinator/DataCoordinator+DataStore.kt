@@ -181,3 +181,33 @@ suspend fun DataCoordinator.setEnableServerWeight(value: Boolean) {
         preferences[PreferencesKeys.enableServerWeight] = value
     }
 }
+
+// ---
+
+suspend fun DataCoordinator.getWeightChartType(): String {
+    val context = this.context ?: return defaultWeightChartType
+    return context.dataStore.data.firstOrNull()?.get(PreferencesKeys.weightChartType)
+        ?: defaultWeightChartType
+}
+
+suspend fun DataCoordinator.setWeightChartType(value: String) {
+    val context = this.context ?: return
+    context.dataStore.edit { preferences ->
+        preferences[PreferencesKeys.weightChartType] = value
+    }
+}
+
+// ---
+
+suspend fun DataCoordinator.getFlowRateChartType(): String {
+    val context = this.context ?: return defaultFlowRateChartType
+    return context.dataStore.data.firstOrNull()?.get(PreferencesKeys.flowRateChartType)
+        ?: defaultFlowRateChartType
+}
+
+suspend fun DataCoordinator.setFlowRateChartType(value: String) {
+    val context = this.context ?: return
+    context.dataStore.edit { preferences ->
+        preferences[PreferencesKeys.flowRateChartType] = value
+    }
+}

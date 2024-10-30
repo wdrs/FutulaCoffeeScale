@@ -76,4 +76,6 @@
     <string name="weight_unit">г</string>
     <string name="water_unit">мл</string>
     <string name="search_hint">Поиск...</string>
+    <string name="weight_graph_type">Тип графика веса</string>
+    <string name="flowrate_graph_type">Тип графика пролива</string>
 </resources>

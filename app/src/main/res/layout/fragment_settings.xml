@@ -6,604 +6,682 @@
     android:layout_height="match_parent"
     tools:context=".ui.settings.SettingsFragment">
 
-    <LinearLayout
-        android:id="@+id/linearLayout3"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/startSearchAfterLaunch"
+        <LinearLayout
+            android:id="@+id/linearLayout3"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/textView9"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:gravity="center"
-                android:justificationMode="inter_word"
-                android:text="@string/search_after_launch"
-                android:textAlignment="textStart"
-                android:elegantTextHeight="true"
-                android:ellipsize="marquee"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/startSearchAfterLaunchSwitch"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/startSearchAfterLaunch"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/startSearchAfterLaunchSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:checked="false"
-                android:hapticFeedbackEnabled="true"
-                android:lineSpacingExtra="8sp"
-                android:maxLines="1"
-                android:minHeight="48dp"
-                android:showText="false"
-                android:splitTrack="false"
-                android:textSize="20sp"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:switchPadding="8dp"
-                tools:checked="false" />
+                <TextView
+                    android:id="@+id/textView9"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:elegantTextHeight="true"
+                    android:ellipsize="marquee"
+                    android:gravity="center"
+                    android:justificationMode="inter_word"
+                    android:text="@string/search_after_launch"
+                    android:textAlignment="textStart"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/startSearchAfterLaunchSwitch"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/startSearchAfterLaunchSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:checked="false"
+                    android:hapticFeedbackEnabled="true"
+                    android:lineSpacingExtra="8sp"
+                    android:maxLines="1"
+                    android:minHeight="48dp"
+                    android:showText="false"
+                    android:splitTrack="false"
+                    android:textSize="20sp"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:switchPadding="8dp"
+                    tools:checked="false" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/stopTimerWhenLostConnectionLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/textView8"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:elegantTextHeight="true"
-                android:ellipsize="marquee"
-                android:gravity="center"
-                android:justificationMode="inter_word"
-                android:text="@string/stop_timer_on_lost"
-                android:textAlignment="textStart"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/stopTimerWhenLostConnectionSwitch"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/stopTimerWhenLostConnectionLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/stopTimerWhenLostConnectionSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:checked="true"
-                android:hapticFeedbackEnabled="true"
-                android:lineSpacingExtra="8sp"
-                android:maxLines="1"
-                android:minHeight="48dp"
-                android:showText="false"
-                android:splitTrack="false"
-                android:textSize="20sp"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:switchPadding="8dp"
-                tools:checked="true" />
+                <TextView
+                    android:id="@+id/textView8"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:elegantTextHeight="true"
+                    android:ellipsize="marquee"
+                    android:gravity="center"
+                    android:justificationMode="inter_word"
+                    android:text="@string/stop_timer_on_lost"
+                    android:textAlignment="textStart"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/stopTimerWhenLostConnectionSwitch"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/stopTimerWhenLostConnectionSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:checked="true"
+                    android:hapticFeedbackEnabled="true"
+                    android:lineSpacingExtra="8sp"
+                    android:maxLines="1"
+                    android:minHeight="48dp"
+                    android:showText="false"
+                    android:splitTrack="false"
+                    android:textSize="20sp"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:switchPadding="8dp"
+                    tools:checked="true" />
 
-        <View
-            android:id="@+id/divider2"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="?android:attr/listDivider" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/autoAllLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            <View
+                android:id="@+id/divider2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
 
-            <TextView
-                android:id="@+id/textView0"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:gravity="center"
-                android:text="@string/enable_autofunctions_text"
-                android:textAlignment="textStart"
-                android:elegantTextHeight="true"
-                android:ellipsize="marquee"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/autoFuncSettingsSwitch"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/autoAllLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/autoFuncSettingsSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:checked="true"
-                android:hapticFeedbackEnabled="true"
-                android:lineSpacingExtra="8sp"
-                android:maxLines="1"
-                android:minHeight="48dp"
-                android:showText="false"
-                android:splitTrack="false"
-                android:textSize="20sp"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:switchPadding="8dp"
-                tools:checked="true" />
+                <TextView
+                    android:id="@+id/textView0"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:elegantTextHeight="true"
+                    android:ellipsize="marquee"
+                    android:gravity="center"
+                    android:text="@string/enable_autofunctions_text"
+                    android:textAlignment="textStart"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/autoFuncSettingsSwitch"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/autoFuncSettingsSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:checked="true"
+                    android:hapticFeedbackEnabled="true"
+                    android:lineSpacingExtra="8sp"
+                    android:maxLines="1"
+                    android:minHeight="48dp"
+                    android:showText="false"
+                    android:splitTrack="false"
+                    android:textSize="20sp"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:switchPadding="8dp"
+                    tools:checked="true" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/autoStartLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/textView1"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:elegantTextHeight="true"
-                android:ellipsize="marquee"
-                android:gravity="center"
-                android:justificationMode="inter_word"
-                android:text="@string/enable_autostart_text"
-                android:textAlignment="textStart"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/autoStartSettingsSwitch"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/autoStartLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/autoStartSettingsSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:checked="true"
-                android:hapticFeedbackEnabled="true"
-                android:lineSpacingExtra="8sp"
-                android:maxLines="1"
-                android:minHeight="48dp"
-                android:showText="false"
-                android:splitTrack="false"
-                android:textSize="20sp"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:switchPadding="8dp"
-                tools:checked="true" />
+                <TextView
+                    android:id="@+id/textView1"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:elegantTextHeight="true"
+                    android:ellipsize="marquee"
+                    android:gravity="center"
+                    android:justificationMode="inter_word"
+                    android:text="@string/enable_autostart_text"
+                    android:textAlignment="textStart"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/autoStartSettingsSwitch"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/autoStartSettingsSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:checked="true"
+                    android:hapticFeedbackEnabled="true"
+                    android:lineSpacingExtra="8sp"
+                    android:maxLines="1"
+                    android:minHeight="48dp"
+                    android:showText="false"
+                    android:splitTrack="false"
+                    android:textSize="20sp"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:switchPadding="8dp"
+                    tools:checked="true" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/ignoreDoseLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/textView6"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:elegantTextHeight="true"
-                android:ellipsize="marquee"
-                android:gravity="center"
-                android:justificationMode="inter_word"
-                android:text="@string/enable_ignore_dose"
-                android:textAlignment="textStart"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/ignoreDoseSettingsSwitch"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/ignoreDoseLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/ignoreDoseSettingsSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:checked="false"
-                android:hapticFeedbackEnabled="true"
-                android:lineSpacingExtra="8sp"
-                android:maxLines="1"
-                android:minHeight="48dp"
-                android:showText="false"
-                android:splitTrack="false"
-                android:textSize="20sp"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:switchPadding="8dp"
-                tools:checked="false" />
+                <TextView
+                    android:id="@+id/textView6"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:elegantTextHeight="true"
+                    android:ellipsize="marquee"
+                    android:gravity="center"
+                    android:justificationMode="inter_word"
+                    android:text="@string/enable_ignore_dose"
+                    android:textAlignment="textStart"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/ignoreDoseSettingsSwitch"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/ignoreDoseSettingsSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:checked="false"
+                    android:hapticFeedbackEnabled="true"
+                    android:lineSpacingExtra="8sp"
+                    android:maxLines="1"
+                    android:minHeight="48dp"
+                    android:showText="false"
+                    android:splitTrack="false"
+                    android:textSize="20sp"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:switchPadding="8dp"
+                    tools:checked="false" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/autoDoseLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:elegantTextHeight="true"
-                android:ellipsize="marquee"
-                android:gravity="center"
-                android:justificationMode="inter_word"
-                android:text="@string/enable_autodose_text"
-                android:textAlignment="textStart"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/autoDoseSettingsSwitch"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/autoDoseLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/autoDoseSettingsSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:checked="true"
-                android:hapticFeedbackEnabled="true"
-                android:lineSpacingExtra="8sp"
-                android:maxLines="1"
-                android:minHeight="48dp"
-                android:showText="false"
-                android:splitTrack="false"
-                android:textSize="20sp"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:switchPadding="8dp"
-                tools:checked="true" />
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:elegantTextHeight="true"
+                    android:ellipsize="marquee"
+                    android:gravity="center"
+                    android:justificationMode="inter_word"
+                    android:text="@string/enable_autodose_text"
+                    android:textAlignment="textStart"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/autoDoseSettingsSwitch"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/autoDoseSettingsSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:checked="true"
+                    android:hapticFeedbackEnabled="true"
+                    android:lineSpacingExtra="8sp"
+                    android:maxLines="1"
+                    android:minHeight="48dp"
+                    android:showText="false"
+                    android:splitTrack="false"
+                    android:textSize="20sp"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:switchPadding="8dp"
+                    tools:checked="true" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/autoTareLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:elegantTextHeight="true"
-                android:ellipsize="marquee"
-                android:gravity="center"
-                android:justificationMode="inter_word"
-                android:text="@string/enable_autotare_text"
-                android:textAlignment="textStart"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/autoTareSettingsSwitch"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/autoTareLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/autoTareSettingsSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:checked="true"
-                android:hapticFeedbackEnabled="true"
-                android:lineSpacingExtra="8sp"
-                android:maxLines="1"
-                android:minHeight="48dp"
-                android:showText="false"
-                android:splitTrack="false"
-                android:textSize="20sp"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:switchPadding="8dp"
-                tools:checked="true" />
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:elegantTextHeight="true"
+                    android:ellipsize="marquee"
+                    android:gravity="center"
+                    android:justificationMode="inter_word"
+                    android:text="@string/enable_autotare_text"
+                    android:textAlignment="textStart"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/autoTareSettingsSwitch"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/autoTareSettingsSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:checked="true"
+                    android:hapticFeedbackEnabled="true"
+                    android:lineSpacingExtra="8sp"
+                    android:maxLines="1"
+                    android:minHeight="48dp"
+                    android:showText="false"
+                    android:splitTrack="false"
+                    android:textSize="20sp"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:switchPadding="8dp"
+                    tools:checked="true" />
 
-        <View
-            android:id="@+id/divider"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="?android:attr/listDivider" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/replaceResetWithTareLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
 
-            <TextView
-                android:id="@+id/textView7"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:gravity="center"
-                android:justificationMode="inter_word"
-                android:text="@string/enable_reset_as_tare"
-                android:textAlignment="textStart"
-                android:elegantTextHeight="true"
-                android:ellipsize="marquee"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/replaceResetWithTareSwitch"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/replaceResetWithTareLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/replaceResetWithTareSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:checked="false"
-                android:hapticFeedbackEnabled="true"
-                android:lineSpacingExtra="8sp"
-                android:maxLines="1"
-                android:minHeight="48dp"
-                android:showText="false"
-                android:splitTrack="false"
-                android:textSize="20sp"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:switchPadding="8dp"
-                tools:checked="false" />
+                <TextView
+                    android:id="@+id/textView7"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:elegantTextHeight="true"
+                    android:ellipsize="marquee"
+                    android:gravity="center"
+                    android:justificationMode="inter_word"
+                    android:text="@string/enable_reset_as_tare"
+                    android:textAlignment="textStart"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/replaceResetWithTareSwitch"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/replaceResetWithTareSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:checked="false"
+                    android:hapticFeedbackEnabled="true"
+                    android:lineSpacingExtra="8sp"
+                    android:maxLines="1"
+                    android:minHeight="48dp"
+                    android:showText="false"
+                    android:splitTrack="false"
+                    android:textSize="20sp"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:switchPadding="8dp"
+                    tools:checked="false" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/enableServerWeightLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/textView11"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:gravity="center"
-                android:justificationMode="inter_word"
-                android:text="@string/enable_server_weight"
-                android:textAlignment="textStart"
-                android:elegantTextHeight="true"
-                android:ellipsize="marquee"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/enableServerWeightSwitch"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/enableServerWeightLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/enableServerWeightSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:checked="false"
-                android:hapticFeedbackEnabled="true"
-                android:lineSpacingExtra="8sp"
-                android:maxLines="1"
-                android:minHeight="48dp"
-                android:showText="false"
-                android:splitTrack="false"
-                android:textSize="20sp"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:switchPadding="8dp"
-                tools:checked="false" />
+                <TextView
+                    android:id="@+id/textView11"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:elegantTextHeight="true"
+                    android:ellipsize="marquee"
+                    android:gravity="center"
+                    android:justificationMode="inter_word"
+                    android:text="@string/enable_server_weight"
+                    android:textAlignment="textStart"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/enableServerWeightSwitch"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/enableServerWeightSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:checked="false"
+                    android:hapticFeedbackEnabled="true"
+                    android:lineSpacingExtra="8sp"
+                    android:maxLines="1"
+                    android:minHeight="48dp"
+                    android:showText="false"
+                    android:splitTrack="false"
+                    android:textSize="20sp"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:switchPadding="8dp"
+                    tools:checked="false" />
 
-        <View
-            android:id="@+id/divider3"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="?android:attr/listDivider" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/autoSwitchesLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            <View
+                android:id="@+id/divider3"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
 
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:gravity="center"
-                android:justificationMode="inter_word"
-                android:text="@string/enable_hide_switches"
-                android:textAlignment="textStart"
-                android:elegantTextHeight="true"
-                android:ellipsize="marquee"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/autoHideSwitchesSettingsSwitch"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/autoSwitchesLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/autoHideSwitchesSettingsSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:checked="true"
-                android:hapticFeedbackEnabled="true"
-                android:lineSpacingExtra="8sp"
-                android:maxLines="1"
-                android:minHeight="48dp"
-                android:showText="false"
-                android:splitTrack="false"
-                android:textSize="20sp"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:switchPadding="8dp"
-                tools:checked="true" />
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:elegantTextHeight="true"
+                    android:ellipsize="marquee"
+                    android:gravity="center"
+                    android:justificationMode="inter_word"
+                    android:text="@string/enable_hide_switches"
+                    android:textAlignment="textStart"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/autoHideSwitchesSettingsSwitch"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/autoHideSwitchesSettingsSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:checked="true"
+                    android:hapticFeedbackEnabled="true"
+                    android:lineSpacingExtra="8sp"
+                    android:maxLines="1"
+                    android:minHeight="48dp"
+                    android:showText="false"
+                    android:splitTrack="false"
+                    android:textSize="20sp"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:switchPadding="8dp"
+                    tools:checked="true" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/autoButtonsLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/textView5"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:gravity="center"
-                android:justificationMode="inter_word"
-                android:text="@string/enable_hide_buttons"
-                android:textAlignment="textStart"
-                android:elegantTextHeight="true"
-                android:ellipsize="marquee"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/autoHideButtonsSettingsSwitch"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/autoButtonsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/autoHideButtonsSettingsSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:checked="false"
-                android:hapticFeedbackEnabled="true"
-                android:lineSpacingExtra="8sp"
-                android:maxLines="1"
-                android:minHeight="48dp"
-                android:showText="false"
-                android:splitTrack="false"
-                android:textSize="20sp"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:switchPadding="8dp"
-                tools:checked="false" />
+                <TextView
+                    android:id="@+id/textView5"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:elegantTextHeight="true"
+                    android:ellipsize="marquee"
+                    android:gravity="center"
+                    android:justificationMode="inter_word"
+                    android:text="@string/enable_hide_buttons"
+                    android:textAlignment="textStart"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/autoHideButtonsSettingsSwitch"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/autoHideButtonsSettingsSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:checked="false"
+                    android:hapticFeedbackEnabled="true"
+                    android:lineSpacingExtra="8sp"
+                    android:maxLines="1"
+                    android:minHeight="48dp"
+                    android:showText="false"
+                    android:splitTrack="false"
+                    android:textSize="20sp"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:switchPadding="8dp"
+                    tools:checked="false" />
 
-        <View
-            android:id="@+id/divider5"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="?android:attr/listDivider" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/showOneGraphInHistoryLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            <View
+                android:id="@+id/divider5"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
 
-            <TextView
-                android:id="@+id/textView10"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:gravity="center"
-                android:justificationMode="inter_word"
-                android:text="@string/one_graph"
-                android:textAlignment="textStart"
-                android:elegantTextHeight="true"
-                android:ellipsize="marquee"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/showOneGraphInHistorySwitch"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/showOneGraphInHistoryLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/showOneGraphInHistorySwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:checked="false"
-                android:hapticFeedbackEnabled="true"
-                android:lineSpacingExtra="8sp"
-                android:maxLines="1"
-                android:minHeight="48dp"
-                android:showText="false"
-                android:splitTrack="false"
-                android:textSize="20sp"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:switchPadding="8dp"
-                tools:checked="false" />
+                <TextView
+                    android:id="@+id/textView10"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:elegantTextHeight="true"
+                    android:ellipsize="marquee"
+                    android:gravity="center"
+                    android:justificationMode="inter_word"
+                    android:text="@string/one_graph"
+                    android:textAlignment="textStart"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/showOneGraphInHistorySwitch"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </LinearLayout>
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/showOneGraphInHistorySwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:checked="false"
+                    android:hapticFeedbackEnabled="true"
+                    android:lineSpacingExtra="8sp"
+                    android:maxLines="1"
+                    android:minHeight="48dp"
+                    android:showText="false"
+                    android:splitTrack="false"
+                    android:textSize="20sp"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:switchPadding="8dp"
+                    tools:checked="false" />
 
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:id="@+id/divider6"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/selectWeightGraphTypeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/selectWeightGraphType"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:hint="@string/weight_graph_type"
+                    android:inputType="none"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                        android:id="@+id/selectWeightGraphTypeAuto"
+                        style="@style/Widget.Material3.AutoCompleteTextView.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:id="@+id/divider7"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/selectFlowRateGraphTypeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/selectFlowRateGraphType"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:hint="@string/flowrate_graph_type"
+                    android:inputType="none"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                        android:id="@+id/selectFlowRateGraphTypeAuto"
+                        style="@style/Widget.Material3.AutoCompleteTextView.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

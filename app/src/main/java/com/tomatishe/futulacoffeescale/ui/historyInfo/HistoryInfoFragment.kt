@@ -6,6 +6,7 @@ import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.ContactsContract.Data
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -22,7 +23,9 @@ import com.tomatishe.futulacoffeescale.Dependencies
 import com.tomatishe.futulacoffeescale.R
 import com.tomatishe.futulacoffeescale.WeightRecordInfoTuple
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.DataCoordinator
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getFlowRateChartType
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getOneGraphInHistory
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getWeightChartType
 import com.tomatishe.futulacoffeescale.databinding.FragmentHistoryInfoBinding
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -125,6 +128,18 @@ class HistoryInfoFragment : Fragment() {
     }
 
     private val viewModel: HistoryInfoViewModel by viewModels()
+
+    private fun returnChartType(chartType: String): AAChartType {
+        val returnChartType: AAChartType = when (chartType) {
+            "Area" -> AAChartType.Area
+            "AreaSpline" -> AAChartType.Areaspline
+            "Column" -> AAChartType.Column
+            "Line" -> AAChartType.Line
+            "Spline" -> AAChartType.Spline
+            else -> AAChartType.Areaspline
+        }
+        return returnChartType
+    }
 
     private fun isSystemDarkMode(): Boolean {
         val configuration = Resources.getSystem().configuration
@@ -314,8 +329,11 @@ class HistoryInfoFragment : Fragment() {
         GlobalScope.launch {
             showOneGraphInHistory = DataCoordinator.shared.getOneGraphInHistory()
 
+            val weightChartType = DataCoordinator.shared.getWeightChartType()
+            val flowRateChartType = DataCoordinator.shared.getFlowRateChartType()
+
             if (showOneGraphInHistory) {
-                chartWeightViewModel = AAChartModel().chartType(AAChartType.Areaspline).yAxisTitle(
+                chartWeightViewModel = AAChartModel().chartType(returnChartType(weightChartType)).yAxisTitle(
                     getString(
                         R.string.weight_text
                     ) + " / " + getString(
@@ -335,7 +353,7 @@ class HistoryInfoFragment : Fragment() {
                     chartWeightView.aa_drawChartWithChartModel(chartWeightViewModel)
                 }
             } else {
-                chartWeightViewModel = AAChartModel().chartType(AAChartType.Areaspline).yAxisTitle(
+                chartWeightViewModel = AAChartModel().chartType(returnChartType(weightChartType)).yAxisTitle(
                     getString(
                         R.string.weight_text
                     )
@@ -346,7 +364,7 @@ class HistoryInfoFragment : Fragment() {
                     .dataLabelsEnabled(false).series(arrayOf(weightLogGraphData))
                     .categories(chartViewCategories).colorsTheme(arrayOf(primaryChartColor))
                 chartFlowRateViewModel =
-                    AAChartModel().chartType(AAChartType.Column)
+                    AAChartModel().chartType(returnChartType(flowRateChartType))
                         .yAxisTitle(getString(R.string.flowrate_text))
                         .animationType(AAChartAnimationType.Elastic).tooltipEnabled(true)
                         .legendEnabled(false).markerRadius(0).dataLabelsEnabled(false)

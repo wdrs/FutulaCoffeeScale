@@ -40,6 +40,10 @@ class DataCoordinator {
     val defaultOneGraphInHistory: Boolean = false
     var enableServerWeight: Boolean = false
     val defaultEnableServerWeight: Boolean = false
+    var weightChartType: String = "AreaSpline"
+    val defaultWeightChartType: String = "AreaSpline"
+    var flowRateChartType: String = "AreaSpline"
+    val defaultFlowRateChartType: String = "AreaSpline"
 
     // MARK: Data Store Variables
     private val USER_PREFERENCES_NAME = "fCoffeeScapePreferences"
@@ -66,6 +70,8 @@ class DataCoordinator {
             startSearchAfterLaunch = getStartSearchAfterLaunch()
             oneGraphInHistory = getOneGraphInHistory()
             enableServerWeight = getEnableServerWeight()
+            weightChartType = getWeightChartType()
+            flowRateChartType = getFlowRateChartType()
             // Callback
             onLoad()
         }

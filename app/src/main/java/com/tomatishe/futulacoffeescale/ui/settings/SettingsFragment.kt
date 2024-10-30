@@ -1,15 +1,22 @@
 package com.tomatishe.futulacoffeescale.ui.settings
 
+import android.R
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.materialswitch.MaterialSwitch
+import com.google.android.material.snackbar.Snackbar
+import com.tomatishe.futulacoffeescale.Dependencies
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.DataCoordinator
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoAll
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoButtons
@@ -18,11 +25,13 @@ import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoStart
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoSwitches
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoTare
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getEnableServerWeight
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getFlowRateChartType
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getIgnoreDose
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getOneGraphInHistory
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getReplaceResetWithTare
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getStartSearchAfterLaunch
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getStopTimerWhenLostConnection
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getWeightChartType
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoAll
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoButtons
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoDose
@@ -30,14 +39,17 @@ import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoSt
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoSwitches
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoTare
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateEnableServerWeight
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateFlowRateChartType
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateIgnoreDose
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateOneGraphInHistory
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateReplaceResetWithTare
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateStartSearchAfterLaunch
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateStopTimerWhenLostConnection
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateWeightChartType
 import com.tomatishe.futulacoffeescale.databinding.FragmentSettingsBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
@@ -65,6 +77,11 @@ class SettingsFragment : Fragment() {
     private lateinit var startSearchAfterLaunchSwitch: MaterialSwitch
     private lateinit var showOneGraphInHistorySwitch: MaterialSwitch
     private lateinit var enableServerWeightSwitch: MaterialSwitch
+    private lateinit var weightChartType: AppCompatAutoCompleteTextView
+    private lateinit var flowRateChartType: AppCompatAutoCompleteTextView
+
+    private val weightChartTypeArray = arrayOf("Area", "AreaSpline", "Column", "Line", "Spline")
+    private val flowRateChartTypeArray = arrayOf("Area", "AreaSpline", "Column", "Line", "Spline")
 
     private var _binding: FragmentSettingsBinding? = null
 
@@ -132,6 +149,25 @@ class SettingsFragment : Fragment() {
             }
         }
 
+    private suspend fun getChartTypes() {
+        val wcType = DataCoordinator.shared.getWeightChartType()
+        val frType = DataCoordinator.shared.getFlowRateChartType()
+        Handler(Looper.getMainLooper()).post {
+            weightChartType.setText(wcType, false)
+            flowRateChartType.setText(frType, false)
+        }
+        weightChartType.doOnTextChanged { text, start, before, count ->
+            DataCoordinator.shared.updateWeightChartType(
+                text.toString()
+            )
+        }
+        flowRateChartType.doOnTextChanged { text, start, before, count ->
+            DataCoordinator.shared.updateFlowRateChartType(
+                text.toString()
+            )
+        }
+    }
+
     override fun onStart() {
         isSettingsLoaded = false
         super.onStart()
@@ -183,6 +219,36 @@ class SettingsFragment : Fragment() {
         startSearchAfterLaunchSwitch = binding.startSearchAfterLaunchSwitch
         showOneGraphInHistorySwitch = binding.showOneGraphInHistorySwitch
         enableServerWeightSwitch = binding.enableServerWeightSwitch
+        weightChartType = binding.selectWeightGraphTypeAuto
+        flowRateChartType = binding.selectFlowRateGraphTypeAuto
+
+        weightChartType.setAdapter(
+            ArrayAdapter(
+                binding.root.context,
+                R.layout.simple_list_item_1,
+                weightChartTypeArray.toMutableList()
+            )
+        )
+
+        flowRateChartType.setAdapter(
+            ArrayAdapter(
+                binding.root.context,
+                R.layout.simple_list_item_1,
+                flowRateChartTypeArray.toMutableList()
+            )
+        )
+
+        weightChartType.isFocusable = false
+        weightChartType.isCursorVisible = false
+        weightChartType.keyListener = null
+
+        flowRateChartType.isFocusable = false
+        flowRateChartType.isCursorVisible = false
+        flowRateChartType.keyListener = null
+
+        GlobalScope.launch {
+            getChartTypes()
+        }
 
         autoFuncSettingsSwitch.setOnClickListener {
             DataCoordinator.shared.updateAutoAll(autoFuncSettingsSwitch.isChecked)

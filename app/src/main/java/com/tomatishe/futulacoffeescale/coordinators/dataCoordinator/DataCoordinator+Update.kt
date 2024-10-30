@@ -136,3 +136,25 @@ fun DataCoordinator.updateEnableServerWeight(value: Boolean) {
         // OPTIONAL - Send Broadcast
     }
 }
+
+fun DataCoordinator.updateWeightChartType(value: String) {
+    // Update Value
+    this.weightChartType = value
+    // Save to System
+    GlobalScope.launch(Dispatchers.Default) {
+        // Update DataStore
+        setWeightChartType(value)
+        // OPTIONAL - Send Broadcast
+    }
+}
+
+fun DataCoordinator.updateFlowRateChartType(value: String) {
+    // Update Value
+    this.flowRateChartType = value
+    // Save to System
+    GlobalScope.launch(Dispatchers.Default) {
+        // Update DataStore
+        setFlowRateChartType(value)
+        // OPTIONAL - Send Broadcast
+    }
+}
