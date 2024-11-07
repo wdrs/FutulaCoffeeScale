@@ -20,8 +20,8 @@ class DataCoordinator {
     val defaultAutoAll: Boolean = true
     var autoStart: Boolean = true
     val defaultAutoStart: Boolean = true
-    var ignoreDose: Boolean = false
-    val defaultIgnoreDose: Boolean = false
+    var ignoreDose: Boolean = true
+    val defaultIgnoreDose: Boolean = true
     var autoDose: Boolean = true
     val defaultAutoDose: Boolean = true
     var autoTare: Boolean = true

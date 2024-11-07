@@ -91,7 +91,7 @@ class SettingsFragment : Fragment() {
 
     private var autoFuncSettingsSwitchChecked = true
     private var autoStartSettingsSwitchChecked = true
-    private var ignoreDoseSettingsSwitchChecked = false
+    private var ignoreDoseSettingsSwitchChecked = true
     private var autoDoseSettingsSwitchChecked = true
     private var autoTareSettingsSwitchChecked = true
     private var autoHideSwitchesSettingsSwitchChecked = true
