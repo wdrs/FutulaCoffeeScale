@@ -51,7 +51,7 @@ class AboutPageFragment : Fragment() {
                 packageManager.getPackageInfo(packageName, 0)
             }
             AppVersion(
-                versionName = packageInfo.versionName,
+                versionName = packageInfo.versionName.toString(),
                 versionNumber = PackageInfoCompat.getLongVersionCode(packageInfo),
             )
         } catch (e: Exception) {

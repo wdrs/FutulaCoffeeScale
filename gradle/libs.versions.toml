@@ -1,35 +1,38 @@
 [versions]
-aachartcoreKotlin = "-SNAPSHOT"
-agp = "8.5.0"
+aachartcoreKotlin = "7.4.0"
+agp = "8.10.1"
 blessedAndroidCoroutines = "0.4.1"
-datastorePreferences = "1.1.1"
-kotlin = "1.9.0"
-coreKtx = "1.13.1"
+datastorePreferences = "1.1.7"
+kotlin = "2.1.21"
+coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
 material = "1.12.0"
-constraintlayout = "2.1.4"
-lifecycleLivedataKtx = "2.8.3"
-lifecycleViewmodelKtx = "2.8.3"
-material3 = "1.2.1"
-material3Version = "1.3.0-beta04"
-navigationFragmentKtx = "2.7.7"
-navigationUiKtx = "2.7.7"
+constraintlayout = "2.2.1"
+lifecycleLivedataKtx = "2.9.0"
+lifecycleViewmodelKtx = "2.9.0"
+material3 = "1.3.2"
+#material3Version = "1.3.2"
+navigationFragmentKtx = "2.9.0"
+navigationUiKtx = "2.9.0"
 timerx = "3.1.0"
 legacySupportV4 = "1.0.0"
-fragmentKtx = "1.8.1"
-roomRxjava2 = "2.6.1"
+fragmentKtx = "1.8.7"
+roomRxjava2 = "2.7.1"
+room = "2.7.1"
 
 [libraries]
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 aachartcore-kotlin = { module = "com.github.AAChartModel:AAChartCore-Kotlin", version.ref = "aachartcoreKotlin" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-datastore-preferences-rxjava2 = { module = "androidx.datastore:datastore-preferences-rxjava2", version.ref = "datastorePreferences" }
 androidx-datastore-preferences-rxjava3 = { module = "androidx.datastore:datastore-preferences-rxjava3", version.ref = "datastorePreferences" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
-androidx-material3-v130beta04 = { module = "androidx.compose.material3:material3", version.ref = "material3Version" }
 androidx-navigation-safe-args-gradle-plugin = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "navigationFragmentKtx" }
 blessed-android-coroutines = { module = "com.github.weliem:blessed-android-coroutines", version.ref = "blessedAndroidCoroutines" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -50,4 +53,4 @@ androidx-room-rxjava2 = { group = "androidx.room", name = "room-rxjava2", versio
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-
+kotlin-ksp = { id = "com.google.devtools.ksp", version = "2.1.21-2.0.1" }
