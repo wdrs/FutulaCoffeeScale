@@ -159,7 +159,7 @@ data class WeightRecordExtra(
 @Dao
 interface WeightRecordDao {
     @Insert(entity = WeightRecordDbEntity::class)
-    fun insertWeightRecordData(weightRecord: WeightRecordDbEntity)
+    fun insertWeightRecordData(weightRecord: WeightRecordDbEntity): Long
 
     @Query(
         "SELECT id, brew_date, weight_unit, dose_record, weight_record,\n " +
@@ -350,7 +350,7 @@ object Dependencies {
         }
     }
 
-    private val appDatabase: AppDatabase by lazy {
+    val appDatabase: AppDatabase by lazy {
         Room.databaseBuilder(
             applicationContext, AppDatabase::class.java, "futula_coffee_scale_database.db"
         ).allowMainThreadQueries()
@@ -369,10 +369,8 @@ object Dependencies {
 
 class WeightRecordRepository(private val weightRecordDao: WeightRecordDao) {
 
-    suspend fun insertWeightRecordData(weightRecordDbEntity: WeightRecordDbEntity) {
-        withContext(Dispatchers.IO) {
-            weightRecordDao.insertWeightRecordData(weightRecordDbEntity)
-        }
+    suspend fun insertWeightRecordData(weightRecordDbEntity: WeightRecordDbEntity): Long {
+        return weightRecordDao.insertWeightRecordData(weightRecordDbEntity)
     }
 
     suspend fun getAllWeightRecordData(): List<WeightRecordInfoTuple> {
@@ -403,9 +401,7 @@ class WeightRecordRepository(private val weightRecordDao: WeightRecordDao) {
 class WeightRecordRepositoryExtra(private val weightRecordExtraDao: WeightRecordExtraDao) {
 
     suspend fun insertWeightRecordExtraData(weightRecordDbEntityExtra: WeightRecordDbEntityExtra) {
-        withContext(Dispatchers.IO) {
-            weightRecordExtraDao.insertWeightRecordExtraData(weightRecordDbEntityExtra)
-        }
+        weightRecordExtraDao.insertWeightRecordExtraData(weightRecordDbEntityExtra)
     }
 
     suspend fun getAllWeightRecordExtraData(): List<WeightRecordInfoTupleExtra> {

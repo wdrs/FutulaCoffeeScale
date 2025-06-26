@@ -318,8 +318,6 @@ class HistoryInfoFragment : Fragment() {
 
         chartFlowRateViewLayout = binding.chartFlowRateViewLayout
 
-        chartWeightView.isClearBackgroundColor = true
-        chartFlowRateView.isClearBackgroundColor = true
 
         weightLogGraphData =
             AASeriesElement().name(getString(R.string.weight_text)).data(weightLog.toTypedArray())
@@ -347,6 +345,7 @@ class HistoryInfoFragment : Fragment() {
                     .series(arrayOf(weightLogGraphData, flowRateLogGraphData))
                     .categories(chartViewCategories)
                     .colorsTheme(arrayOf(primaryChartColor, secondaryChartColor))
+                    .backgroundColor("#00000000")
 
                 Handler(Looper.getMainLooper()).post {
                     chartFlowRateViewLayout.visibility = View.GONE
@@ -363,6 +362,7 @@ class HistoryInfoFragment : Fragment() {
                     .markerRadius(0)
                     .dataLabelsEnabled(false).series(arrayOf(weightLogGraphData))
                     .categories(chartViewCategories).colorsTheme(arrayOf(primaryChartColor))
+                    .backgroundColor("#00000000")
                 chartFlowRateViewModel =
                     AAChartModel().chartType(returnChartType(flowRateChartType))
                         .yAxisTitle(getString(R.string.flowrate_text))
@@ -370,6 +370,7 @@ class HistoryInfoFragment : Fragment() {
                         .legendEnabled(false).markerRadius(0).dataLabelsEnabled(false)
                         .series(arrayOf(flowRateLogGraphData))
                         .categories(chartViewCategories).colorsTheme(arrayOf(primaryChartColor))
+                        .backgroundColor("#00000000")
 
                 Handler(Looper.getMainLooper()).post {
                     chartWeightView.aa_drawChartWithChartModel(chartWeightViewModel)
