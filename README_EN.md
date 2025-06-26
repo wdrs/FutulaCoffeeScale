@@ -1,8 +1,7 @@
 # Futula Coffee Scale
 ## _Coffee application for Futula Kitchen Scale 3_
 
-## Русская версия README
-[Читать тут](README.md)
+## [Русская версия README](README.md)
 
 <div>
 <img src='docs/images/main_screen_en.jpg' width="33%" >
@@ -144,20 +143,20 @@ Appearance types:
 
 ## TODO
 
-✅ Manual dose editing
-✅ Net weight calculation
-✅ "Grinder" field
-✅ Detailed cards
-✅ Search by history
-✅ Graph appearance customization
-🔲 Automatic stop
-🔲 Setting the display of graphs during pouring (one for all, one of two, both, more/less)
-🔲 Point ratings
-🔲 Filter by brewing date
-🔲 Filter by fields
-🔲 Export to JSON
-🔲 Export to CSV
-🔲 Start/Stop timer without conditions
+✅ Manual dose editing  
+✅ Net weight calculation  
+✅ "Grinder" field  
+✅ Detailed cards  
+✅ Search by history  
+✅ Graph appearance customization  
+🔲 Automatic stop  
+🔲 Setting the display of graphs during pouring (one for all, one of two, both, more/less)  
+🔲 Point ratings  
+🔲 Filter by brewing date  
+🔲 Filter by fields  
+🔲 Export to JSON  
+🔲 Export to CSV  
+🔲 Start/Stop timer without conditions  
 
 ## Application update
 
