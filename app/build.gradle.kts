@@ -14,7 +14,7 @@ android {
         minSdk = 29
         targetSdk = 36
         versionCode = 6
-        versionName = "1.1.3"
+        versionName = "1.1.4"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     ksp {
