@@ -636,7 +636,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
-                    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
                         android:id="@+id/selectWeightGraphTypeAuto"
                         style="@style/Widget.Material3.AutoCompleteTextView.OutlinedBox"
                         android:layout_width="match_parent"
@@ -673,7 +673,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
-                    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
                         android:id="@+id/selectFlowRateGraphTypeAuto"
                         style="@style/Widget.Material3.AutoCompleteTextView.OutlinedBox"
                         android:layout_width="match_parent"

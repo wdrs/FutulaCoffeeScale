@@ -27,6 +27,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.room.withTransaction
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartAnimationType
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartModel
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartType
@@ -37,6 +38,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.tomatishe.futulacoffeescale.Dependencies
 import com.tomatishe.futulacoffeescale.R
 import com.tomatishe.futulacoffeescale.WeightRecord
+import com.tomatishe.futulacoffeescale.WeightRecordExtra
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.DataCoordinator
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoAll
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoButtons
@@ -731,23 +733,25 @@ class HomeFragment : Fragment() {
                             switchesLayout.visibility = View.GONE
                         }
 
-                        chartWeightViewModel =
-                            AAChartModel().chartType(returnChartType(weightChartType))
-                                .yAxisTitle(getString(R.string.weight_text)).markerRadius(0)
-                                .animationType(AAChartAnimationType.Elastic).tooltipEnabled(false)
-                                .legendEnabled(false)
-                                .dataLabelsEnabled(false).series(arrayOf(weightLogGraphData))
-                                .categories(chartViewCategories)
-                                .colorsTheme(arrayOf(primaryChartColor))
+                        chartWeightViewModel = AAChartModel()
+                            .chartType(returnChartType(weightChartType))
+                            .yAxisTitle(getString(R.string.weight_text)).markerRadius(0)
+                            .animationType(AAChartAnimationType.Elastic).tooltipEnabled(false)
+                            .legendEnabled(false)
+                            .dataLabelsEnabled(false).series(arrayOf(weightLogGraphData))
+                            .categories(chartViewCategories)
+                            .colorsTheme(arrayOf(primaryChartColor))
+                            .backgroundColor("#00000000")
 
-                        chartFlowRateViewModel =
-                            AAChartModel().chartType(returnChartType(flowRateChartType))
-                                .yAxisTitle(getString(R.string.flowrate_text)).markerRadius(0)
-                                .animationType(AAChartAnimationType.Elastic).tooltipEnabled(false)
-                                .legendEnabled(false)
-                                .dataLabelsEnabled(false).series(arrayOf(flowRateLogGraphData))
-                                .categories(chartViewCategories)
-                                .colorsTheme(arrayOf(primaryChartColor))
+                        chartFlowRateViewModel = AAChartModel()
+                            .chartType(returnChartType(flowRateChartType))
+                            .yAxisTitle(getString(R.string.flowrate_text)).markerRadius(0)
+                            .animationType(AAChartAnimationType.Elastic).tooltipEnabled(false)
+                            .legendEnabled(false)
+                            .dataLabelsEnabled(false).series(arrayOf(flowRateLogGraphData))
+                            .categories(chartViewCategories)
+                            .colorsTheme(arrayOf(primaryChartColor))
+                            .backgroundColor("#00000000")
 
                         chartWeightView.aa_drawChartWithChartModel(chartWeightViewModel)
                         chartFlowRateView.aa_drawChartWithChartModel(chartFlowRateViewModel)
@@ -879,7 +883,25 @@ class HomeFragment : Fragment() {
             brewRatioString
         )
         if (weightLogSecond.size > 0) {
-            Dependencies.weightRecordRepository.insertWeightRecordData(newWeightRecord.toWeightRecordDbEntity())
+            GlobalScope.launch {
+                Dependencies.appDatabase.withTransaction {
+                    val newId =
+                        Dependencies.weightRecordRepository.insertWeightRecordData(newWeightRecord.toWeightRecordDbEntity())
+                    val newWeightRecordExtra = WeightRecordExtra(
+                        weightId = newId,
+                        coffeeBean = null,
+                        coffeeGrinder = null,
+                        coffeeGrinderLevel = null,
+                        gadgetName = null,
+                        waterTemp = null,
+                        extraInfo = null,
+                        coffeeRoaster = null,
+                    )
+                    Dependencies.weightRecordRepositoryExtra.insertWeightRecordExtraData(
+                        newWeightRecordExtra.toWeightRecordDbEntityExtra()
+                    )
+                }
+            }
             Snackbar.make(
                 mRootView!!, R.string.action_saved, Snackbar.LENGTH_SHORT
             ).setAnchorView(R.id.switchesLayout).show()
@@ -1008,8 +1030,6 @@ class HomeFragment : Fragment() {
         chartWeightView = binding.chartWeightView
         chartFlowRateView = binding.chartFlowRateView
 
-        chartWeightView.isClearBackgroundColor = true
-        chartFlowRateView.isClearBackgroundColor = true
 
         doseButton = binding.doseButton
         doseButton.setOnClickListener {

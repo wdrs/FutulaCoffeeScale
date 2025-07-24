@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
                 requestLocationPermission()
             }
 
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            true -> {
                 requestBluetoothPermissions()
             }
         }

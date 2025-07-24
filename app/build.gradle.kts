@@ -1,26 +1,24 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    id("kotlin-kapt")
+    alias(libs.plugins.kotlin.ksp)
     id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
     namespace = "com.tomatishe.futulacoffeescale"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.tomatishe.futulacoffeescale"
         minSdk = 29
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 6
         versionName = "1.1.3"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        kapt {
-            arguments {arg("room.schemaLocation", "$projectDir/schemas")}
-        }
+    }
+    ksp {
+        arg("room.schemaLocation", "$projectDir/schemas")
     }
 
     buildTypes {
@@ -53,7 +51,6 @@ dependencies {
     implementation(libs.androidx.legacy.support.v4)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.room.rxjava2)
-    val room_version = "2.6.1"
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -73,10 +70,9 @@ dependencies {
     implementation(libs.androidx.datastore.preferences.rxjava2)
     implementation(libs.androidx.datastore.preferences.rxjava3)
 
-    implementation("com.github.AAChartModel:AAChartCore-Kotlin:7.2.1")
+    implementation(libs.aachartcore.kotlin)
 
-    implementation("androidx.room:room-runtime:$room_version")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
-    kapt("androidx.room:room-compiler:$room_version")
-    implementation("androidx.room:room-ktx:$room_version")
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
 }

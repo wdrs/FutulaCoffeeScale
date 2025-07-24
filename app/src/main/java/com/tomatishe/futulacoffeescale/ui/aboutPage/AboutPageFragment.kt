@@ -3,20 +3,19 @@ package com.tomatishe.futulacoffeescale.ui.aboutPage
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
-import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.pm.PackageInfoCompat
-import com.tomatishe.futulacoffeescale.R
+import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.tomatishe.futulacoffeescale.databinding.FragmentAboutPageBinding
 
 class AboutPageFragment : Fragment() {
@@ -51,7 +50,7 @@ class AboutPageFragment : Fragment() {
                 packageManager.getPackageInfo(packageName, 0)
             }
             AppVersion(
-                versionName = packageInfo.versionName,
+                versionName = packageInfo.versionName.toString(),
                 versionNumber = PackageInfoCompat.getLongVersionCode(packageInfo),
             )
         } catch (e: Exception) {
@@ -98,7 +97,7 @@ class AboutPageFragment : Fragment() {
             val appRepoUrl = appRepoLink.text.toString()
             val appRepoUrlIntent = Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse(appRepoUrl)
+                appRepoUrl.toUri()
             )
             startActivity(appRepoUrlIntent)
         }
@@ -107,7 +106,7 @@ class AboutPageFragment : Fragment() {
             val appIdeaUrl = appIdeaLink.text.toString()
             val appIdeaUrlIntent = Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse(appIdeaUrl)
+                appIdeaUrl.toUri()
             )
             startActivity(appIdeaUrlIntent)
         }
@@ -116,7 +115,7 @@ class AboutPageFragment : Fragment() {
             val appAuthorUrl = appAuthorLink.text.toString()
             val appAuthorUrlIntent = Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse(appAuthorUrl)
+                appAuthorUrl.toUri()
             )
             startActivity(appAuthorUrlIntent)
         }

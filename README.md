@@ -1,6 +1,8 @@
 # Futula Coffee Scale
 ## _Кофейное приложение для Futula Kitchen Scale 3_
 
+## [English Version of README](README_EN.md)
+
 <div>
 <img src='docs/images/main_screen.jpg' width="33%" >
 <img src='docs/images/info_screen.jpg' width="33%" >
