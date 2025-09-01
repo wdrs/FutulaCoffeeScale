@@ -78,4 +78,10 @@
     <string name="search_hint">Поиск...</string>
     <string name="weight_graph_type">Тип графика веса</string>
     <string name="flowrate_graph_type">Тип графика пролива</string>
+    <string name="unit_settings_header">Настойки юнитов веса</string>
+    <string name="setting_use_fixed_unit">Зафиксировать юнит для весов</string>
+    <string name="setting_fixed_unit_value">Юнит для фиксации</string>
+    <string name="setting_always_convert_units">Всегда конвертировать в юнит</string>
+    <string name="setting_preferred_display_unit_value">Юнит для отображения в приложении</string>
+    <string name="graph_settings_header">Настройки графиков</string>
 </resources>

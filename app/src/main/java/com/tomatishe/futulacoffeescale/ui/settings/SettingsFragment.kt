@@ -9,11 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Spinner
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView
+import androidx.appcompat.widget.AppCompatSpinner
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.materialswitch.MaterialSwitch
 import com.google.android.material.snackbar.Snackbar
 import com.tomatishe.futulacoffeescale.Dependencies
@@ -32,6 +35,11 @@ import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getReplaceRe
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getStartSearchAfterLaunch
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getStopTimerWhenLostConnection
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getWeightChartType
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getUseFixedUnit
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getFixedUnitValue
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAlwaysConvertUnits
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getPreferredDisplayUnit
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAlwaysConvertUnits
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoAll
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoButtons
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoDose
@@ -39,12 +47,15 @@ import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoSt
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoSwitches
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateAutoTare
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateEnableServerWeight
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateFixedUnitValue
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateFlowRateChartType
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateIgnoreDose
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateOneGraphInHistory
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updatePreferredDisplayUnit
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateReplaceResetWithTare
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateStartSearchAfterLaunch
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateStopTimerWhenLostConnection
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateUseFixedUnit
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.updateWeightChartType
 import com.tomatishe.futulacoffeescale.databinding.FragmentSettingsBinding
 import kotlinx.coroutines.CoroutineScope
@@ -80,6 +91,18 @@ class SettingsFragment : Fragment() {
     private lateinit var weightChartType: AppCompatAutoCompleteTextView
     private lateinit var flowRateChartType: AppCompatAutoCompleteTextView
 
+    // ... Units Settings ...
+    private lateinit var useFixedUnitLayout: ConstraintLayout
+    private lateinit var fixedUnitValueLayout: ConstraintLayout
+    private lateinit var alwaysConvertUnitsLayout: ConstraintLayout
+    private lateinit var preferredDisplayUnitValueLayout: ConstraintLayout
+    private lateinit var useFixedUnitSwitch: MaterialSwitch
+    private lateinit var fixedUnitSpinner: Spinner
+    private lateinit var alwaysConvertUnitsSwitch: MaterialSwitch
+    private lateinit var preferredDisplayUnitSpinner: Spinner
+
+
+    val availableUnitsArray = arrayOf("g", "ml", "ml milk", "oz")
     private val weightChartTypeArray = arrayOf("Area", "AreaSpline", "Column", "Line", "Spline")
     private val flowRateChartTypeArray = arrayOf("Area", "AreaSpline", "Column", "Line", "Spline")
 
@@ -102,6 +125,13 @@ class SettingsFragment : Fragment() {
     private var oneGraphInHistory = false
     private var enableServerWeightChecked = false
 
+    // ... Unit Settings States ...
+    private var useFixedUnitSwitchChecked = true
+    private var fixedUnitValueSelected = availableUnitsArray.firstOrNull() ?: "g"
+    private var alwaysConvertUnitsSwitchChecked = false
+    private var preferredDisplayUnitSelected = availableUnitsArray.firstOrNull() ?: "g"
+// ...
+
     private var isSettingsLoaded = false
         set(value) {
             field = value
@@ -123,6 +153,28 @@ class SettingsFragment : Fragment() {
                         startSearchAfterLaunchSwitch.isChecked = startSearchAfterLaunchChecked
                         showOneGraphInHistorySwitch.isChecked = oneGraphInHistory
                         enableServerWeightSwitch.isChecked = enableServerWeightChecked
+                        useFixedUnitSwitch.isChecked = useFixedUnitSwitchChecked
+                        alwaysConvertUnitsSwitch.isChecked = alwaysConvertUnitsSwitchChecked
+
+                        val fixedUnitPosition = availableUnitsArray.indexOf(fixedUnitValueSelected)
+                        if (fixedUnitPosition >= 0) {
+                            fixedUnitSpinner.setSelection(fixedUnitPosition)
+                        }
+                        val preferredUnitPosition = availableUnitsArray.indexOf(preferredDisplayUnitSelected)
+                        if (preferredUnitPosition >= 0) {
+                            preferredDisplayUnitSpinner.setSelection(preferredUnitPosition)
+                        }
+
+                        if (useFixedUnitSwitch.isChecked) {
+                            fixedUnitValueLayout.visibility = View.VISIBLE
+                        } else {
+                            fixedUnitValueLayout.visibility = View.GONE
+                        }
+                        if (alwaysConvertUnitsSwitch.isChecked) {
+                            preferredDisplayUnitValueLayout.visibility = View.VISIBLE
+                        } else {
+                            preferredDisplayUnitValueLayout.visibility = View.GONE
+                        }
 
                         if (autoStartSettingsSwitch.isChecked) {
                             ignoreDoseLayout.visibility = View.VISIBLE
@@ -157,14 +209,18 @@ class SettingsFragment : Fragment() {
             flowRateChartType.setText(frType, false)
         }
         weightChartType.doOnTextChanged { text, start, before, count ->
-            DataCoordinator.shared.updateWeightChartType(
-                text.toString()
-            )
+            lifecycleScope.launch {
+                DataCoordinator.shared.updateWeightChartType(
+                    text.toString()
+                )
+            }
         }
         flowRateChartType.doOnTextChanged { text, start, before, count ->
-            DataCoordinator.shared.updateFlowRateChartType(
-                text.toString()
-            )
+            lifecycleScope.launch {
+                DataCoordinator.shared.updateFlowRateChartType(
+                    text.toString()
+                )
+            }
         }
     }
 
@@ -186,6 +242,10 @@ class SettingsFragment : Fragment() {
                 startSearchAfterLaunchChecked = DataCoordinator.shared.getStartSearchAfterLaunch()
                 oneGraphInHistory = DataCoordinator.shared.getOneGraphInHistory()
                 enableServerWeightChecked = DataCoordinator.shared.getEnableServerWeight()
+                useFixedUnitSwitchChecked = DataCoordinator.shared.getUseFixedUnit()
+                fixedUnitValueSelected = DataCoordinator.shared.getFixedUnitValue()
+                alwaysConvertUnitsSwitchChecked = DataCoordinator.shared.getAlwaysConvertUnits()
+                preferredDisplayUnitSelected = DataCoordinator.shared.getPreferredDisplayUnit()
                 isSettingsLoaded = true
             }
         }
@@ -222,6 +282,20 @@ class SettingsFragment : Fragment() {
         weightChartType = binding.selectWeightGraphTypeAuto
         flowRateChartType = binding.selectFlowRateGraphTypeAuto
 
+        // ... unit settings binding ...
+
+        useFixedUnitLayout = binding.useFixedUnitLayout
+        fixedUnitValueLayout = binding.fixedUnitValueLayout
+        alwaysConvertUnitsLayout = binding.alwaysConvertUnitsLayout
+        preferredDisplayUnitValueLayout = binding.preferredDisplayUnitValueLayout
+
+        useFixedUnitSwitch = binding.useFixedUnitSwitch
+        fixedUnitSpinner = binding.fixedUnitSpinner
+        alwaysConvertUnitsSwitch = binding.alwaysConvertUnitsSwitch
+        preferredDisplayUnitSpinner = binding.preferredDisplayUnitSpinner
+
+        // ... chart type settings adapters ...
+
         weightChartType.setAdapter(
             ArrayAdapter(
                 binding.root.context,
@@ -238,6 +312,18 @@ class SettingsFragment : Fragment() {
             )
         )
 
+        // ... unit settings adapters ...
+
+        val unitArrayAdapter = ArrayAdapter(
+            requireContext(),
+            R.layout.simple_spinner_item,
+            availableUnitsArray
+        )
+        unitArrayAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+
+        fixedUnitSpinner.adapter = unitArrayAdapter
+        preferredDisplayUnitSpinner.adapter = unitArrayAdapter
+
         weightChartType.isFocusable = false
         weightChartType.isCursorVisible = false
         weightChartType.keyListener = null
@@ -246,12 +332,56 @@ class SettingsFragment : Fragment() {
         flowRateChartType.isCursorVisible = false
         flowRateChartType.keyListener = null
 
-        GlobalScope.launch {
+        lifecycleScope.launch {
             getChartTypes()
         }
 
+        useFixedUnitSwitch.setOnCheckedChangeListener { _, isChecked ->
+            lifecycleScope.launch {
+                DataCoordinator.shared.updateUseFixedUnit(isChecked)
+            }
+            fixedUnitValueLayout.visibility = if (isChecked) View.VISIBLE else View.GONE
+        }
+
+        alwaysConvertUnitsSwitch.setOnCheckedChangeListener { _, isChecked ->
+            lifecycleScope.launch {
+                DataCoordinator.shared.updateAlwaysConvertUnits(isChecked)
+            }
+            preferredDisplayUnitValueLayout.visibility = if (isChecked) View.VISIBLE else View.GONE
+        }
+
+        fixedUnitSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                val selectedUnit = availableUnitsArray[position]
+                fixedUnitValueSelected = selectedUnit
+                lifecycleScope.launch {
+                    DataCoordinator.shared.updateFixedUnitValue(selectedUnit)
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // Maybe for future
+            }
+        }
+
+        preferredDisplayUnitSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                val selectedUnit = availableUnitsArray[position]
+                preferredDisplayUnitSelected = selectedUnit
+                lifecycleScope.launch {
+                    DataCoordinator.shared.updatePreferredDisplayUnit(selectedUnit)
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // Maybe for future
+            }
+        }
+
         autoFuncSettingsSwitch.setOnClickListener {
-            DataCoordinator.shared.updateAutoAll(autoFuncSettingsSwitch.isChecked)
+            lifecycleScope.launch {
+                DataCoordinator.shared.updateAutoAll(autoFuncSettingsSwitch.isChecked)
+            }
             if (autoFuncSettingsSwitch.isChecked) {
                 autoStartLayout.visibility = View.VISIBLE
                 if (autoStartSettingsSwitch.isChecked) {
@@ -268,7 +398,9 @@ class SettingsFragment : Fragment() {
         }
 
         autoStartSettingsSwitch.setOnClickListener {
-            DataCoordinator.shared.updateAutoStart(autoStartSettingsSwitch.isChecked)
+            lifecycleScope.launch {
+                DataCoordinator.shared.updateAutoStart(autoStartSettingsSwitch.isChecked)
+            }
             if (autoStartSettingsSwitch.isChecked) {
                 ignoreDoseLayout.visibility = View.VISIBLE
             } else {
@@ -280,57 +412,77 @@ class SettingsFragment : Fragment() {
         }
 
         ignoreDoseSettingsSwitch.setOnClickListener {
-            DataCoordinator.shared.updateIgnoreDose(ignoreDoseSettingsSwitch.isChecked)
+            lifecycleScope.launch {
+                DataCoordinator.shared.updateIgnoreDose(ignoreDoseSettingsSwitch.isChecked)
+            }
         }
 
         autoDoseSettingsSwitch.setOnClickListener {
-            DataCoordinator.shared.updateAutoDose(autoDoseSettingsSwitch.isChecked)
+            lifecycleScope.launch {
+                DataCoordinator.shared.updateAutoDose(autoDoseSettingsSwitch.isChecked)
+            }
             if (!autoStartSettingsSwitch.isChecked && !autoDoseSettingsSwitch.isChecked && !autoTareSettingsSwitch.isChecked) {
                 autoFuncSettingsSwitch.performClick()
             }
         }
 
         autoTareSettingsSwitch.setOnClickListener {
-            DataCoordinator.shared.updateAutoTare(autoTareSettingsSwitch.isChecked)
+            lifecycleScope.launch {
+                DataCoordinator.shared.updateAutoTare(autoTareSettingsSwitch.isChecked)
+            }
             if (!autoStartSettingsSwitch.isChecked && !autoDoseSettingsSwitch.isChecked && !autoTareSettingsSwitch.isChecked) {
                 autoFuncSettingsSwitch.performClick()
             }
         }
 
         autoHideSwitchesSettingsSwitch.setOnClickListener {
-            DataCoordinator.shared.updateAutoSwitches(autoHideSwitchesSettingsSwitch.isChecked)
+            lifecycleScope.launch {
+                DataCoordinator.shared.updateAutoSwitches(autoHideSwitchesSettingsSwitch.isChecked)
+            }
         }
 
         autoHideButtonsSettingsSwitch.setOnClickListener {
-            DataCoordinator.shared.updateAutoButtons(autoHideButtonsSettingsSwitch.isChecked)
+            lifecycleScope.launch {
+                DataCoordinator.shared.updateAutoButtons(autoHideButtonsSettingsSwitch.isChecked)
+            }
         }
 
         replaceResetWithTareSwitch.setOnClickListener {
-            DataCoordinator.shared.updateReplaceResetWithTare(replaceResetWithTareSwitch.isChecked)
+            lifecycleScope.launch {
+                DataCoordinator.shared.updateReplaceResetWithTare(replaceResetWithTareSwitch.isChecked)
+            }
         }
 
         stopTimerWhenLostConnectionSwitch.setOnClickListener {
-            DataCoordinator.shared.updateStopTimerWhenLostConnection(
-                stopTimerWhenLostConnectionSwitch.isChecked
-            )
+            lifecycleScope.launch {
+                DataCoordinator.shared.updateStopTimerWhenLostConnection(
+                    stopTimerWhenLostConnectionSwitch.isChecked
+                )
+            }
         }
 
         startSearchAfterLaunchSwitch.setOnClickListener {
-            DataCoordinator.shared.updateStartSearchAfterLaunch(
-                startSearchAfterLaunchSwitch.isChecked
-            )
+            lifecycleScope.launch {
+                DataCoordinator.shared.updateStartSearchAfterLaunch(
+                    startSearchAfterLaunchSwitch.isChecked
+                )
+            }
         }
 
         showOneGraphInHistorySwitch.setOnClickListener {
-            DataCoordinator.shared.updateOneGraphInHistory(
-                showOneGraphInHistorySwitch.isChecked
-            )
+            lifecycleScope.launch {
+                DataCoordinator.shared.updateOneGraphInHistory(
+                    showOneGraphInHistorySwitch.isChecked
+                )
+            }
         }
 
         enableServerWeightSwitch.setOnClickListener {
-            DataCoordinator.shared.updateEnableServerWeight(
-                enableServerWeightSwitch.isChecked
-            )
+            lifecycleScope.launch {
+                DataCoordinator.shared.updateEnableServerWeight(
+                    enableServerWeightSwitch.isChecked
+                )
+            }
         }
 
         //val textView: TextView = binding.textSlideshow

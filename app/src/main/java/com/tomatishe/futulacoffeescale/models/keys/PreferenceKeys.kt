@@ -18,4 +18,8 @@ object PreferencesKeys {
     val enableServerWeight = booleanPreferencesKey("enableServerWeight")
     val weightChartType = stringPreferencesKey("weightChartType")
     val flowRateChartType = stringPreferencesKey("flowRateChartType")
+    val useFixedUnit = booleanPreferencesKey("useFixedUnit")
+    val fixedUnit = stringPreferencesKey("fixedUnit")
+    val alwaysConvertUnits = booleanPreferencesKey("alwaysConvertUnits")
+    val preferredDisplayUnit = stringPreferencesKey("preferredDisplayUnit")
 }

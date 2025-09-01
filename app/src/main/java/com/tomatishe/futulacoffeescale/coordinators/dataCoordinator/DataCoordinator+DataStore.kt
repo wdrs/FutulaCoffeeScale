@@ -211,3 +211,63 @@ suspend fun DataCoordinator.setFlowRateChartType(value: String) {
         preferences[PreferencesKeys.flowRateChartType] = value
     }
 }
+
+// --- Unit Management Preferences ---
+
+suspend fun DataCoordinator.getUseFixedUnit(): Boolean {
+    val context = this.context ?: return defaultUseFixedUnit
+    return context.dataStore.data.firstOrNull()?.get(PreferencesKeys.useFixedUnit)
+        ?: defaultUseFixedUnit
+}
+
+suspend fun DataCoordinator.setUseFixedUnit(value: Boolean) {
+    val context = this.context ?: return
+    context.dataStore.edit { preferences ->
+        preferences[PreferencesKeys.useFixedUnit] = value
+    }
+}
+
+// ---
+
+suspend fun DataCoordinator.getFixedUnitValue(): String {
+    val context = this.context ?: return defaultFixedUnit
+    return context.dataStore.data.firstOrNull()?.get(PreferencesKeys.fixedUnit)
+        ?: defaultFixedUnit
+}
+
+suspend fun DataCoordinator.setFixedUnitValue(value: String) {
+    val context = this.context ?: return
+    context.dataStore.edit { preferences ->
+        preferences[PreferencesKeys.fixedUnit] = value
+    }
+}
+
+// ---
+
+suspend fun DataCoordinator.getAlwaysConvertUnits(): Boolean {
+    val context = this.context ?: return defaultAlwaysConvertUnits
+    return context.dataStore.data.firstOrNull()?.get(PreferencesKeys.alwaysConvertUnits)
+        ?: defaultAlwaysConvertUnits
+}
+
+suspend fun DataCoordinator.setAlwaysConvertUnits(value: Boolean) {
+    val context = this.context ?: return
+    context.dataStore.edit { preferences ->
+        preferences[PreferencesKeys.alwaysConvertUnits] = value
+    }
+}
+
+// ---
+
+suspend fun DataCoordinator.getPreferredDisplayUnit(): String {
+    val context = this.context ?: return defaultPreferredDisplayUnit
+    return context.dataStore.data.firstOrNull()?.get(PreferencesKeys.preferredDisplayUnit)
+        ?: defaultPreferredDisplayUnit
+}
+
+suspend fun DataCoordinator.setPreferredDisplayUnit(value: String) {
+    val context = this.context ?: return
+    context.dataStore.edit { preferences ->
+        preferences[PreferencesKeys.preferredDisplayUnit] = value
+    }
+}
