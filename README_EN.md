@@ -129,6 +129,9 @@ Here you can adjust the application behavior to your needs.
 - Replace reset with tare - change the behavior of the reset button so that it works like a tare button;
 - Enable saving dripper weight - add a button to save the funnel weight to calculate the net beverage weight;
 - Hide switches when brewing - when the timer is turned on, it will hide the automation switches;
+- Weight unit settings;
+  - Fix unit on the scale;
+  - Fix unit for converting;
 - Hide buttons after brewing - after finishing brewing, it will hide the bottom buttons. Increases the area of the graphs;
 - One graph in history - will show a combined graph of flow rate and weight instead of two graphs when viewing in history;
 - Weight graph type - changes the appearance of the weight graph;
