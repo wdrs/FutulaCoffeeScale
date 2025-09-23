@@ -1,6 +1,6 @@
 [versions]
 aachartcoreKotlin = "7.4.0"
-agp = "8.12.2"
+agp = "8.13.0"
 blessedAndroidCoroutines = "0.4.2"
 datastorePreferences = "1.1.7"
 kotlin = "2.2.10"
