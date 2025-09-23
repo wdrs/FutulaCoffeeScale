@@ -75,6 +75,8 @@
     <string name="search_in_history">Поиск...</string>
     <string name="weight_unit">г</string>
     <string name="water_unit">мл</string>
+    <string name="milk_unit">мл молока</string>
+    <string name="oz_unit">oz</string>
     <string name="search_hint">Поиск...</string>
     <string name="weight_graph_type">Тип графика веса</string>
     <string name="flowrate_graph_type">Тип графика пролива</string>
@@ -82,6 +84,7 @@
     <string name="setting_use_fixed_unit">Зафиксировать юнит для весов</string>
     <string name="setting_fixed_unit_value">Юнит для фиксации</string>
     <string name="setting_always_convert_units">Всегда конвертировать в юнит</string>
-    <string name="setting_preferred_display_unit_value">Юнит для отображения в приложении</string>
+    <string name="setting_preferred_display_unit_value">Юнит для отображения</string>
     <string name="graph_settings_header">Настройки графиков</string>
+    <string name="in">в</string>
 </resources>

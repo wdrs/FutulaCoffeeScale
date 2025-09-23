@@ -164,7 +164,10 @@ class HomeFragment : Fragment() {
             activity?.runOnUiThread {
                 waitWatch.reset()
                 waitWatch.start()
-                weightLabel.text = "Weight in %s".format(weightUnit)
+                weightLabel.text =
+                    getString(R.string.weight_text) + " " +
+                    getString(R.string.`in`) + " " +
+                    getString(R.string.weight_unit)
                 weightText.text = "%.1f".format(weightRecord)
                 if (autoFuncSettingsSwitchChecked && autoStartSettingsSwitchChecked) {
                     if (
@@ -436,6 +439,17 @@ class HomeFragment : Fragment() {
                     sendCommandToScale(peripheral, unitGramCommand)
                 }
 
+                // Synchronize time on the scale
+                val calendar = Calendar.getInstance()
+                val hour = calendar.get(Calendar.HOUR_OF_DAY)
+                val minutes = calendar.get(Calendar.MINUTE)
+                val seconds = calendar.get(Calendar.SECOND)
+                val timeCommand = byteArrayOf(
+                    0xF1.toByte(), 0x07.toByte(), 0xE8.toByte(), 0x07.toByte(),
+                    0x05.toByte(), hour.toByte(), minutes.toByte(), seconds.toByte())
+                    .joinToString("") { "%02x".format(it)}
+                sendCommandToScale(peripheral, timeCommand)
+
             } catch (e: IllegalArgumentException) {
                 Log.d("ERROR", "$e")
             } catch (b: GattException) {
@@ -464,7 +478,7 @@ class HomeFragment : Fragment() {
                 ConnectionState.CONNECTED -> {
                     isConnected = true
                     handlePeripheral(peripheral)
-                }
+                    }
 
                 ConnectionState.DISCONNECTING -> {
                     currentScanButtonText = getString(R.string.button_connect_disconnecting)
