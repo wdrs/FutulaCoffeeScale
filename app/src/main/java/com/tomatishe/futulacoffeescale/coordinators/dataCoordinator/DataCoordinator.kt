@@ -45,6 +45,16 @@ class DataCoordinator {
     var flowRateChartType: String = "AreaSpline"
     val defaultFlowRateChartType: String = "AreaSpline"
 
+    // New preferences for unit management
+    var useFixedUnit: Boolean = true
+    val defaultUseFixedUnit: Boolean = true
+    var fixedUnitValue: String = "g"
+    val defaultFixedUnit: String = "g"
+    var alwaysConvertUnits: Boolean = false
+    val defaultAlwaysConvertUnits: Boolean = false
+    var preferredDisplayUnit: String = "g"
+    val defaultPreferredDisplayUnit: String = "g"
+
     // MARK: Data Store Variables
     private val USER_PREFERENCES_NAME = "fCoffeeScapePreferences"
     val Context.dataStore by preferencesDataStore(
@@ -72,6 +82,11 @@ class DataCoordinator {
             enableServerWeight = getEnableServerWeight()
             weightChartType = getWeightChartType()
             flowRateChartType = getFlowRateChartType()
+            // Initialize new unit preferences
+            useFixedUnit = getUseFixedUnit()
+            fixedUnitValue = getFixedUnitValue()
+            alwaysConvertUnits = getAlwaysConvertUnits()
+            preferredDisplayUnit = getPreferredDisplayUnit()
             // Callback
             onLoad()
         }

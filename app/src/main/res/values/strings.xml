@@ -73,9 +73,18 @@
     <string name="enable_server_weight">Enable saving dripper weight</string>
     <string name="coffee_roaster">Coffe Roaster</string>
     <string name="search_in_history">Search...</string>
-    <string name="water_unit">ml</string>
     <string name="weight_unit">g</string>
+    <string name="water_unit">ml</string>
+    <string name="milk_unit">ml milk</string>
+    <string name="oz_unit">oz</string>
     <string name="search_hint">Search...</string>
     <string name="weight_graph_type">Weight graph type</string>
     <string name="flowrate_graph_type">Flowrate graph type</string>
+    <string name="unit_settings_header">Unit settings</string>
+    <string name="setting_use_fixed_unit">Fix units use on scale</string>
+    <string name="setting_fixed_unit_value">Unit to use</string>
+    <string name="setting_always_convert_units">ALways convert to unit</string>
+    <string name="setting_preferred_display_unit_value">Unit to display in app</string>
+    <string name="graph_settings_header">Graphs Settings</string>
+    <string name="in">in</string>
 </resources>

@@ -22,11 +22,10 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.get
-import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.room.withTransaction
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartAnimationType
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartModel
@@ -40,6 +39,7 @@ import com.tomatishe.futulacoffeescale.R
 import com.tomatishe.futulacoffeescale.WeightRecord
 import com.tomatishe.futulacoffeescale.WeightRecordExtra
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.DataCoordinator
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAlwaysConvertUnits
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoAll
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoButtons
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoDose
@@ -47,11 +47,14 @@ import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoStart
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoSwitches
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getAutoTare
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getEnableServerWeight
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getFixedUnitValue
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getFlowRateChartType
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getIgnoreDose
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getPreferredDisplayUnit
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getReplaceResetWithTare
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getStartSearchAfterLaunch
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getStopTimerWhenLostConnection
+import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getUseFixedUnit
 import com.tomatishe.futulacoffeescale.coordinators.dataCoordinator.getWeightChartType
 import com.tomatishe.futulacoffeescale.databinding.FragmentHomeBinding
 import com.welie.blessed.BluetoothCentralManager
@@ -61,6 +64,7 @@ import com.welie.blessed.ConnectionState
 import com.welie.blessed.GattException
 import com.welie.blessed.WriteType
 import com.welie.blessed.asUInt8
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -70,6 +74,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.UUID
 import java.util.concurrent.TimeUnit
+import androidx.core.view.isVisible
 
 
 private const val SCALE_NAME = "LFSmart Scale"
@@ -159,6 +164,10 @@ class HomeFragment : Fragment() {
             activity?.runOnUiThread {
                 waitWatch.reset()
                 waitWatch.start()
+                weightLabel.text =
+                    getString(R.string.weight_text) + " " +
+                    getString(R.string.`in`) + " " +
+                    getString(R.string.weight_unit)
                 weightText.text = "%.1f".format(weightRecord)
                 if (autoFuncSettingsSwitchChecked && autoStartSettingsSwitchChecked) {
                     if (
@@ -179,6 +188,10 @@ class HomeFragment : Fragment() {
             }
         }
     private var weightUnit: String = "g"
+    private var useFixedUnitSetting: Boolean = true
+    private var fixedUnitValueSetting: String = "g"
+    private var alwaysConvertUnitsSetting: Boolean = false
+    private var preferredDisplayUnitSetting: String = "g"
     private var weightLog = mutableListOf<Float>()
     private var weightLogSecond = mutableListOf<Float>()
     private var weightLogGraphData =
@@ -311,6 +324,7 @@ class HomeFragment : Fragment() {
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun handlePeripheral(peripheral: BluetoothPeripheral) {
         GlobalScope.launch {
             try {
@@ -327,32 +341,56 @@ class HomeFragment : Fragment() {
 
                 peripheral.observe(weightCharacteristic) { value ->
                     try {
-                        val weightSign =
-                            if (value.sliceArray(5..5)[0].toInt() > 0) -1.0 else 1.0
-                        val localWeightUnit = value.sliceArray(8..8)[0].toInt()
-                        weightUnit = when (localWeightUnit) {
+                        if (useFixedUnitSetting) {
+                            val localWeightUnitByte = value.sliceArray(8..8)[0].toInt()
+                            val fixedUnitByte = when (fixedUnitValueSetting) {
+                                "g" -> 4
+                                "oz" -> 6
+                                "ml w" -> 7
+                                "ml milk" -> 8
+                                else -> 4
+                            }
+                            if (localWeightUnitByte != fixedUnitByte) {
+                                val command = when (fixedUnitValueSetting) {
+                                    "g" -> unitGramCommand
+                                    "oz" -> unitOzCommand
+                                    "ml w" -> unitMlWCommand
+                                    "ml milk" -> unitMlMilkCommand
+                                    else -> unitGramCommand
+                                }
+                                lifecycleScope.launch { sendCommandToScale(peripheral, command) }
+                            }
+                        }
+
+                        val weightSign = if (value.sliceArray(5..5)[0].toInt() > 0) -1.0 else 1.0
+                        val baseWeightInGrams = (intFrom2ByteArray(value.sliceArray(3..4)).toFloat() / 10) * weightSign.toFloat()
+
+                        val localWeightUnitString = when (value.sliceArray(8..8)[0].toInt()) {
                             4 -> "g"
                             6 -> "oz"
                             7 -> "ml w"
                             8 -> "ml milk"
-                            else -> {
-                                "g"
-                            }
+                            else -> "g"
                         }
-                        val weightUnitMultiplier = when (localWeightUnit) {
-                            4 -> 1.0
-                            6 -> 0.035274
-                            7 -> 1.0
-                            8 -> 0.972
-                            else -> {
-                                1.0
-                            }
-                        }
-                        if (isWeightLocked) {
-                            weightRecord = weightRecordLocked
+
+                        weightUnit = if (alwaysConvertUnitsSetting) {
+                            preferredDisplayUnitSetting
                         } else {
-                            weightRecord =
-                                (intFrom2ByteArray(value.sliceArray(3..4)).toFloat() / 10) * weightSign.toFloat() * weightUnitMultiplier.toFloat()
+                            localWeightUnitString
+                        }
+
+                        val weightUnitMultiplier = when (weightUnit) {
+                            "g" -> 1.0
+                            "oz" -> 0.035274
+                            "ml w" -> 1.0
+                            "ml milk" -> 0.972
+                            else -> 1.0
+                        }
+
+                        weightRecord = if (isWeightLocked) {
+                            weightRecordLocked
+                        } else {
+                            (baseWeightInGrams * weightUnitMultiplier).toFloat()
                         }
                     } catch (exception: Exception) {
                         Log.d(
@@ -372,7 +410,7 @@ class HomeFragment : Fragment() {
                 peripheral.observe(batteryCharacteristic) { value ->
                     try {
                         batteryLevel = value.asUInt8()?.toInt()!!
-                        Log.d("INFO", "BATTERY = ${batteryLevel}")
+                        Log.d("INFO", "BATTERY = $batteryLevel")
                     } catch (exception: Exception) {
                         Log.d(
                             "ERROR",
@@ -388,7 +426,29 @@ class HomeFragment : Fragment() {
                     }
                 }
 
-                sendCommandToScale(peripheral, unitGramCommand)
+                if (useFixedUnitSetting) {
+                    val command = when (fixedUnitValueSetting) {
+                        "g" -> unitGramCommand
+                        "oz" -> unitOzCommand
+                        "ml w" -> unitMlWCommand
+                        "ml milk" -> unitMlMilkCommand
+                        else -> unitGramCommand
+                    }
+                    sendCommandToScale(peripheral, command)
+                } else {
+                    sendCommandToScale(peripheral, unitGramCommand)
+                }
+
+                // Synchronize time on the scale
+                val calendar = Calendar.getInstance()
+                val hour = calendar.get(Calendar.HOUR_OF_DAY)
+                val minutes = calendar.get(Calendar.MINUTE)
+                val seconds = calendar.get(Calendar.SECOND)
+                val timeCommand = byteArrayOf(
+                    0xF1.toByte(), 0x07.toByte(), 0xE8.toByte(), 0x07.toByte(),
+                    0x05.toByte(), hour.toByte(), minutes.toByte(), seconds.toByte())
+                    .joinToString("") { "%02x".format(it)}
+                sendCommandToScale(peripheral, timeCommand)
 
             } catch (e: IllegalArgumentException) {
                 Log.d("ERROR", "$e")
@@ -418,7 +478,7 @@ class HomeFragment : Fragment() {
                 ConnectionState.CONNECTED -> {
                     isConnected = true
                     handlePeripheral(peripheral)
-                }
+                    }
 
                 ConnectionState.DISCONNECTING -> {
                     currentScanButtonText = getString(R.string.button_connect_disconnecting)
@@ -543,10 +603,10 @@ class HomeFragment : Fragment() {
                 brewRatioString = "1:${"%.1f".format(percentRatio)}"
             }
 
-            if (flowRateLog.size > 0) {
+            if (flowRateLog.isNotEmpty()) {
                 val flt = flowRateLog.toMutableList()
                 flt.retainAll { it >= 0.1F }
-                flowRateAvg = if (flt.size > 0) {
+                flowRateAvg = if (flt.isNotEmpty()) {
                     flt.average().toFloat()
                 } else {
                     0.0F
@@ -583,10 +643,10 @@ class HomeFragment : Fragment() {
         set(value) {
             field = value
             activity?.runOnUiThread {
-                if (isScanning) {
-                    currentScanButtonText = getString(R.string.button_connect_scanning)
+                currentScanButtonText = if (isScanning) {
+                    getString(R.string.button_connect_scanning)
                 } else {
-                    currentScanButtonText = getString(R.string.button_connect)
+                    getString(R.string.button_connect)
                 }
             }
         }
@@ -729,7 +789,9 @@ class HomeFragment : Fragment() {
                             switchesLayout.visibility = View.GONE
                         }
 
-                        if (isTimerWorking && autoHideSwitchesSettingsSwitchChecked && switchesLayout.visibility == View.VISIBLE) {
+
+
+                        if (isTimerWorking && autoHideSwitchesSettingsSwitchChecked && switchesLayout.isVisible) {
                             switchesLayout.visibility = View.GONE
                         }
 
@@ -774,7 +836,7 @@ class HomeFragment : Fragment() {
     private fun startStopWatch() {
         isTimerWorking = true
         isTimerPaused = false
-        if (weightLog.size == 0) {
+        if (weightLog.isEmpty()) {
             weightLog.add(weightRecord)
             weightLogSecond.add(weightRecord)
             weightLogGraphData =
@@ -784,9 +846,9 @@ class HomeFragment : Fragment() {
                     weightLogGraphData
                 )
             )
-            Log.d("INFO", "Added weight ${weightRecord} to graph")
+            Log.d("INFO", "Added weight $weightRecord to graph")
         }
-        if (flowRateLog.size == 0) {
+        if (flowRateLog.isEmpty()) {
             flowRateLog.add(flowRate)
             flowRateLogSecond.add(flowRate)
             flowRateLogGraphData =
@@ -796,7 +858,7 @@ class HomeFragment : Fragment() {
                     flowRateLogGraphData
                 )
             )
-            Log.d("INFO", "Added flowrate ${flowRate} to graph")
+            Log.d("INFO", "Added flowrate $flowRate to graph")
         }
         stopwatch.start()
     }
@@ -849,7 +911,7 @@ class HomeFragment : Fragment() {
         scanButton.isEnabled = true
         if (!isConnected) {
             Log.d("INFO", "${weightLog.size}")
-            if (weightLog.size > 0) {
+            if (weightLog.isNotEmpty()) {
                 doseButton.isEnabled = true
             }
             currentScanButtonText = getString(R.string.button_connect)
@@ -882,7 +944,7 @@ class HomeFragment : Fragment() {
             timeString,
             brewRatioString
         )
-        if (weightLogSecond.size > 0) {
+        if (weightLogSecond.isNotEmpty()) {
             GlobalScope.launch {
                 Dependencies.appDatabase.withTransaction {
                     val newId =
@@ -1113,7 +1175,7 @@ class HomeFragment : Fragment() {
                 if (autoDoseSettingsSwitchChecked && autoDoseSwitch.isChecked) {
                     autoDoseSwitch.isChecked = false
                 }
-                if (weightLog.size > 0 && weightLog.last() > 0 && doseRecord > 0) {
+                if (weightLog.isNotEmpty() && weightLog.last() > 0 && doseRecord > 0) {
                     val percentRatio = weightLog.last() / doseRecord
                     brewRatioString = "1:${"%.1f".format(percentRatio)}"
                 }
@@ -1159,6 +1221,10 @@ class HomeFragment : Fragment() {
                 startSearchAfterLaunchChecked = DataCoordinator.shared.getStartSearchAfterLaunch()
                 weightChartType = DataCoordinator.shared.getWeightChartType()
                 flowRateChartType = DataCoordinator.shared.getFlowRateChartType()
+                useFixedUnitSetting = DataCoordinator.shared.getUseFixedUnit()
+                fixedUnitValueSetting = DataCoordinator.shared.getFixedUnitValue()
+                alwaysConvertUnitsSetting = DataCoordinator.shared.getAlwaysConvertUnits()
+                preferredDisplayUnitSetting = DataCoordinator.shared.getPreferredDisplayUnit()
                 isSettingsLoaded = true
             }
 
