@@ -78,6 +78,7 @@ import androidx.core.view.isVisible
 
 
 private const val SCALE_NAME = "LFSmart Scale"
+private const val SCALE_NAME_LEFU = "LEFU-CK811"
 private const val scaleServiceUuidString = "0000fff0-0000-1000-8000-00805f9b34fb"
 private const val scaleSendCommandUuidString = "0000fff1-0000-1000-8000-00805f9b34fb"
 private const val scaleGetWeightUuidString = "0000fff4-0000-1000-8000-00805f9b34fb"
@@ -282,7 +283,7 @@ class HomeFragment : Fragment() {
     @SuppressLint("MissingPermission")
     private fun startBleScan() {
         isScanning = true
-        central.scanForPeripheralsUsingFilters(filters = listOf(scanFilter),
+        central.scanForPeripheralsUsingFilters(filters = listOf(scanFilter, scanFilterLefu),
             { peripheral, scanResult ->
                 Log.d(
                     "INFO", "Found peripheral '${peripheral.name}' with RSSI ${scanResult.rssi}"
@@ -520,6 +521,7 @@ class HomeFragment : Fragment() {
     }
 
     private val scanFilter = ScanFilter.Builder().setDeviceName(SCALE_NAME).build()
+    private val scanFilterLefu = ScanFilter.Builder().setDeviceName(SCALE_NAME_LEFU).build()
 
     private val waitWatch = buildTimer {
         startFormat("MM:SS")
